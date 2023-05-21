@@ -1,4 +1,2 @@
-public/build/**/*
-node_modules
-vendor
 dist
+node_modules

@@ -2,8 +2,13 @@ import chalk from 'chalk'
 import inquirer from 'inquirer'
 import fs from 'fs'
 import simpleGit from 'simple-git'
+import { execSync } from 'child_process'
 
 const git = simpleGit()
+
+const execSyncOut = (command) => {
+  execSync(command, { stdio: 'inherit' })
+}
 
 const packageJsonPath = './package.json'
 const packageJson = JSON.parse(fs.readFileSync(packageJsonPath).toString())

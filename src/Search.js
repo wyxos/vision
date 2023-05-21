@@ -3,7 +3,7 @@ import axios from 'axios'
 import LoadState from './LoadState'
 
 export default class Search {
-  state = new LoadState
+  state = new LoadState()
 
   result = ref([])
 
@@ -15,26 +15,26 @@ export default class Search {
     field: null
   }
 
-  constructor (options = {}) {
+  constructor(options = {}) {
     Object.assign(this.options, options)
   }
 
-  static create (options) {
+  static create(options) {
     return new Search(options)
   }
 
-  search (value) {
+  search(value) {
     return this.customSearch({ payload: { value } })
   }
 
-  async customSearch ({ url, payload }) {
-    if(this.timeout){
+  async customSearch({ url, payload }) {
+    if (this.timeout) {
       this.controller.abort()
 
       clearTimeout(this.timeout)
     }
 
-    this.controller = new AbortController();
+    this.controller = new AbortController()
 
     this.timeout = setTimeout(async () => {
       this.state.loading()
@@ -59,7 +59,7 @@ export default class Search {
     }, 500)
   }
 
-  async restore (url, payload) {
+  async restore(url, payload) {
     this.state.loading()
 
     this.result.value = []
@@ -79,7 +79,7 @@ export default class Search {
     return data
   }
 
-  getConfig () {
+  getConfig() {
     return {
       data: this.result.value,
       field: this.options.field

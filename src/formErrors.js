@@ -36,7 +36,9 @@ export default function useFormErrors() {
         }
       }
 
-      const match = target.find((error) => Array.isArray(key) ? key.includes(error.key) : error.key === key)
+      const match = target.find((error) =>
+        Array.isArray(key) ? key.includes(error.key) : error.key === key
+      )
 
       if (!match) {
         return {

@@ -239,7 +239,7 @@ export default class Listing {
   async patch(options) {
     const { path, props, attributes } = options
 
-    const { row, index } = props
+    const { row } = props
 
     const payload = {
       id: row.id,
@@ -326,7 +326,7 @@ export default class Listing {
     this.states.filter.loading()
 
     await this.load().catch((error) => {
-      this.states.filter.isFailure
+      this.states.filter.failed()
 
       throw error
     })
