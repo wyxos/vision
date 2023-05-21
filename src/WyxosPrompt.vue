@@ -2,60 +2,76 @@
 import LoadState from './LoadState'
 
 export default {
-    name: 'WyxosPrompt',
-    props: {
-        title: {
-            type: String
-        },
-        message: {
-            type: String
-        },
-        confirmText: {
-            type: String
-        },
-        cancelText: {
-            type: String
-        },
-        loading: {
-            type: Boolean
-        },
-        callback: {
-            type: Function
-        }
+  name: 'WyxosPrompt',
+  props: {
+    title: {
+      type: String,
+      default: null
     },
-    setup(){
-        return {
-            state: new LoadState()
-        }
+    message: {
+      type: String,
+      default: null
     },
-    methods: {
-        async proceed(){
-            if(this.callback){
-                this.state.loading()
-
-                await this.callback()
-                    .catch(error => {
-                        this.state.failed()
-
-                        throw error
-                    })
-
-                this.state.loaded()
-            }
-
-            this.$emit('close', {action: true})
-        }
+    confirmText: {
+      type: String,
+      default: null
+    },
+    cancelText: {
+      type: String,
+      default: null
+    },
+    loading: {
+      type: Boolean,
+      default: false
+    },
+    callback: {
+      type: Function,
+      default: null
     }
+  },
+  emits: ['close'],
+  setup() {
+    return {
+      state: new LoadState()
+    }
+  },
+  methods: {
+    async proceed() {
+      if (this.callback) {
+        this.state.loading()
+
+        await this.callback().catch((error) => {
+          this.state.failed()
+
+          throw error
+        })
+
+        this.state.loaded()
+      }
+
+      this.$emit('close', { action: true })
+    }
+  }
 }
 </script>
 
 <template>
-    <o-modal :active="true">
-        <h2>{{ title }}</h2>
-        <p>{{ message}}</p>
-        <div class="button-group">
-            <wyxos-button native-type="button" :disabled="state.isLoading" @click="$emit('close', {action: false})">{{ cancelText }}</wyxos-button>
-            <wyxos-button native-type="button" :loading="state.isLoading" @click="proceed()">{{ confirmText }}</wyxos-button>
-        </div>
-    </o-modal>
+  <o-modal :active="true">
+    <h2>{{ title }}</h2>
+    <p>{{ message }}</p>
+    <div class="button-group">
+      <wyxos-button
+        :disabled="state.isLoading"
+        native-type="button"
+        @click="$emit('close', { action: false })">
+        {{ cancelText }}
+      </wyxos-button>
+      <wyxos-button
+        :loading="state.isLoading"
+        native-type="button"
+        @click="proceed()"
+        >{{ confirmText }}
+      </wyxos-button>
+    </div>
+  </o-modal>
 </template>

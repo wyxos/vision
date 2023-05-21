@@ -1,4 +1,4 @@
-import {reactive} from "vue";
+import { reactive } from 'vue'
 
 export default class Tab {
   attributes = reactive({
@@ -7,25 +7,25 @@ export default class Tab {
 
   callbacks = {}
 
-  constructor (active) {
+  constructor(active) {
     this.attributes.name = active
   }
 
-  is (name) {
+  is(name) {
     return this.attributes.name === name
   }
 
-  onChange (callbacks) {
+  onChange(callbacks) {
     this.callbacks = callbacks
   }
 
-  activeClass (name, classes) {
+  activeClass(name, classes) {
     return {
       class: this.is(name) ? classes : []
     }
   }
 
-  set (name) {
+  set(name) {
     this.attributes.name = name
 
     if (this.callbacks[name]) {
@@ -33,11 +33,11 @@ export default class Tab {
     }
   }
 
-  assign(attributes){
+  assign(attributes) {
     Object.assign(this, attributes)
   }
 
-  static create (name) {
+  static create(name) {
     return new Tab(name)
   }
 }

@@ -32,10 +32,9 @@ export default {
 </script>
 
 <template>
-    <slot v-bind="{ add, remove, items }">
-        <ul>
-            <li></li>
-        </ul>
-    </slot>
+  <slot v-bind="{ add, remove, items }">
+    <ul>
+      <li></li>
+    </ul>
+  </slot>
 </template>
-

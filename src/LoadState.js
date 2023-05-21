@@ -7,23 +7,23 @@ export default class LoadState {
     isFailure: false
   })
 
-  get isLoading(){
+  get isLoading() {
     return this.state.isLoading
   }
 
-  get isLoaded(){
+  get isLoaded() {
     return this.state.isLoaded
   }
 
-  get isFailure(){
+  get isFailure() {
     return this.state.isFailure
   }
 
-  isState(state){
+  isState(state) {
     return this.state[state]
   }
 
-  loading () {
+  loading() {
     Object.assign(this.state, {
       isLoading: true,
       isLoaded: false,
@@ -31,7 +31,7 @@ export default class LoadState {
     })
   }
 
-  loaded () {
+  loaded() {
     Object.assign(this.state, {
       isLoading: false,
       isLoaded: true,
@@ -39,7 +39,7 @@ export default class LoadState {
     })
   }
 
-  failed () {
+  failed() {
     Object.assign(this.state, {
       isLoading: false,
       isLoaded: false,
@@ -47,7 +47,7 @@ export default class LoadState {
     })
   }
 
-  static create(){
+  static create() {
     return new LoadState()
   }
 }
