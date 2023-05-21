@@ -1,6 +1,6 @@
 {
   "name": "@wyxos/vue-3-helpers",
-  "version": "4.1.1",
+  "version": "1.0.0",
   "description": "",
   "type": "module",
   "files": [
@@ -38,6 +38,16 @@
     "vue": "^3.2.37"
   },
   "devDependencies": {
+    "prettier": "latest",
+    "eslint": "latest",
+    "eslint-config-prettier": "latest",
+    "eslint-config-standard": "latest",
+    "eslint-plugin-import": "latest",
+    "eslint-plugin-json": "latest",
+    "eslint-plugin-n": "latest",
+    "eslint-plugin-node": "latest",
+    "eslint-plugin-promise": "latest",
+    "eslint-plugin-vue": "latest",
     "@vitejs/plugin-vue": "^3.0.0",
     "chalk": "^5.0.1",
     "inquirer": "^9.1.0",

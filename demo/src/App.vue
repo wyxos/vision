@@ -48,7 +48,7 @@
     <div class="container">
         <h1 class="title is-3">Demo App</h1>
         <wyxos-form :form="errors" @submit="submit()">
-            <wyxos-input name="email" label="Email" :bag="errors.bag"></wyxos-input>
+            <wyxos-input name="email" label="Email" :bag="errors.#errorBag"></wyxos-input>
 
             <wyxos-button native-type="submit">Submit</wyxos-button>
         </wyxos-form>
