@@ -6,12 +6,12 @@
   "files": [
     "dist"
   ],
-  "main": "./dist/vue-helpers.umd.cjs",
-  "module": "./dist/vue-helpers.js",
+  "main": "./dist/vision.umd.cjs",
+  "module": "./dist/vision.js",
   "exports": {
     ".": {
-      "import": "./dist/vue-helpers.js",
-      "require": "./dist/vue-helpers.umd.cjs"
+      "import": "./dist/vision.js",
+      "require": "./dist/vision.umd.cjs"
     }
   },
   "scripts": {
