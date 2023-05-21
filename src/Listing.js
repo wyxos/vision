@@ -1,7 +1,10 @@
 import { reactive } from 'vue'
 import axios from 'axios'
 import LoadState from './LoadState'
-import qs from 'query-string';
+import qs from 'query-string'
+import useFormErrors from './formErrors'
+
+let cancelTokenSource
 
 export default class Listing {
   api = null
@@ -12,13 +15,18 @@ export default class Listing {
 
   options = null
 
+  errors = null
+  errorBag = 'default'
+
   states = {
-    fetch: new LoadState(),
-    filter: new LoadState()
+    load: LoadState.create(),
+    fetch: LoadState.create(),
+    filter: LoadState.create()
   }
 
   query = reactive({
     items: [],
+    showing: 0,
     perPage: 0,
     total: 0
   })
@@ -31,7 +39,36 @@ export default class Listing {
     isFilterActive: false
   })
 
-  static create (params, options) {
+  get tableConfig() {
+    return {
+      data: this.query.items,
+      total: this.query.total,
+      perPage: this.query.perPage,
+      loading: this.isLoading
+    }
+  }
+
+  get isLoading() {
+    return this.states.fetch.isLoading
+  }
+
+  get isLoaded() {
+    return this.states.fetch.isLoaded
+  }
+
+  get isFailure() {
+    return this.states.fetch.isFailure
+  }
+
+  get isFilterLoading() {
+    return this.states.filter.isLoading
+  }
+
+  get isFilterActive() {
+    return this.state.isFilterActive
+  }
+
+  static create(params, options) {
     if (!options) {
       throw Error('Listing options have not been provided.')
     }
@@ -42,14 +79,18 @@ export default class Listing {
       throw Error('Structure of search query required.')
     }
 
-    instance.structure = Object.assign({}, JSON.parse(JSON.stringify(params)))
+    instance.errors = useFormErrors()
+    instance.errors.createBag(this.errorBag)
 
-    instance.options = Object.assign({
-      enableSearchUpdate: true,
-      transformItem: (item) => item
-    }, options)
+    instance.options = Object.assign(
+      {
+        enableSearchUpdate: true,
+        transformItem: (item) => item
+      },
+      options
+    )
 
-    Object.assign(instance.params, params)
+    instance.setParameters(params)
 
     if (instance.options.enableSearchUpdate) {
       instance.mergeSearch()
@@ -62,7 +103,15 @@ export default class Listing {
     return instance
   }
 
-  mergeSearch () {
+  setParameters(params) {
+    const structure = JSON.parse(JSON.stringify(params))
+
+    this.structure = Object.assign({}, structure)
+
+    this.params = reactive(params)
+  }
+
+  mergeSearch() {
     const query = qs.parse(window.location.search, {
       arrayFormat: 'bracket'
     })
@@ -70,26 +119,19 @@ export default class Listing {
     Object.assign(this.params, this.structure, query)
   }
 
-  tableConfig () {
-    return {
-      data: this.query.items,
-      total: this.query.total,
-      perPage: this.query.perPage,
-      loading: this.isLoading
-    }
-  }
-
-  async fetch (path) {
+  async fetch(path, cancelToken) {
     this.states.fetch.loading()
 
     const params = JSON.parse(JSON.stringify(this.params))
 
     const url = path || this.baseUrl
 
-    const { data } = await this.api.get(url, {
-      params
-    })
-      .catch(error => {
+    const { data } = await this.api
+      .get(url, {
+        params,
+        cancelToken
+      })
+      .catch((error) => {
         this.states.fetch.failed()
 
         throw error
@@ -104,69 +146,97 @@ export default class Listing {
     return data
   }
 
-  async reload (path) {
+  async reload(path) {
     const { data } = await this.api.get(path || this.baseUrl, {
       params: JSON.parse(JSON.stringify(this.params))
     })
 
     Object.assign(this.query, data.query, {
-      items: data.query.items.map(item => this.transformItem(item))
+      items: data.query.items.map((item) => this.transformItem(item))
     })
 
     return data
   }
 
-  refreshUrl () {
+  refreshUrl() {
     const base = window.location.href.replace(/\?.*/, '')
 
     const params = JSON.parse(JSON.stringify(this.params))
 
-    const url = base + '?' + qs.stringify(params, {arrayFormat: 'bracket'})
+    const url = base + '?' + qs.stringify(params, { arrayFormat: 'bracket' })
 
     window.history.replaceState({}, '', url)
   }
 
-  push (item) {
-    this.query.items.push(
-      this.transformItem(
-        item
-      )
-    )
+  push(item) {
+    this.query.items.push(this.transformItem(item))
   }
 
-  transformItem (item) {
+  transformItem(item) {
     return this.options.transformItem({
       ...item,
       states: {
-        delete: new LoadState,
-        patch: new LoadState
+        delete: new LoadState(),
+        patch: new LoadState()
       }
     })
   }
 
-  async load (path) {
-    const data = await this.fetch(path)
+  async load(path) {
+    this.errors.clear(null, this.errorBag)
 
-    if (!data.query || !data.query.items) {
+    // if a request is ongoing, cancel it
+    if (cancelTokenSource) {
+      cancelTokenSource.cancel()
+    }
+
+    // create a new CancelToken
+    cancelTokenSource = axios.CancelToken.source()
+
+    this.states.fetch.loading()
+
+    this.query.items = []
+
+    this.query.total = 0
+    this.query.showing = 0
+
+    let data = null
+
+    try {
+      data = await this.fetch(path, cancelTokenSource.token)
+    } catch (error) {
+      if (axios.isCancel(error)) {
+        console.log('Request cancelled')
+        return // early return if request is cancelled
+      } else {
+        this.states.fetch.failed()
+        this.errors.set(error, this.errorBag)
+        throw error
+      }
+    }
+
+    this.states.fetch.loaded()
+
+    if (!data || !data.query || !data.query.items) {
       this.states.fetch.failed()
 
       throw Error('Response format is invalid.')
     }
 
     Object.assign(this.query, data.query, {
-      items: data.query.items.map(item => this.transformItem(item))
+      items: data.query.items.map((item) => this.transformItem(item))
     })
 
     return data
   }
 
-  onPageChange (value) {
+  onPageChange(value) {
     this.params.page = value
 
     return this.load()
   }
 
-  async patch (options) {
+  async patch(options) {
     const { path, props, attributes } = options
 
     const { row, index } = props
@@ -176,7 +246,8 @@ export default class Listing {
       ...attributes
     }
 
-    const { data } = await this.api.patch(path || this.baseUrl, payload)
+    const { data } = await this.api
+      .patch(path || this.baseUrl, payload)
       .catch((error) => {
         throw error
       })
@@ -202,7 +273,7 @@ export default class Listing {
     return data
   }
 
-  async delete (options) {
+  async delete(options) {
     const { path, props, attributes } = options
 
     const { row, index } = props
@@ -214,9 +285,10 @@ export default class Listing {
 
     row.states.delete.loading()
 
-    const { data } = await this.api.delete(path || this.baseUrl, {
-      data: payload
-    })
+    const { data } = await this.api
+      .delete(path || this.baseUrl, {
+        data: payload
+      })
       .catch((error) => {
         row.states.delete.failed()
 
@@ -250,45 +322,47 @@ export default class Listing {
     return data
   }
 
-  get isLoading () {
-    return this.states.fetch.isLoading
-  }
+  async applyFilter() {
+    this.states.filter.loading()
 
-  get isLoaded () {
-    return this.states.fetch.isLoaded
-  }
+    await this.load().catch((error) => {
+      this.states.filter.isFailure
 
-  get isFailure () {
-    return this.states.fetch.isFailure
-  }
+      throw error
+    })
 
-  get isFilterLoading () {
-    return this.states.filter.isLoading
-  }
-
-  get isFilterActive () {
-    return this.state.isFilterActive
-  }
-
-  async applyFilter () {
-    await this.load()
+    this.states.filter.loaded()
 
     this.state.isFilterActive = false
   }
 
-  showFilter () {
+  showFilter() {
     this.state.isFilterActive = true
   }
 
-  cancelFilter () {
+  cancelFilter() {
     this.state.isFilterActive = false
   }
 
-  async resetFilter (url = null) {
-    Object.assign(this.params, this.structure)
+  async resetFilter(resetType = 'url', url = null) {
+    if (resetType === 'url') {
+      // Reset based on the URL
+      this.mergeSearch()
+    } else if (resetType === 'initial') {
+      // Reset to initial structure
+      Object.assign(this.params, this.structure)
+    }
 
     this.state.isFilterActive = false
 
     await this.load(url)
+  }
+
+  getError(key) {
+    return this.errors.get(key, this.errorBag)
+  }
+
+  clearError(key) {
+    this.errors.clear(key, this.errorBag)
   }
 }

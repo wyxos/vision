@@ -29,7 +29,7 @@ export default {
       default: (payload) => payload
     }
   },
-  emits: ['update:modelValue'],
+  emits: ['update:modelValue', 'update:query'],
   setup() {
     const search = Search.create()
 
@@ -39,52 +39,84 @@ export default {
   },
   data() {
     return {
-      query: []
+      query: [],
+      isInternalChange: false
+    }
+  },
+  watch: {
+    modelValue: {
+      handler: async function (newVal, oldVal) {
+        if (this.isInternalChange) {
+          this.isInternalChange = false
+        } else if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
+          this.restore()
+        }
+      },
+      deep: true,
+      immediate: false
     }
   },
   async mounted() {
-    if (this.modelValue && this.modelValue.length) {
-      const { result } = await this.search.restore(
-        this.path,
-        this.restoreFormatter({
-          values: this.modelValue
-        })
-      )
-
-      this.query = result
-
-      this.$emit(
-        'update:modelValue',
-        this.query.map((value) => this.formatter(value))
-      )
-    }
+    this.restore()
   },
   methods: {
+    async restore() {
+      if (this.modelValue && this.modelValue.length) {
+        this.isInternalChange = true
+
+        const { result } = await this.search.restore(
+          this.path,
+          this.restoreFormatter({
+            values: this.modelValue
+          })
+        )
+
+        this.query = result
+
+        this.$emit(
+          'update:modelValue',
+          this.query.map((value) => this.formatter(value))
+        )
+        this.$emit('update:query', this.query)
+      }
+    },
     searchTags(value) {
-      return this.search.customSearch(
-          {
-              url: this.path,
-              payload: this.payloadFormatter({
-                  value,
-                  exclude: this.query.map((item) => this.excludeFormatter(item)).filter(Boolean)
-              })
-          }
-      )
+      return this.search.customSearch({
+        url: this.path,
+        payload: this.payloadFormatter({
+          value,
+          exclude: this.query
+            .map((item) => this.excludeFormatter(item))
+            .filter(Boolean)
+        })
+      })
     },
     addedTag() {
+      this.isInternalChange = true
+
       const reformat = this.query.map((value) => this.formatter(value))
 
       this.$emit('update:modelValue', reformat)
+
+      this.$emit('update:query', this.query)
     },
     removedTag() {
+      this.isInternalChange = true
+
       const reformat = this.query.map((value) => this.formatter(value))
 
       this.$emit('update:modelValue', reformat)
+
+      this.$emit('update:query', this.query)
     },
     reset() {
+      this.isInternalChange = true
+
       this.query = []
 
       this.$emit('update:modelValue', this.query)
+
+      this.$emit('update:query', this.query)
     },
     addItem() {
       this.$refs.tagInput.addItem()
@@ -94,15 +126,13 @@ export default {
 </script>
 <template>
   <o-inputitems
-      ref="tagInput"
-    v-bind="$attrs"
+    ref="tagInput"
     v-model="query"
     :data="search.result.value"
-    :open-on-focus="true"
-    autocomplete
+    allow-autocomplete
+    v-bind="$attrs"
     @add="addedTag($event)"
     @remove="removedTag($event)"
-    @focus="searchTags()"
     @typing="searchTags($event)">
   </o-inputitems>
 </template>

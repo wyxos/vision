@@ -46,4 +46,8 @@ export default class LoadState {
       isFailure: true
     })
   }
+
+  static create(){
+    return new LoadState()
+  }
 }
