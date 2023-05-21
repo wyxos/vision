@@ -19,9 +19,9 @@ export default defineConfig({
     outDir: '../dist',
     lib: {
       entry: path.resolve(__dirname, '../src/main.js'),
-      name: 'VueHelpers',
+      name: 'Vision',
       // the proper extensions will be added
-      fileName: 'vue-helpers'
+      fileName: 'vision'
     },
     rollupOptions: {
       // make sure to externalize deps that shouldn't be bundled
