@@ -1,8 +1,8 @@
 import {reactive} from 'vue'
 import axios from 'axios'
-import LoadState from './LoadState'
+import LoadState from './LoadState.js'
 import qs from 'query-string'
-import useFormErrors from './formErrors'
+import useFormErrors from './formErrors.js'
 
 let cancelTokenSource
 
@@ -43,6 +43,7 @@ export default class Listing {
         return {
             data: this.query.items,
             total: this.query.total,
+            currentPage: this.params.page,
             perPage: this.query.perPage,
             loading: this.isLoading
         }
@@ -115,6 +116,11 @@ export default class Listing {
         const query = qs.parse(window.location.search, {
             arrayFormat: 'bracket'
         })
+
+        // convert page to number if it's defined
+        if (query.page) {
+            query.page = Number(query.page);
+        }
 
         Object.assign(this.params, this.structure, query)
     }
