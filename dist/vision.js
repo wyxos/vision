@@ -1757,10 +1757,18 @@ class jr {
     return a.patch && Object.assign(n, a.patch), (await this.fetch()).query.items.length || (this.params.page--, await this.load()), a;
   }
   async delete(t) {
-    return this.processRowAndRefreshList({ ...t, method: "delete", state: "delete" });
+    return this.processRowAndRefreshList({
+      ...t,
+      method: "delete",
+      state: "delete"
+    });
   }
   async restore(t) {
-    return this.processRowAndRefreshList({ ...t, method: "patch", state: "restore" });
+    return this.processRowAndRefreshList({
+      ...t,
+      method: "patch",
+      state: "restore"
+    });
   }
   async processRowAndRefreshList({ path: t, props: r, payload: s, state: n, method: a } = {}) {
     const { row: i, index: o } = r;
@@ -1770,7 +1778,10 @@ class jr {
     };
     let u = i.states[n];
     u || (u = i.states[n] = I.create()), u.loading();
-    const { data: f } = await this.api[a](t || this.baseUrl, s).catch((g) => {
+    const { data: f } = await this.api[a](
+      t || this.baseUrl,
+      s
+    ).catch((g) => {
       throw u.failed(), g;
     });
     u.loaded(), f.row && Object.assign(i, f.row);

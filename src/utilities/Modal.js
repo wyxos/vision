@@ -1,21 +1,21 @@
-import {ref} from 'vue'
+import { ref } from 'vue'
 
 export default class Modal {
-    state = ref(false)
+  state = ref(false)
 
-    get isVisible() {
-        return this.state
-    }
+  get isVisible() {
+    return this.state
+  }
 
-    static create() {
-        return new Modal()
-    }
+  static create() {
+    return new Modal()
+  }
 
-    show() {
-        this.state = true
-    }
+  show() {
+    this.state = true
+  }
 
-    hide() {
-        this.state = false
-    }
+  hide() {
+    this.state = false
+  }
 }
