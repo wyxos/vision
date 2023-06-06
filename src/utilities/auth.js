@@ -1,106 +1,106 @@
 import axios from 'axios'
-import {computed, reactive} from 'vue'
+import { computed, reactive } from 'vue'
 import LoadState from '../utilities/LoadState.js'
 
 class Auth {
-    attributes = reactive({
-        user: null
-    })
+  attributes = reactive({
+    user: null
+  })
 
-    state = new LoadState()
+  state = new LoadState()
 
-    constructor() {
-        return new Proxy(this, {
-            get(target, name, receiver) {
-                if (!Reflect.has(target, name)) {
-                    if (name in target.attributes) {
-                        return target.attributes[name]
-                    }
+  constructor() {
+    return new Proxy(this, {
+      get(target, name, receiver) {
+        if (!Reflect.has(target, name)) {
+          if (name in target.attributes) {
+            return target.attributes[name]
+          }
 
-                    return null
-                }
-
-                return Reflect.get(target, name, receiver)
-            },
-            set(target, name, value, receiver) {
-                if (!Reflect.has(target, name)) {
-                    if (name in target.attributes) {
-                        target.attributes[name] = value
-
-                        return true
-                    }
-
-                    return null
-                }
-
-                return Reflect.set(target, name, value, receiver)
-            }
-        })
-    }
-
-    get isAdministrator() {
-        return computed(() => Boolean(this.user.super_admin)).value
-    }
-
-    get isClientAdmin() {
-        return computed(() =>
-            Boolean(this.roles.find((role) => role.slug === 'client-admin'))
-        ).value
-    }
-
-    get isClient() {
-        return computed(() =>
-            Boolean(this.roles.find((role) => role.slug === 'user'))
-        ).value
-    }
-
-    get isLoading() {
-        return this.state.isLoading
-    }
-
-    get isLoaded() {
-        return this.state.isLoaded
-    }
-
-    get isFailure() {
-        return this.state.isFailure
-    }
-
-    get isAuthenticated() {
-        return Boolean(this.attributes.user)
-    }
-
-    async load() {
-        this.state.loading()
-
-        await axios.get('/sanctum/csrf-cookie').catch((error) => {
-            this.state.failed()
-
-            throw error
-        })
-
-        const {data} = await axios.get('/api/user')
-
-        if (!('user' in data)) {
-            throw Error('Instance of user is not defined.')
+          return null
         }
 
-        Object.keys(data).forEach((key) => {
-            this.attributes[key] = data[key]
-        })
+        return Reflect.get(target, name, receiver)
+      },
+      set(target, name, value, receiver) {
+        if (!Reflect.has(target, name)) {
+          if (name in target.attributes) {
+            target.attributes[name] = value
 
-        this.state.loaded()
+            return true
+          }
+
+          return null
+        }
+
+        return Reflect.set(target, name, value, receiver)
+      }
+    })
+  }
+
+  get isAdministrator() {
+    return computed(() => Boolean(this.user.super_admin)).value
+  }
+
+  get isClientAdmin() {
+    return computed(() =>
+      Boolean(this.roles.find((role) => role.slug === 'client-admin'))
+    ).value
+  }
+
+  get isClient() {
+    return computed(() =>
+      Boolean(this.roles.find((role) => role.slug === 'user'))
+    ).value
+  }
+
+  get isLoading() {
+    return this.state.isLoading
+  }
+
+  get isLoaded() {
+    return this.state.isLoaded
+  }
+
+  get isFailure() {
+    return this.state.isFailure
+  }
+
+  get isAuthenticated() {
+    return Boolean(this.attributes.user)
+  }
+
+  async load() {
+    this.state.loading()
+
+    await axios.get('/sanctum/csrf-cookie').catch((error) => {
+      this.state.failed()
+
+      throw error
+    })
+
+    const { data } = await axios.get('/api/user')
+
+    if (!('user' in data)) {
+      throw Error('Instance of user is not defined.')
     }
 
-    getUser() {
-        return this.attributes.user
-    }
+    Object.keys(data).forEach((key) => {
+      this.attributes[key] = data[key]
+    })
 
-    reset() {
-        this.attributes = reactive({
-            user: null
-        })
-    }
+    this.state.loaded()
+  }
+
+  getUser() {
+    return this.attributes.user
+  }
+
+  reset() {
+    this.attributes = reactive({
+      user: null
+    })
+  }
 }
 
 const auth = new Auth()
