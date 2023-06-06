@@ -16,54 +16,54 @@ import WyxosPrompt from './components/WyxosPrompt.vue'
 import Modal from './utilities/Modal.js'
 import Tab from './utilities/Tab.js'
 
-const components = import.meta.glob('./components/*.vue', {eager: true})
+const components = import.meta.glob('./components/*.vue', { eager: true })
 
 const install = (app) => {
-    Object.keys(components).forEach(key => {
-        const name = components[key].default.name;
-        const component = components[key].default;
-        app.component(name, component)
-        app.component(name.replace('Wyxos', 'W'), component)
-    })
+  Object.keys(components).forEach((key) => {
+    const name = components[key].default.name
+    const component = components[key].default
+    app.component(name, component)
+    app.component(name.replace('Wyxos', 'W'), component)
+  })
 }
 
 const MappedComponents = {}
 
-Object.keys(components).forEach(key => {
-    MappedComponents[components[key].default.name] = components[key].default
+Object.keys(components).forEach((key) => {
+  MappedComponents[components[key].default.name] = components[key].default
 })
 
 export {
-    Search,
-    FormBuilder,
-    ResourceList,
-    Listing,
-    LoadState,
-    Modal,
-    Tab,
-    dateRender,
-    useFormErrors,
-    WyxosButton,
-    WyxosCollection,
-    WyxosDatepicker,
-    WyxosForm,
-    WyxosImage,
-    WyxosInput,
-    WyxosTags,
-    WyxosPrompt,
-    install
+  Search,
+  FormBuilder,
+  ResourceList,
+  Listing,
+  LoadState,
+  Modal,
+  Tab,
+  dateRender,
+  useFormErrors,
+  WyxosButton,
+  WyxosCollection,
+  WyxosDatepicker,
+  WyxosForm,
+  WyxosImage,
+  WyxosInput,
+  WyxosTags,
+  WyxosPrompt,
+  install
 }
 
 export default {
-    Search,
-    FormBuilder,
-    ResourceList,
-    Listing,
-    LoadState,
-    Modal,
-    Tab,
-    dateRender,
-    useFormErrors,
-    ...MappedComponents,
-    install
+  Search,
+  FormBuilder,
+  ResourceList,
+  Listing,
+  LoadState,
+  Modal,
+  Tab,
+  dateRender,
+  useFormErrors,
+  ...MappedComponents,
+  install
 }
