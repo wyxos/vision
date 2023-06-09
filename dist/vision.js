@@ -4898,7 +4898,10 @@ class ua {
       total: this.query.total,
       currentPage: this.params.page,
       perPage: this.query.perPage,
-      loading: this.isLoading
+      loading: this.isLoading,
+      paginated: !0,
+      backendPagination: !0,
+      striped: !0
     };
   }
   get isLoading() {

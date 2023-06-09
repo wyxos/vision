@@ -45,7 +45,10 @@ export default class Listing {
       total: this.query.total,
       currentPage: this.params.page,
       perPage: this.query.perPage,
-      loading: this.isLoading
+      loading: this.isLoading,
+      paginated: true,
+      backendPagination: true,
+      striped: true
     }
   }
 
