@@ -80,4 +80,4 @@ the [GitHub repository](https://github.com/wyxos/vision/issues).
 
 ## License
 
-`@wyxos/vision` is released under the [MIT License](https://github.com/wyxos/vision/MIT-LICENSE.txt).
+`@wyxos/vision` is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
