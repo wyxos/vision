@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { reactive } from 'vue'
-import LoadState from '../utilities/LoadState.js'
+import LoadState from '../utilities/LoadState'
 
 class Auth {
   attributes = reactive({

@@ -1,6 +1,6 @@
 import { ref } from 'vue'
 import axios from 'axios'
-import LoadState from './LoadState.js'
+import LoadState from './LoadState'
 
 export default class Search {
   state = new LoadState()

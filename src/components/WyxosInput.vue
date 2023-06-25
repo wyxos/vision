@@ -1,5 +1,5 @@
 <script>
-import useFormErrors from '../utilities/formErrors.js'
+import useFormErrors from '../utilities/useFormErrors'
 
 export default {
   name: 'WyxosInput',

@@ -1,5 +1,5 @@
 <script>
-import FormBuilder from '../utilities/FormBuilder.js'
+import FormBuilder from '../utilities/FormBuilder'
 
 export default {
   name: 'WyxosForm',

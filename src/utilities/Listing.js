@@ -1,8 +1,8 @@
 import { reactive } from 'vue'
 import axios from 'axios'
-import LoadState from './LoadState.js'
+import LoadState from './LoadState'
 import qs from 'query-string'
-import useFormErrors from './formErrors.js'
+import useFormErrors from './useFormErrors'
 
 let cancelTokenSource
 

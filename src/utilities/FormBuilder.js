@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { reactive } from 'vue'
-import useFormErrors from './formErrors.js'
-import State from './LoadState.js'
+import useFormErrors from './useFormErrors'
+import State from './LoadState'
 
 export default class FormBuilder {
   loadPath = ''
