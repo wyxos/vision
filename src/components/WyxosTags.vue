@@ -1,5 +1,5 @@
 <script>
-import Search from '../utilities/Search.js'
+import Search from '../utilities/Search'
 
 export default {
   name: 'WyxosTags',

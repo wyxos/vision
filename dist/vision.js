@@ -1,7 +1,7 @@
 var _a = Object.defineProperty;
 var ga = (e, t, r) => t in e ? _a(e, t, { enumerable: !0, configurable: !0, writable: !0, value: r }) : e[t] = r;
 var v = (e, t, r) => (ga(e, typeof t != "symbol" ? t + "" : t, r), r);
-import { resolveComponent as $, openBlock as A, createBlock as De, withCtx as J, renderSlot as Be, createCommentVNode as je, createTextVNode as Ye, toDisplayString as ie, createElementBlock as Ee, normalizeProps as wa, guardReactiveProps as va, createElementVNode as z, reactive as U, createVNode as Oe, normalizeClass as Sa, mergeProps as it, withModifiers as ba, defineComponent as Oa, Fragment as Da, renderList as ka, ref as yr } from "vue";
+import { resolveComponent as $, openBlock as A, createBlock as De, withCtx as J, renderSlot as Be, createCommentVNode as je, createTextVNode as Ye, toDisplayString as ie, createElementBlock as Fe, normalizeProps as wa, guardReactiveProps as va, createElementVNode as z, reactive as U, createVNode as Oe, normalizeClass as Sa, mergeProps as it, withModifiers as ba, defineComponent as Oa, Fragment as Da, renderList as ka, ref as yr } from "vue";
 const se = (e, t) => {
   const r = e.__vccOpts || e;
   for (const [s, n] of t)
@@ -33,15 +33,15 @@ function Ra(e, t, r, s, n, a) {
       r.loading && r.text ? Be(e.$slots, "loading", { key: 1 }, () => [
         Ye(ie(r.text), 1)
       ]) : je("", !0),
-      r.loading ? (A(), Ee("i", Ta)) : je("", !0)
+      r.loading ? (A(), Fe("i", Ta)) : je("", !0)
     ]),
     _: 3
   }, 8, ["disabled"]);
 }
-const Ya = /* @__PURE__ */ se(Ma, [["render", Ra]]), Ea = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const Ya = /* @__PURE__ */ se(Ma, [["render", Ra]]), Fa = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: Ya
-}, Symbol.toStringTag, { value: "Module" })), Fa = {
+}, Symbol.toStringTag, { value: "Module" })), Ea = {
   name: "WyxosCollection",
   props: {
     modelValue: {
@@ -74,7 +74,7 @@ function Na(e, t, r, s, n, a) {
     Pa
   ]);
 }
-const Ca = /* @__PURE__ */ se(Fa, [["render", Na]]), Aa = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const Ca = /* @__PURE__ */ se(Ea, [["render", Na]]), Aa = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: Ca
 }, Symbol.toStringTag, { value: "Module" }));
@@ -411,7 +411,7 @@ function oe(e, t, r) {
   var s = "" + Math.abs(e), n = t - s.length, a = e >= 0;
   return (a ? r ? "+" : "" : "-") + Math.pow(10, Math.max(0, n)).toString().substr(1) + s;
 }
-var Er = /(\[[^\[]*\])|(\\)?([Hh]mm(ss)?|Mo|MM?M?M?|Do|DDDo|DD?D?D?|ddd?d?|do?|w[o|w]?|W[o|W]?|Qo?|N{1,5}|YYYYYY|YYYYY|YYYY|YY|y{2,4}|yo?|gg(ggg?)?|GG(GGG?)?|e|E|a|A|hh?|HH?|kk?|mm?|ss?|S{1,9}|x|X|zz?|ZZ?|.)/g, mt = /(\[[^\[]*\])|(\\)?(LTS|LT|LL?L?L?|l{1,4})/g, Zt = {}, qe = {};
+var Fr = /(\[[^\[]*\])|(\\)?([Hh]mm(ss)?|Mo|MM?M?M?|Do|DDDo|DD?D?D?|ddd?d?|do?|w[o|w]?|W[o|W]?|Qo?|N{1,5}|YYYYYY|YYYYY|YYYY|YY|y{2,4}|yo?|gg(ggg?)?|GG(GGG?)?|e|E|a|A|hh?|HH?|kk?|mm?|ss?|S{1,9}|x|X|zz?|ZZ?|.)/g, mt = /(\[[^\[]*\])|(\\)?(LTS|LT|LL?L?L?|l{1,4})/g, Zt = {}, qe = {};
 function y(e, t, r, s) {
   var n = s;
   typeof s == "string" && (n = function() {
@@ -429,7 +429,7 @@ function Za(e) {
   return e.match(/\[[\s\S]/) ? e.replace(/^\[|\]$/g, "") : e.replace(/\\/g, "");
 }
 function Qa(e) {
-  var t = e.match(Er), r, s;
+  var t = e.match(Fr), r, s;
   for (r = 0, s = t.length; r < s; r++)
     qe[t[r]] ? t[r] = qe[t[r]] : t[r] = Za(t[r]);
   return function(n) {
@@ -464,7 +464,7 @@ var Xa = {
 };
 function Ka(e) {
   var t = this._longDateFormat[e], r = this._longDateFormat[e.toUpperCase()];
-  return t || !r ? t : (this._longDateFormat[e] = r.match(Er).map(function(s) {
+  return t || !r ? t : (this._longDateFormat[e] = r.match(Fr).map(function(s) {
     return s === "MMMM" || s === "MM" || s === "DD" || s === "dddd" ? s.slice(1) : s;
   }).join(""), this._longDateFormat[e]);
 }
@@ -510,7 +510,7 @@ function N(e, t) {
 function Q(e) {
   return typeof e == "string" ? nt[e] || nt[e.toLowerCase()] : void 0;
 }
-function Fr(e) {
+function Er(e) {
   var t = {}, r, s;
   for (s in e)
     b(e, s) && (r = Q(s), r && (t[r] = e[s]));
@@ -528,7 +528,7 @@ function li(e) {
     return s.priority - n.priority;
   }), t;
 }
-function Et(e) {
+function Ft(e) {
   return e % 4 === 0 && e % 100 !== 0 || e % 400 === 0;
 }
 function G(e) {
@@ -547,7 +547,7 @@ function bt(e, t) {
   return e.isValid() ? e._d["get" + (e._isUTC ? "UTC" : "") + t]() : NaN;
 }
 function Js(e, t, r) {
-  e.isValid() && !isNaN(r) && (t === "FullYear" && Et(e.year()) && e.month() === 1 && e.date() === 29 ? (r = w(r), e._d["set" + (e._isUTC ? "UTC" : "") + t](
+  e.isValid() && !isNaN(r) && (t === "FullYear" && Ft(e.year()) && e.month() === 1 && e.date() === 29 ? (r = w(r), e._d["set" + (e._isUTC ? "UTC" : "") + t](
     r,
     e.month(),
     Lt(r, e.month())
@@ -558,7 +558,7 @@ function ui(e) {
 }
 function di(e, t) {
   if (typeof e == "object") {
-    e = Fr(e);
+    e = Er(e);
     var r = li(e), s, n = r.length;
     for (s = 0; s < n; s++)
       this[r[s].unit](e[r[s].unit]);
@@ -566,7 +566,7 @@ function di(e, t) {
     return this[e](t);
   return this;
 }
-var Zs = /\d/, H = /\d\d/, Qs = /\d{3}/, Pr = /\d{4}/, Ft = /[+-]?\d{6}/, M = /\d\d?/, Xs = /\d\d\d\d?/, Ks = /\d\d\d\d\d\d?/, Pt = /\d{1,3}/, Nr = /\d{1,4}/, Nt = /[+-]?\d{1,6}/, Ze = /\d+/, Ct = /[+-]?\d+/, fi = /Z|[+-]\d\d:?\d\d/gi, At = /Z|[+-]\d\d(?::?\d\d)?/gi, ci = /[+-]?\d+(\.\d{1,3})?/, ct = /[0-9]{0,256}['a-z\u00A0-\u05FF\u0700-\uD7FF\uF900-\uFDCF\uFDF0-\uFF07\uFF10-\uFFEF]{1,256}|[\u0600-\u06FF\/]{1,256}(\s*?[\u0600-\u06FF]{1,256}){1,2}/i, Ot;
+var Zs = /\d/, H = /\d\d/, Qs = /\d{3}/, Pr = /\d{4}/, Et = /[+-]?\d{6}/, M = /\d\d?/, Xs = /\d\d\d\d?/, Ks = /\d\d\d\d\d\d?/, Pt = /\d{1,3}/, Nr = /\d{1,4}/, Nt = /[+-]?\d{1,6}/, Ze = /\d+/, Ct = /[+-]?\d+/, fi = /Z|[+-]\d\d:?\d\d/gi, At = /Z|[+-]\d\d(?::?\d\d)?/gi, ci = /[+-]?\d+(\.\d{1,3})?/, ct = /[0-9]{0,256}['a-z\u00A0-\u05FF\u0700-\uD7FF\uF900-\uFDCF\uFDF0-\uFF07\uFF10-\uFFEF]{1,256}|[\u0600-\u06FF\/]{1,256}(\s*?[\u0600-\u06FF]{1,256}){1,2}/i, Ot;
 Ot = {};
 function c(e, t, r) {
   Ot[e] = ue(t) ? t : function(s, n) {
@@ -621,7 +621,7 @@ function Lt(e, t) {
   if (isNaN(e) || isNaN(t))
     return NaN;
   var r = gi(t, 12);
-  return e += (t - r) / 12, r === 1 ? Et(e) ? 29 : 28 : 31 - r % 7 % 2;
+  return e += (t - r) / 12, r === 1 ? Ft(e) ? 29 : 28 : 31 - r % 7 % 2;
 }
 y("M", ["MM", 2], "Mo", function() {
   return this.month() + 1;
@@ -745,8 +745,8 @@ C("year", 1);
 c("Y", Ct);
 c("YY", M, H);
 c("YYYY", Nr, Pr);
-c("YYYYY", Nt, Ft);
-c("YYYYYY", Nt, Ft);
+c("YYYYY", Nt, Et);
+c("YYYYYY", Nt, Et);
 D(["YYYYY", "YYYYYY"], P);
 D("YYYY", function(e, t) {
   t[P] = e.length === 2 ? f.parseTwoDigitYear(e) : w(e);
@@ -758,14 +758,14 @@ D("Y", function(e, t) {
   t[P] = parseInt(e, 10);
 });
 function at(e) {
-  return Et(e) ? 366 : 365;
+  return Ft(e) ? 366 : 365;
 }
 f.parseTwoDigitYear = function(e) {
   return w(e) + (w(e) > 68 ? 1900 : 2e3);
 };
 var an = Je("FullYear", !0);
 function Ri() {
-  return Et(this.year());
+  return Ft(this.year());
 }
 function Yi(e, t, r, s, n, a, i) {
   var o;
@@ -813,10 +813,10 @@ ht(
     t[s.substr(0, 1)] = w(e);
   }
 );
-function Ei(e) {
+function Fi(e) {
   return lt(e, this._week.dow, this._week.doy).week;
 }
-var Fi = {
+var Ei = {
   dow: 0,
   doy: 6
 };
@@ -1068,7 +1068,7 @@ var fn = {
   relativeTime: ai,
   months: wi,
   monthsShort: en,
-  week: Fi,
+  week: Ei,
   weekdays: Ui,
   weekdaysMin: Ii,
   weekdaysShort: ln,
@@ -1362,7 +1362,7 @@ function $r(e) {
   }
   e._a = [], g(e).empty = !0;
   var t = "" + e._i, r, s, n, a, i, o = t.length, l = 0, d, m;
-  for (n = zs(e._f, e._locale).match(Er) || [], m = n.length, r = 0; r < m; r++)
+  for (n = zs(e._f, e._locale).match(Fr) || [], m = n.length, r = 0; r < m; r++)
     a = n[r], s = (t.match(hi(a, e)) || [])[0], s && (i = t.substr(0, t.indexOf(s)), i.length > 0 && g(e).unusedInput.push(i), t = t.slice(
       t.indexOf(s) + s.length
     ), l += s.length), qe[a] ? (s ? g(e).empty = !1 : g(e).unusedTokens.push(a), yi(a, s, e)) : e._strict && !s && g(e).unusedTokens.push(a);
@@ -1388,7 +1388,7 @@ function xo(e) {
 }
 function To(e) {
   if (!e._d) {
-    var t = Fr(e._i), r = t.day === void 0 ? t.date : t.day;
+    var t = Er(e._i), r = t.day === void 0 ? t.date : t.day;
     e._a = Vs(
       [t.year, t.month, r, t.hour, t.minute, t.second, t.millisecond],
       function(s) {
@@ -1418,13 +1418,13 @@ function yn(e, t, r, s, n) {
 function k(e, t, r, s) {
   return yn(e, t, r, s, !1);
 }
-var Eo = Z(
+var Fo = Z(
   "moment().min is deprecated, use moment.max instead. http://momentjs.com/guides/#/warnings/min-max/",
   function() {
     var e = k.apply(null, arguments);
     return this.isValid() && e.isValid() ? e < this ? this : e : Yt();
   }
-), Fo = Z(
+), Eo = Z(
   "moment().max is deprecated, use moment.min instead. http://momentjs.com/guides/#/warnings/min-max/",
   function() {
     var e = k.apply(null, arguments);
@@ -1480,7 +1480,7 @@ function Wo() {
   return ne(NaN);
 }
 function Ut(e) {
-  var t = Fr(e), r = t.year || 0, s = t.quarter || 0, n = t.month || 0, a = t.week || t.isoWeek || 0, i = t.day || 0, o = t.hour || 0, l = t.minute || 0, d = t.second || 0, m = t.millisecond || 0;
+  var t = Er(e), r = t.year || 0, s = t.quarter || 0, n = t.month || 0, a = t.week || t.isoWeek || 0, i = t.day || 0, o = t.hour || 0, l = t.minute || 0, d = t.second || 0, m = t.millisecond || 0;
   this._isValid = Ao(t), this._milliseconds = +m + d * 1e3 + l * 6e4 + o * 1e3 * 60 * 60, this._days = +i + a * 7, this._months = +n + s * 3 + r * 12, this._data = {}, this._locale = _e(), this._bubble();
 }
 function gt(e) {
@@ -1967,10 +1967,10 @@ function Yl() {
     milliseconds: e.milliseconds()
   };
 }
-function El() {
+function Fl() {
   return this.isValid() ? this.toISOString() : null;
 }
-function Fl() {
+function El() {
   return Tr(this);
 }
 function Pl() {
@@ -2146,8 +2146,8 @@ c("GG", M, H);
 c("gg", M, H);
 c("GGGG", Nr, Pr);
 c("gggg", Nr, Pr);
-c("GGGGG", Nt, Ft);
-c("ggggg", Nt, Ft);
+c("GGGGG", Nt, Et);
+c("ggggg", Nt, Et);
 ht(
   ["gggg", "ggggg", "GGGG", "GGGGG"],
   function(e, t, r, s) {
@@ -2316,12 +2316,12 @@ u.isBetween = fl;
 u.isSame = cl;
 u.isSameOrAfter = hl;
 u.isSameOrBefore = ml;
-u.isValid = Fl;
+u.isValid = El;
 u.lang = On;
 u.locale = bn;
 u.localeData = Dn;
-u.max = Fo;
-u.min = Eo;
+u.max = Eo;
+u.min = Fo;
 u.parsingFlags = Pl;
 u.set = di;
 u.startOf = Dl;
@@ -2334,7 +2334,7 @@ u.inspect = gl;
 typeof Symbol < "u" && Symbol.for != null && (u[Symbol.for("nodejs.util.inspect.custom")] = function() {
   return "Moment<" + this.format() + ">";
 });
-u.toJSON = El;
+u.toJSON = Fl;
 u.toString = pl;
 u.unix = xl;
 u.valueOf = Ml;
@@ -2403,7 +2403,7 @@ function uu(e) {
 function du() {
   return k.apply(null, arguments).parseZone();
 }
-function En(e) {
+function Fn(e) {
   return e;
 }
 var O = Yr.prototype;
@@ -2411,8 +2411,8 @@ O.calendar = Ja;
 O.longDateFormat = Ka;
 O.invalidDate = ti;
 O.ordinal = ni;
-O.preparse = En;
-O.postformat = En;
+O.preparse = Fn;
+O.postformat = Fn;
 O.relativeTime = ii;
 O.pastFuture = oi;
 O.set = za;
@@ -2427,7 +2427,7 @@ O.monthsShort = Oi;
 O.monthsParse = ki;
 O.monthsRegex = Ti;
 O.monthsShortRegex = xi;
-O.week = Ei;
+O.week = Fi;
 O.firstDayOfYear = Ni;
 O.firstDayOfWeek = Pi;
 O.weekdays = Vi;
@@ -2443,7 +2443,7 @@ function xt(e, t, r, s) {
   var n = _e(), a = le().set(s, t);
   return n[r](a, e);
 }
-function Fn(e, t, r) {
+function En(e, t, r) {
   if (pe(e) && (t = e, e = void 0), e = e || "", t != null)
     return xt(e, t, r, "month");
   var s, n = [];
@@ -2461,10 +2461,10 @@ function Br(e, t, r, s) {
   return o;
 }
 function fu(e, t) {
-  return Fn(e, t, "months");
+  return En(e, t, "months");
 }
 function cu(e, t) {
-  return Fn(e, t, "monthsShort");
+  return En(e, t, "monthsShort");
 }
 function hu(e, t, r) {
   return Br(e, t, r, "weekdays");
@@ -2576,18 +2576,18 @@ function ge(e) {
   };
 }
 var bu = ge("ms"), Ou = ge("s"), Du = ge("m"), ku = ge("h"), Mu = ge("d"), xu = ge("w"), Tu = ge("M"), Ru = ge("Q"), Yu = ge("y");
-function Eu() {
+function Fu() {
   return ne(this);
 }
-function Fu(e) {
+function Eu(e) {
   return e = Q(e), this.isValid() ? this[e + "s"]() : NaN;
 }
-function Fe(e) {
+function Ee(e) {
   return function() {
     return this.isValid() ? this._data[e] : NaN;
   };
 }
-var Pu = Fe("milliseconds"), Nu = Fe("seconds"), Cu = Fe("minutes"), Au = Fe("hours"), Lu = Fe("days"), Wu = Fe("months"), Uu = Fe("years");
+var Pu = Ee("milliseconds"), Nu = Ee("seconds"), Cu = Ee("minutes"), Au = Ee("hours"), Lu = Ee("days"), Wu = Ee("months"), Uu = Ee("years");
 function Iu() {
   return G(this.days() / 7);
 }
@@ -2646,8 +2646,8 @@ S.asQuarters = Ru;
 S.asYears = Yu;
 S.valueOf = Su;
 S._bubble = wu;
-S.clone = Eu;
-S.get = Fu;
+S.clone = Fu;
+S.get = Eu;
 S.milliseconds = Pu;
 S.seconds = Nu;
 S.minutes = Cu;
@@ -2843,7 +2843,7 @@ var hd = function(e) {
   return function(t) {
     return e && t instanceof e;
   };
-}(typeof Uint8Array < "u" && Object.getPrototypeOf(Uint8Array)), F = {
+}(typeof Uint8Array < "u" && Object.getPrototypeOf(Uint8Array)), E = {
   isArray: Zr,
   isArrayBuffer: Ln,
   isBuffer: Gu,
@@ -2874,7 +2874,7 @@ var hd = function(e) {
   toArray: cd,
   isTypedArray: hd,
   isFileList: td
-}, We = F;
+}, We = E;
 function hs(e) {
   return encodeURIComponent(e).replace(/%3A/gi, ":").replace(/%24/g, "$").replace(/%2C/gi, ",").replace(/%20/g, "+").replace(/%5B/gi, "[").replace(/%5D/gi, "]");
 }
@@ -2899,7 +2899,7 @@ var Un = function(t, r, s) {
     i !== -1 && (t = t.slice(0, i)), t += (t.indexOf("?") === -1 ? "?" : "&") + n;
   }
   return t;
-}, md = F;
+}, md = E;
 function jt() {
   this.handlers = [];
 }
@@ -2919,11 +2919,11 @@ jt.prototype.forEach = function(t) {
     s !== null && t(s);
   });
 };
-var yd = jt, pd = F, _d = function(t, r) {
+var yd = jt, pd = E, _d = function(t, r) {
   pd.forEach(t, function(n, a) {
     a !== r && a.toUpperCase() === r.toUpperCase() && (t[r] = n, delete t[a]);
   });
-}, In = F;
+}, In = E;
 function ze(e, t, r, s, n) {
   Error.call(this), this.message = e, this.name = "AxiosError", t && (this.code = t), r && (this.config = r), s && (this.request = s), n && (this.response = n);
 }
@@ -2971,7 +2971,7 @@ var Qe = ze, qn = {
   silentJSONParsing: !0,
   forcedJSONParsing: !0,
   clarifyTimeoutError: !1
-}, K = F;
+}, K = E;
 function gd(e, t) {
   t = t || new FormData();
   var r = [];
@@ -3025,7 +3025,7 @@ function vd() {
   if (ys)
     return er;
   ys = 1;
-  var e = F;
+  var e = E;
   return er = e.isStandardBrowserEnv() ? function() {
     return {
       write: function(s, n, a, i, o, l) {
@@ -3063,7 +3063,7 @@ function kd() {
   if (ps)
     return tr;
   ps = 1;
-  var e = F, t = [
+  var e = E, t = [
     "age",
     "authorization",
     "content-length",
@@ -3099,7 +3099,7 @@ function Md() {
   if (_s)
     return rr;
   _s = 1;
-  var e = F;
+  var e = E;
   return rr = e.isStandardBrowserEnv() ? function() {
     var r = /(msie|trident)/i.test(navigator.userAgent), s = document.createElement("a"), n;
     function a(i) {
@@ -3130,7 +3130,7 @@ function qt() {
   if (gs)
     return sr;
   gs = 1;
-  var e = Qe, t = F;
+  var e = Qe, t = E;
   function r(s) {
     e.call(this, s == null ? "canceled" : s, e.ERR_CANCELED), this.name = "CanceledError";
   }
@@ -3150,7 +3150,7 @@ function Ss() {
   if (vs)
     return ar;
   vs = 1;
-  var e = F, t = wd(), r = vd(), s = Un, n = Hn, a = kd(), i = Md(), o = qn, l = Qe, d = qt(), m = xd();
+  var e = E, t = wd(), r = vd(), s = Un, n = Hn, a = kd(), i = Md(), o = qn, l = Qe, d = qt(), m = xd();
   return ar = function(h) {
     return new Promise(function(ha, Ne) {
       var Xe = h.data, Ke = h.headers, et = h.responseType, Ce;
@@ -3218,20 +3218,20 @@ var ir, bs;
 function Td() {
   return bs || (bs = 1, ir = null), ir;
 }
-var E = F, Os = _d, Ds = Qe, Rd = qn, Yd = Vn, Ed = {
+var F = E, Os = _d, Ds = Qe, Rd = qn, Yd = Vn, Fd = {
   "Content-Type": "application/x-www-form-urlencoded"
 };
 function ks(e, t) {
-  !E.isUndefined(e) && E.isUndefined(e["Content-Type"]) && (e["Content-Type"] = t);
+  !F.isUndefined(e) && F.isUndefined(e["Content-Type"]) && (e["Content-Type"] = t);
 }
-function Fd() {
+function Ed() {
   var e;
   return (typeof XMLHttpRequest < "u" || typeof process < "u" && Object.prototype.toString.call(process) === "[object process]") && (e = Ss()), e;
 }
 function Pd(e, t, r) {
-  if (E.isString(e))
+  if (F.isString(e))
     try {
-      return (t || JSON.parse)(e), E.trim(e);
+      return (t || JSON.parse)(e), F.trim(e);
     } catch (s) {
       if (s.name !== "SyntaxError")
         throw s;
@@ -3240,16 +3240,16 @@ function Pd(e, t, r) {
 }
 var Vt = {
   transitional: Rd,
-  adapter: Fd(),
+  adapter: Ed(),
   transformRequest: [function(t, r) {
-    if (Os(r, "Accept"), Os(r, "Content-Type"), E.isFormData(t) || E.isArrayBuffer(t) || E.isBuffer(t) || E.isStream(t) || E.isFile(t) || E.isBlob(t))
+    if (Os(r, "Accept"), Os(r, "Content-Type"), F.isFormData(t) || F.isArrayBuffer(t) || F.isBuffer(t) || F.isStream(t) || F.isFile(t) || F.isBlob(t))
       return t;
-    if (E.isArrayBufferView(t))
+    if (F.isArrayBufferView(t))
       return t.buffer;
-    if (E.isURLSearchParams(t))
+    if (F.isURLSearchParams(t))
       return ks(r, "application/x-www-form-urlencoded;charset=utf-8"), t.toString();
-    var s = E.isObject(t), n = r && r["Content-Type"], a;
-    if ((a = E.isFileList(t)) || s && n === "multipart/form-data") {
+    var s = F.isObject(t), n = r && r["Content-Type"], a;
+    if ((a = F.isFileList(t)) || s && n === "multipart/form-data") {
       var i = this.env && this.env.FormData;
       return Yd(a ? { "files[]": t } : t, i && new i());
     } else if (s || n === "application/json")
@@ -3258,7 +3258,7 @@ var Vt = {
   }],
   transformResponse: [function(t) {
     var r = this.transitional || Vt.transitional, s = r && r.silentJSONParsing, n = r && r.forcedJSONParsing, a = !s && this.responseType === "json";
-    if (a || n && E.isString(t) && t.length)
+    if (a || n && F.isString(t) && t.length)
       try {
         return JSON.parse(t);
       } catch (i) {
@@ -3284,13 +3284,13 @@ var Vt = {
     }
   }
 };
-E.forEach(["delete", "get", "head"], function(t) {
+F.forEach(["delete", "get", "head"], function(t) {
   Vt.headers[t] = {};
 });
-E.forEach(["post", "put", "patch"], function(t) {
-  Vt.headers[t] = E.merge(Ed);
+F.forEach(["post", "put", "patch"], function(t) {
+  Vt.headers[t] = F.merge(Fd);
 });
-var Kr = Vt, Nd = F, Cd = Kr, Ad = function(t, r, s) {
+var Kr = Vt, Nd = E, Cd = Kr, Ad = function(t, r, s) {
   var n = this || Cd;
   return Nd.forEach(s, function(i) {
     t = i.call(n, t, r);
@@ -3301,7 +3301,7 @@ function Bn() {
     return !!(t && t.__CANCEL__);
   }), or;
 }
-var xs = F, lr = Ad, Ld = Bn(), Wd = Kr, Ud = qt();
+var xs = E, lr = Ad, Ld = Bn(), Wd = Kr, Ud = qt();
 function ur(e) {
   if (e.cancelToken && e.cancelToken.throwIfRequested(), e.signal && e.signal.aborted)
     throw new Ud();
@@ -3338,7 +3338,7 @@ var Id = function(t) {
       t.transformResponse
     ))), Promise.reject(n);
   });
-}, q = F, zn = function(t, r) {
+}, q = E, zn = function(t, r) {
   r = r || {};
   var s = {};
   function n(m, p) {
@@ -3450,7 +3450,7 @@ function jd(e, t, r) {
 var qd = {
   assertOptions: jd,
   validators: es
-}, Jn = F, Vd = Un, Ys = yd, Es = Id, Ht = zn, Hd = Hn, Zn = qd, Ue = Zn.validators;
+}, Jn = E, Vd = Un, Ys = yd, Fs = Id, Ht = zn, Hd = Hn, Zn = qd, Ue = Zn.validators;
 function Ge(e) {
   this.defaults = e, this.interceptors = {
     request: new Ys(),
@@ -3475,7 +3475,7 @@ Ge.prototype.request = function(t, r) {
   });
   var o;
   if (!a) {
-    var l = [Es, void 0];
+    var l = [Fs, void 0];
     for (Array.prototype.unshift.apply(l, n), l = l.concat(i), o = Promise.resolve(r); l.length; )
       o = o.then(l.shift(), l.shift());
     return o;
@@ -3490,7 +3490,7 @@ Ge.prototype.request = function(t, r) {
     }
   }
   try {
-    o = Es(d);
+    o = Fs(d);
   } catch (h) {
     return Promise.reject(h);
   }
@@ -3527,11 +3527,11 @@ Jn.forEach(["post", "put", "patch"], function(t) {
   }
   Ge.prototype[t] = r(), Ge.prototype[t + "Form"] = r(!0);
 });
-var Bd = Ge, fr, Fs;
+var Bd = Ge, fr, Es;
 function zd() {
-  if (Fs)
+  if (Es)
     return fr;
-  Fs = 1;
+  Es = 1;
   var e = qt();
   function t(r) {
     if (typeof r != "function")
@@ -3596,12 +3596,12 @@ function Jd() {
   if (Ns)
     return hr;
   Ns = 1;
-  var e = F;
+  var e = E;
   return hr = function(r) {
     return e.isObject(r) && r.isAxiosError === !0;
   }, hr;
 }
-var Cs = F, Zd = An, St = Bd, Qd = zn, Xd = Kr;
+var Cs = E, Zd = An, St = Bd, Qd = zn, Xd = Kr;
 function Qn(e) {
   var t = new St(e), r = Zd(St.prototype.request, t);
   return Cs.extend(r, St.prototype, t), Cs.extend(r, t), r.create = function(n) {
@@ -3899,8 +3899,8 @@ const tf = /* @__PURE__ */ se(Kd, [["render", ef]]), rf = /* @__PURE__ */ Object
 }, nf = /* @__PURE__ */ Ye(" An error occurred. Try again? ");
 function af(e, t, r, s, n, a) {
   const i = $("o-loading"), o = $("o-button");
-  return A(), Ee("div", null, [
-    r.form.isLoaded ? (A(), Ee("form", {
+  return A(), Fe("div", null, [
+    r.form.isLoaded ? (A(), Fe("form", {
       key: 0,
       class: "form",
       onSubmit: t[0] || (t[0] = ba((l) => e.$emit("submit"), ["prevent"]))
@@ -3968,7 +3968,7 @@ const of = /* @__PURE__ */ se(sf, [["render", af]]), lf = /* @__PURE__ */ Object
   }
 }, df = ["width", "height"];
 function ff(e, t, r, s, n, a) {
-  return A(), Ee("img", {
+  return A(), Fe("img", {
     ref: "image",
     src: "",
     alt: "",
@@ -4120,7 +4120,7 @@ const bf = {
   }
 };
 function Of(e, t, r, s, n, a) {
-  return A(), Ee("li", null, [
+  return A(), Fe("li", null, [
     Be(e.$slots, "default", { logout: a.logout }, () => [
       z("button", {
         class: "button is-primary",
@@ -4209,7 +4209,7 @@ function Tf(e, t, r, s, n, a) {
 const Rf = /* @__PURE__ */ se(Mf, [["render", Tf]]), Yf = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: Rf
-}, Symbol.toStringTag, { value: "Module" })), Ef = {
+}, Symbol.toStringTag, { value: "Module" })), Ff = {
   name: "WyxosSelect",
   props: {
     label: {
@@ -4248,7 +4248,7 @@ const Rf = /* @__PURE__ */ se(Mf, [["render", Tf]]), Yf = /* @__PURE__ */ Object
       (t = this.form) == null || t.clearError(this.name), this.$emit("update:modelValue", e);
     }
   }
-}, Ff = ["value"];
+}, Ef = ["value"];
 function Pf(e, t, r, s, n, a) {
   var l;
   const i = $("o-select"), o = $("o-field");
@@ -4265,10 +4265,10 @@ function Pf(e, t, r, s, n, a) {
       }, {
         default: J(() => [
           Be(e.$slots, "default", {}, () => [
-            r.items ? (A(!0), Ee(Da, { key: 0 }, ka(r.items, (d) => (A(), Ee("option", {
+            r.items ? (A(!0), Fe(Da, { key: 0 }, ka(r.items, (d) => (A(), Fe("option", {
               key: d.value,
               value: d.value
-            }, ie(d.label), 9, Ff))), 128)) : je("", !0)
+            }, ie(d.label), 9, Ef))), 128)) : je("", !0)
           ])
         ]),
         _: 3
@@ -4277,7 +4277,7 @@ function Pf(e, t, r, s, n, a) {
     _: 3
   }, 16, ["label"]);
 }
-const Nf = /* @__PURE__ */ se(Ef, [["render", Pf]]), Cf = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const Nf = /* @__PURE__ */ se(Ff, [["render", Pf]]), Cf = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: Nf
 }, Symbol.toStringTag, { value: "Module" }));
@@ -5218,7 +5218,7 @@ class fa {
     return new fa(t);
   }
 }
-const mr = /* @__PURE__ */ Object.assign({ "./components/WyxosButton.vue": Ea, "./components/WyxosCollection.vue": Aa, "./components/WyxosConfirm.vue": Va, "./components/WyxosDatepicker.vue": rf, "./components/WyxosForm.vue": lf, "./components/WyxosImage.vue": hf, "./components/WyxosInput.vue": _f, "./components/WyxosLogout.vue": kf, "./components/WyxosPrompt.vue": Yf, "./components/WyxosSelect.vue": Cf, "./components/WyxosTags.vue": Uf }), ca = {}, Kf = (e) => {
+const mr = /* @__PURE__ */ Object.assign({ "./components/WyxosButton.vue": Fa, "./components/WyxosCollection.vue": Aa, "./components/WyxosConfirm.vue": Va, "./components/WyxosDatepicker.vue": rf, "./components/WyxosForm.vue": lf, "./components/WyxosImage.vue": hf, "./components/WyxosInput.vue": _f, "./components/WyxosLogout.vue": kf, "./components/WyxosPrompt.vue": Yf, "./components/WyxosSelect.vue": Cf, "./components/WyxosTags.vue": Uf }), ca = {}, Kf = (e) => {
   Object.keys(mr).forEach((t) => {
     const r = mr[t].default.name, s = mr[t].default;
     e.component(r, s), e.component(r.replace("Wyxos", "W"), s), ca[r] = s;
@@ -5228,7 +5228,6 @@ const mr = /* @__PURE__ */ Object.assign({ "./components/WyxosButton.vue": Ea, "
   ...ca
 };
 export {
-  sc as DateRender,
   nc as FileRequest,
   ts as FormBuilder,
   ua as Listing,
@@ -5250,8 +5249,9 @@ export {
   Nf as WyxosSelect,
   Wf as WyxosTags,
   rc as auth,
+  sc as dateRender,
   lc as default,
   Ws as errorHandler,
-  Rt as formErrors,
-  oc as success
+  oc as success,
+  Rt as useFormErrors
 };
