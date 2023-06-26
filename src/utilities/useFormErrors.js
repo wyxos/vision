@@ -50,7 +50,7 @@ export default function useFormErrors() {
         variant: 'danger'
       }
     },
-    clear(key, bag = 'default') {
+    clear(key = null, bag = 'default') {
       if (key) {
         const target = formErrors[bag]
 

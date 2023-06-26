@@ -35,28 +35,37 @@ export default class FormBuilder {
 
     return new Proxy(this, {
       get(target, name, receiver) {
-        if (!Reflect.has(target, name)) {
-          if (name in target.form) {
-            return target.form[name]
-          }
-
-          return null
+        // Check if the property exists in the instance
+        if (Reflect.has(target, name)) {
+          return Reflect.get(target, name, receiver)
         }
-
-        return Reflect.get(target, name, receiver)
+        // If not, attempt to access it from the 'form' object
+        let value = target.form
+        const path = name.split('.')
+        for (let i = 0; i < path.length; i++) {
+          if (value === undefined || value === null) {
+            return null
+          }
+          value = value[path[i]]
+        }
+        return value
       },
       set(target, name, value, receiver) {
-        if (!Reflect.has(target, name)) {
-          if (name in target.form) {
-            target.form[name] = value
-
-            return true
-          }
-
-          return null
+        // Check if the property exists in the instance
+        if (Reflect.has(target, name)) {
+          return Reflect.set(target, name, value, receiver)
         }
-
-        return Reflect.set(target, name, value, receiver)
+        // If not, attempt to set it in the 'form' object
+        let obj = target.form
+        const path = name.split('.')
+        for (let i = 0; i < path.length - 1; i++) {
+          if (!(path[i] in obj)) {
+            obj[path[i]] = {}
+          }
+          obj = obj[path[i]]
+        }
+        obj[path[path.length - 1]] = value
+        return true
       }
     })
   }
