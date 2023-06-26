@@ -40,15 +40,26 @@ export default class FormBuilder {
           return Reflect.get(target, name, receiver)
         }
         // If not, attempt to access it from the 'form' object
-        let value = target.form
-        const path = name.split('.')
-        for (let i = 0; i < path.length; i++) {
-          if (value === undefined || value === null) {
-            return null
+        if (Reflect.has(target.form, name)) {
+          const path = name.split('.')
+          if (path.length > 1) {
+            // handle nested properties
+            let value = target.form
+
+            for (let i = 0; i < path.length; i++) {
+              value = value[path[i]]
+            }
+
+            if (value === undefined || value === null) {
+              return undefined
+            }
+
+            return value
           }
-          value = value[path[i]]
+
+          return Reflect.get(target.form, name)
         }
-        return value
+        return undefined
       },
       set(target, name, value, receiver) {
         // Check if the property exists in the instance
@@ -56,16 +67,32 @@ export default class FormBuilder {
           return Reflect.set(target, name, value, receiver)
         }
         // If not, attempt to set it in the 'form' object
-        let obj = target.form
-        const path = name.split('.')
-        for (let i = 0; i < path.length - 1; i++) {
-          if (!(path[i] in obj)) {
-            obj[path[i]] = {}
+        if (Reflect.has(target.form, name)) {
+          const path = name.split('.')
+
+          if (path.length > 1) {
+            let obj = target.form
+
+            for (let i = 0; i < path.length - 1; i++) {
+              if (!(path[i] in obj)) {
+                obj[path[i]] = {}
+              }
+              obj = obj[path[i]]
+            }
+
+            if (obj[path[path.length - 1]] === undefined) {
+              return false
+            }
+
+            obj[path[path.length - 1]] = value
+
+            return true
           }
-          obj = obj[path[i]]
+
+          return Reflect.set(target.form, name, value)
         }
-        obj[path[path.length - 1]] = value
-        return true
+
+        return false
       }
     })
   }
