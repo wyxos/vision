@@ -28,6 +28,12 @@ export default {
     form: {
       type: FormBuilder,
       default: null
+    },
+    options: {
+      type: Object,
+      default() {
+        return {}
+      }
     }
   },
   emits: ['update:modelValue'],
@@ -70,6 +76,7 @@ export default {
   <o-field :label="label" v-bind="form?.getError(name)">
     <o-datepicker
       v-model="query"
+      v-bind="options"
       :date-formatter="dateFormatter"
       @update:model-value="updateQuery"></o-datepicker>
   </o-field>
