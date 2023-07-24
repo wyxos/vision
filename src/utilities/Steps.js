@@ -22,7 +22,7 @@ export default class Steps {
   }
 
   next() {
-    const index = this.flow.findIndex(this.getCurrent())
+    const index = this.flow.findIndex((item) => item === this.getCurrent())
 
     const next = this.flow[index + 1]
 

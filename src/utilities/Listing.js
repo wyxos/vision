@@ -39,7 +39,7 @@ export default class Listing {
     isFilterActive: false
   })
 
-  get tableConfig() {
+  get config() {
     return {
       data: this.query.items,
       total: this.query.total,
@@ -49,6 +49,12 @@ export default class Listing {
       paginated: true,
       backendPagination: true,
       striped: true
+    }
+  }
+
+  get events() {
+    return {
+      pageChange: ($event) => this.onPageChange($event)
     }
   }
 

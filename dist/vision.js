@@ -5497,7 +5497,7 @@ class jn {
       isFilterActive: !1
     }));
   }
-  get tableConfig() {
+  get config() {
     return {
       data: this.query.items,
       total: this.query.total,
@@ -5507,6 +5507,11 @@ class jn {
       paginated: !0,
       backendPagination: !0,
       striped: !0
+    };
+  }
+  get events() {
+    return {
+      pageChange: (t) => this.onPageChange(t)
     };
   }
   get isLoading() {
@@ -5801,7 +5806,7 @@ class Kd {
     this.flow = t;
   }
   next() {
-    const t = this.flow.findIndex(this.getCurrent()), r = this.flow[t + 1];
+    const t = this.flow.findIndex((s) => s === this.getCurrent()), r = this.flow[t + 1];
     if (r) {
       this.set(r);
       return;
