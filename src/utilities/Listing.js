@@ -186,7 +186,7 @@ export default class Listing {
     const url =
       base + '?' + qs.stringify(filteredParams, { arrayFormat: 'bracket' })
 
-    window.history.replaceState({}, '', url)
+    window.history.pushState({}, '', url)
   }
 
   push(item) {
@@ -219,12 +219,32 @@ export default class Listing {
     this.query.items = []
 
     this.query.total = 0
+
     this.query.showing = 0
 
     let data = null
 
     try {
-      data = await this.fetch(path, cancelTokenSource.token)
+      this.states.fetch.loading()
+
+      const params = JSON.parse(JSON.stringify(this.params))
+
+      const url = path || this.baseUrl
+
+      const response = await this.api
+        .get(url, {
+          params,
+          cancelToken: cancelTokenSource.token
+        })
+        .catch((error) => {
+          this.states.fetch.failed()
+
+          throw error
+        })
+
+      this.states.fetch.loaded()
+
+      data = response.data
     } catch (error) {
       if (axios.isCancel(error)) {
         console.log('Request cancelled')
@@ -363,10 +383,70 @@ export default class Listing {
   async applyFilter() {
     this.states.filter.loading()
 
-    await this.load().catch((error) => {
+    this.errors.clear(null, this.errorBag)
+
+    // if a request is ongoing, cancel it
+    if (cancelTokenSource) {
+      cancelTokenSource.cancel()
+    }
+
+    // create a new CancelToken
+    cancelTokenSource = axios.CancelToken.source()
+
+    this.states.filter.loading()
+
+    this.query.items = []
+
+    this.query.total = 0
+
+    this.query.showing = 0
+
+    let data = null
+
+    try {
+      this.states.filter.loading()
+
+      const params = JSON.parse(JSON.stringify(this.params))
+
+      const url = this.baseUrl
+
+      const response = await this.api
+        .get(url, {
+          params,
+          cancelToken: cancelTokenSource.token
+        })
+        .catch((error) => {
+          this.states.filter.failed()
+
+          throw error
+        })
+
+      this.states.filter.loaded()
+
+      data = response.data
+    } catch (error) {
+      if (axios.isCancel(error)) {
+        console.log('Request cancelled')
+        return // early return if request is cancelled
+      } else {
+        this.states.filter.failed()
+        this.errors.set(error, this.errorBag)
+        throw error
+      }
+    }
+
+    this.states.filter.loaded()
+
+    this.refreshUrl()
+
+    if (!data || !data.query || !data.query.items) {
       this.states.filter.failed()
 
-      throw error
+      throw Error('Response format is invalid.')
+    }
+
+    Object.assign(this.query, data.query, {
+      items: data.query.items.map((item) => this.transformItem(item))
     })
 
     this.states.filter.loaded()
