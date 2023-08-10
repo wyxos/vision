@@ -16,6 +16,7 @@ export default class Listing {
   options = null
 
   errors = null
+
   errorBag = 'default'
 
   states = {
@@ -123,7 +124,8 @@ export default class Listing {
 
   mergeSearch() {
     const query = qs.parse(window.location.search, {
-      arrayFormat: 'bracket'
+      arrayFormat: 'bracket',
+      parseNumbers: true
     })
 
     // convert page to number if it's defined
@@ -381,8 +383,6 @@ export default class Listing {
   }
 
   async applyFilter() {
-    this.states.filter.loading()
-
     this.errors.clear(null, this.errorBag)
 
     // if a request is ongoing, cancel it
@@ -390,10 +390,11 @@ export default class Listing {
       cancelTokenSource.cancel()
     }
 
+    this.states.filter.loading()
+    this.states.load.loading()
+
     // create a new CancelToken
     cancelTokenSource = axios.CancelToken.source()
-
-    this.states.filter.loading()
 
     this.query.items = []
 
@@ -404,8 +405,6 @@ export default class Listing {
     let data = null
 
     try {
-      this.states.filter.loading()
-
       const params = JSON.parse(JSON.stringify(this.params))
 
       const url = this.baseUrl
@@ -421,8 +420,6 @@ export default class Listing {
           throw error
         })
 
-      this.states.filter.loaded()
-
       data = response.data
     } catch (error) {
       if (axios.isCancel(error)) {
@@ -430,12 +427,11 @@ export default class Listing {
         return // early return if request is cancelled
       } else {
         this.states.filter.failed()
+        this.states.load.failed()
         this.errors.set(error, this.errorBag)
         throw error
       }
     }
-
-    this.states.filter.loaded()
 
     this.refreshUrl()
 
@@ -450,6 +446,7 @@ export default class Listing {
     })
 
     this.states.filter.loaded()
+    this.states.load.loaded()
 
     this.state.isFilterActive = false
   }
@@ -467,8 +464,11 @@ export default class Listing {
       // Reset based on the URL
       this.mergeSearch()
     } else if (resetType === 'initial') {
+      console.log('initial', this.structure)
       // Reset to initial structure
       Object.assign(this.params, this.structure)
+
+      this.refreshUrl()
     }
 
     this.state.isFilterActive = false
@@ -482,5 +482,10 @@ export default class Listing {
 
   clearError(key) {
     this.errors.clear(key, this.errorBag)
+  }
+
+  get isResettable() {
+    console.log(this.params, this.structure)
+    return JSON.stringify(this.params) !== JSON.stringify(this.structure)
   }
 }
