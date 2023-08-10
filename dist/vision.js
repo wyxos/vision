@@ -4330,7 +4330,7 @@ class Zt {
     }).catch((a) => {
       throw this.loadFailed(), a;
     });
-    return s && (this.original = i.form), Object.assign(this.form, i.form), i.model && Object.assign(this.model, i.model), this.loaded(), i;
+    return s && Object.assign(this.original, i.form), Object.assign(this.form, i.form), i.model && Object.assign(this.model, i.model), this.loaded(), i;
   }
   loading() {
     this.states.load.loading();
@@ -5549,7 +5549,8 @@ class jn {
   }
   mergeSearch() {
     const t = ps.parse(window.location.search, {
-      arrayFormat: "bracket"
+      arrayFormat: "bracket",
+      parseNumbers: !0
     });
     t.page && (t.page = Number(t.page)), Object.assign(this.params, this.structure, t);
   }
@@ -5667,29 +5668,28 @@ class jn {
     return l;
   }
   async applyFilter() {
-    this.states.filter.loading(), this.errors.clear(null, this.errorBag), Me && Me.cancel(), Me = L.CancelToken.source(), this.states.filter.loading(), this.query.items = [], this.query.total = 0, this.query.showing = 0;
+    this.errors.clear(null, this.errorBag), Me && Me.cancel(), this.states.filter.loading(), this.states.load.loading(), Me = L.CancelToken.source(), this.query.items = [], this.query.total = 0, this.query.showing = 0;
     let t = null;
     try {
-      this.states.filter.loading();
-      const r = JSON.parse(JSON.stringify(this.params)), s = this.baseUrl, n = await this.api.get(s, {
+      const r = JSON.parse(JSON.stringify(this.params)), s = this.baseUrl;
+      t = (await this.api.get(s, {
         params: r,
         cancelToken: Me.token
       }).catch((i) => {
         throw this.states.filter.failed(), i;
-      });
-      this.states.filter.loaded(), t = n.data;
+      })).data;
     } catch (r) {
       if (L.isCancel(r)) {
         console.log("Request cancelled");
         return;
       } else
-        throw this.states.filter.failed(), this.errors.set(r, this.errorBag), r;
+        throw this.states.filter.failed(), this.states.load.failed(), this.errors.set(r, this.errorBag), r;
     }
-    if (this.states.filter.loaded(), this.refreshUrl(), !t || !t.query || !t.query.items)
+    if (this.refreshUrl(), !t || !t.query || !t.query.items)
       throw this.states.filter.failed(), Error("Response format is invalid.");
     Object.assign(this.query, t.query, {
       items: t.query.items.map((r) => this.transformItem(r))
-    }), this.states.filter.loaded(), this.state.isFilterActive = !1;
+    }), this.states.filter.loaded(), this.states.load.loaded(), this.state.isFilterActive = !1;
   }
   showFilter() {
     this.state.isFilterActive = !0;
@@ -5698,13 +5698,16 @@ class jn {
     this.state.isFilterActive = !1;
   }
   async resetFilter(t = "url", r = null) {
-    t === "url" ? this.mergeSearch() : t === "initial" && Object.assign(this.params, this.structure), this.state.isFilterActive = !1, await this.load(r);
+    t === "url" ? this.mergeSearch() : t === "initial" && (console.log("initial", this.structure), Object.assign(this.params, this.structure), this.refreshUrl()), this.state.isFilterActive = !1, await this.load(r);
   }
   getError(t) {
     return this.errors.get(t, this.errorBag);
   }
   clearError(t) {
     this.errors.clear(t, this.errorBag);
+  }
+  get isResettable() {
+    return console.log(this.params, this.structure), JSON.stringify(this.params) !== JSON.stringify(this.structure);
   }
 }
 class In {

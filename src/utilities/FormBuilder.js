@@ -233,7 +233,7 @@ export default class FormBuilder {
       })
 
     if (updateOriginal) {
-      this.original = data.form
+      Object.assign(this.original, data.form)
     }
 
     Object.assign(this.form, data.form)
