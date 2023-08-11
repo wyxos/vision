@@ -249,7 +249,7 @@ export default class Listing {
       data = response.data
     } catch (error) {
       if (axios.isCancel(error)) {
-        console.log('Request cancelled')
+        console.error('Request cancelled')
         return // early return if request is cancelled
       } else {
         this.states.fetch.failed()
@@ -423,7 +423,7 @@ export default class Listing {
       data = response.data
     } catch (error) {
       if (axios.isCancel(error)) {
-        console.log('Request cancelled')
+        console.error('Request cancelled')
         return // early return if request is cancelled
       } else {
         this.states.filter.failed()
@@ -464,7 +464,6 @@ export default class Listing {
       // Reset based on the URL
       this.mergeSearch()
     } else if (resetType === 'initial') {
-      console.log('initial', this.structure)
       // Reset to initial structure
       Object.assign(this.params, this.structure)
 
@@ -485,7 +484,6 @@ export default class Listing {
   }
 
   get isResettable() {
-    console.log(this.params, this.structure)
     return JSON.stringify(this.params) !== JSON.stringify(this.structure)
   }
 }

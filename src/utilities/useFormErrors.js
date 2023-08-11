@@ -7,7 +7,9 @@ const formErrors = reactive({
 export default function useFormErrors() {
   return {
     createBag(bag) {
-      formErrors[bag] = []
+      if (!formErrors[bag]) {
+        formErrors[bag] = []
+      }
     },
     set(error, bag = 'default') {
       const hasValidationErrors =
@@ -67,6 +69,9 @@ export default function useFormErrors() {
       }
 
       formErrors[bag] = []
+    },
+    all(bag = 'default') {
+      return formErrors[bag]
     }
   }
 }
