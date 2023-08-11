@@ -36,8 +36,6 @@ export default class Search {
   getEvents({ searchPayloadFormatter = null } = {}) {
     return {
       'update:model-value': ($event) => {
-        console.log('triggered', $event)
-
         this.value.value = $event
 
         return this.search(searchPayloadFormatter)
