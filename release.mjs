@@ -35,16 +35,23 @@ execSyncOut("npm run lint");
 // Build the project
 execSyncOut("npm run build");
 
+// Check for changes
+const status = await git.status();
+if (status.modified.length > 0) {
+  await git.add(".");
+  // Commit the changes
+  await git.commit("chore: linted");
+}
+
+// Build the project
+execSyncOut("npm run build");
+
 // Update the version
 execSyncOut(`npm version ${version} -m "${commitMessage}"`);
 
 const commitFiles = async () => {
   await git.add(".");
   await git.commit(commitMessage);
-};
-
-const createTag = async () => {
-  await git.tag([tagVersion, "-m", tagVersion]);
 };
 
 const pushChanges = async () => {
@@ -55,7 +62,6 @@ const pushChanges = async () => {
 const release = async () => {
   try {
     await commitFiles();
-    await createTag();
     await pushChanges();
     console.log(chalk.green(`Successfully released version ${version}`));
     console.log(chalk.green("Publishing to npm..."));
