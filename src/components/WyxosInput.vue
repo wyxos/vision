@@ -8,6 +8,10 @@ export default {
       type: String,
       default: ''
     },
+    readonly: {
+      type: Boolean,
+      default: false
+    },
     name: {
       type: String,
       required: true
@@ -17,8 +21,21 @@ export default {
       default: () => {
         return 'default'
       }
+    },
+    type: {
+      type: String,
+      default: 'text'
+    },
+    fieldClass: {
+      type: String,
+      default: null
+    },
+    modelValue: {
+      type: [String, Number, null],
+      default: null
     }
   },
+  emits: ['update:modelValue'],
   setup() {
     const errors = useFormErrors()
 
@@ -26,38 +43,25 @@ export default {
       errors
     }
   },
-  computed: {
-    fieldAttrs() {
-      const attrs = this.$attrs
+  methods: {
+    onInput(value) {
+      this.errors.clear(this.name, this.bag)
 
-      const output = {}
-
-      Object.keys(attrs).forEach((key) => {
-        if (/^field-/.test(key)) {
-          output[key.replace(/^field-/, '')] = attrs[key]
-        }
-      })
-
-      return output
-    },
-    inputAttrs() {
-      const attrs = this.$attrs
-
-      const output = {}
-
-      Object.keys(attrs).forEach((key) => {
-        if (!/^field-/.test(key)) {
-          output[key] = attrs[key]
-        }
-      })
-
-      return output
+      this.$emit('update:modelValue', value)
     }
   }
 }
 </script>
 <template>
-  <o-field :label="label" v-bind="{ ...errors.get(name, bag), ...fieldAttrs }">
-    <o-input v-bind="inputAttrs" @input="errors.clear(name, bag)"></o-input>
+  <o-field
+    :label="label"
+    :class="fieldClass"
+    v-bind="{ ...errors.get(name, bag) }">
+    <o-input
+      :readonly="readonly"
+      :name="name"
+      :type="type"
+      :model-value="modelValue"
+      @update:model-value="onInput($event)"></o-input>
   </o-field>
 </template>
