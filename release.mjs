@@ -2,10 +2,13 @@ import chalk from "chalk";
 import inquirer from "inquirer";
 import { execSync } from "child_process";
 import simpleGit from "simple-git";
+import fs from "fs";
 
 const git = simpleGit();
 
-const currentVersion = execSync("npm -v", { encoding: "utf-8" }).trim();
+const packageJsonPath = "./package.json";
+const packageJson = JSON.parse(fs.readFileSync(packageJsonPath).toString());
+const currentVersion = packageJson.version;
 
 let defaultVersion = currentVersion.split(".");
 defaultVersion[defaultVersion.length - 1] = Number(defaultVersion[defaultVersion.length - 1]) + 1;
