@@ -37,6 +37,10 @@ export default {
     modelValue: {
       type: [String, Number, null],
       default: null
+    },
+    disabled: {
+      type: [Boolean, String],
+      default: null
     }
   },
   emits: ['update:modelValue'],
@@ -66,6 +70,7 @@ export default {
       :class="inputClass"
       :name="name"
       :type="type"
+      :disabled="disabled"
       :model-value="modelValue"
       @update:model-value="onInput($event)"></o-input>
   </o-field>
