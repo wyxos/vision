@@ -30,6 +30,10 @@ export default {
       type: String,
       default: null
     },
+    inputClass: {
+      type: String,
+      default: null
+    },
     modelValue: {
       type: [String, Number, null],
       default: null
@@ -59,6 +63,7 @@ export default {
     v-bind="{ ...errors.get(name, bag) }">
     <o-input
       :readonly="readonly"
+      :class="inputClass"
       :name="name"
       :type="type"
       :model-value="modelValue"
