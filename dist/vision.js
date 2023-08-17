@@ -4588,6 +4588,10 @@ const Zc = /* @__PURE__ */ G(zc, [["render", Jc]]), Kc = /* @__PURE__ */ Object.
     modelValue: {
       type: [String, Number, null],
       default: null
+    },
+    disabled: {
+      type: [Boolean, String],
+      default: null
     }
   },
   emits: ["update:modelValue"],
@@ -4614,9 +4618,10 @@ function Xc(e, t, r, s, n, i) {
         class: _s(r.inputClass),
         name: r.name,
         type: r.type,
+        disabled: r.disabled,
         "model-value": r.modelValue,
         "onUpdate:modelValue": t[0] || (t[0] = (u) => i.onInput(u))
-      }, null, 8, ["readonly", "class", "name", "type", "model-value"])
+      }, null, 8, ["readonly", "class", "name", "type", "disabled", "model-value"])
     ]),
     _: 1
   }, 16, ["label", "class"]);
