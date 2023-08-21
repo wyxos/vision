@@ -143,24 +143,22 @@ export default class Listing {
 
     const url = path || this.baseUrl
 
-    const { data } = await this.api
-      .get(url, {
+    try {
+      const { data } = await this.api.get(url, {
         params,
         cancelToken
       })
-      .catch((error) => {
-        this.states.fetch.failed()
 
-        throw error
-      })
+      this.states.fetch.loaded()
 
-    this.states.fetch.loaded()
+      if (this.options.enableSearchUpdate) {
+        this.refreshUrl()
+      }
 
-    if (this.options.enableSearchUpdate) {
-      this.refreshUrl()
+      return data
+    } catch (error) {
+      this.states.fetch.failed()
     }
-
-    return data
   }
 
   async reload(path) {
@@ -247,30 +245,30 @@ export default class Listing {
       this.states.fetch.loaded()
 
       data = response.data
+
+      this.states.fetch.loaded()
+
+      if (!data || !data.query || !data.query.items) {
+        this.states.fetch.failed()
+
+        throw Error('Response format is invalid.')
+      }
+
+      Object.assign(this.query, data.query, {
+        items: data.query.items.map((item) => this.transformItem(item))
+      })
+
+      return data
     } catch (error) {
       if (axios.isCancel(error)) {
+        this.states.fetch.loaded()
         console.error('Request cancelled')
-        return // early return if request is cancelled
       } else {
         this.states.fetch.failed()
         this.errors.set(error, this.errorBag)
         throw error
       }
     }
-
-    this.states.fetch.loaded()
-
-    if (!data || !data.query || !data.query.items) {
-      this.states.fetch.failed()
-
-      throw Error('Response format is invalid.')
-    }
-
-    Object.assign(this.query, data.query, {
-      items: data.query.items.map((item) => this.transformItem(item))
-    })
-
-    return data
   }
 
   onPageChange(value) {

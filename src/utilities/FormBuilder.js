@@ -154,7 +154,10 @@ export default class FormBuilder {
     this.errors.clear(key, this.errorBag)
   }
 
-  async submit({ path = this.submitPath, formatter = null, config = {} } = {}) {
+  async submit(
+    { path = this.submitPath, formatter = null, config = {} } = {},
+    onComplete = null
+  ) {
     // Validate inputs
     if (typeof path !== 'string') throw new Error('Path must be a string')
     if (formatter !== null && typeof formatter !== 'function')
@@ -175,11 +178,20 @@ export default class FormBuilder {
 
     try {
       const { data } = await axios[methods](path, payload, config)
+      console.log('are we here?')
       this.clearErrors()
       this.submitted()
-      return data
+      return onComplete ? onComplete(data) : data
     } catch (error) {
-      return this.handleSubmissionFailure(error)
+      console.log('caught error in plugin', error.response.status)
+
+      if (error.response?.status === 422) {
+        this.handleSubmissionFailure(error)
+
+        return null
+      }
+
+      return Promise.reject(error)
     }
   }
 
@@ -190,7 +202,6 @@ export default class FormBuilder {
   handleSubmissionFailure(error) {
     this.submitFailed()
     this.errors.set(error, this.errorBag)
-    throw error
   }
 
   async advancedSubmit(callback) {
