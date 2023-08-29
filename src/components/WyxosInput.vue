@@ -26,6 +26,10 @@ export default {
       type: String,
       default: 'text'
     },
+    clearable: {
+      type: Boolean,
+      default: false
+    },
     fieldClass: {
       type: String,
       default: null
@@ -70,6 +74,7 @@ export default {
       :class="inputClass"
       :name="name"
       :type="type"
+      :clearable="clearable"
       :disabled="disabled"
       :model-value="modelValue"
       @update:model-value="onInput($event)"></o-input>
