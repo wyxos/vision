@@ -3172,6 +3172,10 @@ const fl = /* @__PURE__ */ $(dl, [["render", cl]]), ml = /* @__PURE__ */ Object.
       type: String,
       default: "text"
     },
+    clearable: {
+      type: Boolean,
+      default: !1
+    },
     fieldClass: {
       type: String,
       default: null
@@ -3213,10 +3217,11 @@ function _l(e, t, r, s, a, i) {
         class: _r(r.inputClass),
         name: r.name,
         type: r.type,
+        clearable: r.clearable,
         disabled: r.disabled,
         "model-value": r.modelValue,
         "onUpdate:modelValue": t[0] || (t[0] = (u) => i.onInput(u))
-      }, null, 8, ["readonly", "class", "name", "type", "disabled", "model-value"])
+      }, null, 8, ["readonly", "class", "name", "type", "clearable", "disabled", "model-value"])
     ]),
     _: 1
   }, 16, ["label", "class"]);
