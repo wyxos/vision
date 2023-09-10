@@ -14,6 +14,9 @@
       "require": "./dist/vision.umd.cjs"
     }
   },
+  "bin": {
+    "vision": "./src/vision.mjs"
+  },
   "scripts": {
     "dev": "vite --config demo/vite.config.js",
     "build": "vite --config demo/vite.config.js build",
@@ -34,6 +37,7 @@
   "dependencies": {
     "@oruga-ui/oruga-next": "latest",
     "axios": "latest",
+    "commander": "^11.0.0",
     "moment": "latest",
     "query-string": "latest",
     "vue": "latest"
@@ -50,12 +54,19 @@
     "eslint-plugin-node": "latest",
     "eslint-plugin-promise": "latest",
     "eslint-plugin-vue": "latest",
-    "vite-plugin-eslint": "latest",
     "inquirer": "latest",
     "prettier": "latest",
     "sass": "latest",
     "sass-loader": "latest",
     "simple-git": "latest",
-    "vite": "latest"
+    "vite": "latest",
+    "vite-plugin-eslint": "latest"
+  },
+  "peerDependencies": {
+    "@oruga-ui/oruga-next": "latest",
+    "axios": "latest",
+    "moment": "latest",
+    "query-string": "latest",
+    "vue": "latest"
   }
 }

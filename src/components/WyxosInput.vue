@@ -34,6 +34,10 @@ export default {
       type: String,
       default: null
     },
+    inputRootClass: {
+      type: String,
+      default: null
+    },
     inputClass: {
       type: String,
       default: null
@@ -72,6 +76,7 @@ export default {
     <o-input
       :readonly="readonly"
       :class="inputClass"
+      :root-class="inputRootClass"
       :name="name"
       :type="type"
       :clearable="clearable"
