@@ -1,5 +1,6 @@
 <script>
 import useFormErrors from '../utilities/useFormErrors'
+import FormBuilder from '@wyxos-helpers/utilities/FormBuilder.js'
 
 export default {
   name: 'WyxosInput',
@@ -46,6 +47,10 @@ export default {
       type: [String, Number, null],
       default: null
     },
+    form: {
+      type: FormBuilder,
+      default: null
+    },
     disabled: {
       type: [Boolean, String],
       default: null
@@ -61,18 +66,40 @@ export default {
   },
   methods: {
     onInput(value) {
+      if (!this.name) {
+        this.$emit('update:modelValue', value)
+
+        return
+      }
+
+      if (this.form) {
+        this.form.clearError(this.name)
+
+        this.$emit('update:modelValue', value)
+
+        return
+      }
+
       this.errors.clear(this.name, this.bag)
 
       this.$emit('update:modelValue', value)
+    },
+    getError() {
+      if (!this.name) {
+        return
+      }
+
+      if (this.form) {
+        return this.form.getError(this.name)
+      }
+
+      return this.errors.getError(this.name)
     }
   }
 }
 </script>
 <template>
-  <o-field
-    :label="label"
-    :class="fieldClass"
-    v-bind="{ ...errors.get(name, bag) }">
+  <o-field :label="label" :class="fieldClass" v-bind="{ ...getError() }">
     <o-input
       :readonly="readonly"
       :class="inputClass"
