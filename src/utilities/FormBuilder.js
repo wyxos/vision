@@ -185,10 +185,12 @@ export default class FormBuilder {
     } catch (error) {
       console.log('caught error in plugin', error.response.status)
 
+      this.submitFailed()
+
       if (error.response?.status === 422) {
         this.handleSubmissionFailure(error)
 
-        return null
+        return Promise.reject(error)
       }
 
       return Promise.reject(error)

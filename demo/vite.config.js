@@ -31,7 +31,7 @@ export default defineConfig({
     rollupOptions: {
       // make sure to externalize deps that shouldn't be bundled
       // into your library
-      external: ['vue', 'axios'],
+      external: ['vue', 'axios', '@oruga-ui/oruga-next'],
       output: {
         exports: 'named',
         // Provide global variables to use in the UMD build
