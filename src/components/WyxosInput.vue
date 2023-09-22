@@ -1,6 +1,6 @@
 <script>
 import useFormErrors from '../utilities/useFormErrors'
-import FormBuilder from '@wyxos-helpers/utilities/FormBuilder.js'
+import FormBuilder from '../utilities/FormBuilder.js'
 
 export default {
   name: 'WyxosInput',
