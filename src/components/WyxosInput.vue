@@ -93,7 +93,7 @@ export default {
         return this.form.getError(this.name)
       }
 
-      return this.errors.getError(this.name)
+      return this.errors.get(this.name)
     }
   }
 }
