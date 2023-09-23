@@ -1,6 +1,6 @@
 <script>
 export default {
-  name: 'TokenExpired',
+  name: 'WyxosTokenExpired',
   emits: ['close'],
   methods: {
     async proceed() {

@@ -2,7 +2,7 @@
 import FormBuilder from '../utilities/FormBuilder.js'
 
 export default {
-  name: 'SessionExpired',
+  name: 'WyxosSessionExpired',
   emits: ['close'],
   setup() {
     const login = FormBuilder.create({
@@ -10,7 +10,7 @@ export default {
         email: null,
         password: null
       },
-      submitPath: `/portal/login`
+      submitPath: ``
     })
 
     return {

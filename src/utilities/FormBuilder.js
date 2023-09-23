@@ -178,13 +178,10 @@ export default class FormBuilder {
 
     try {
       const { data } = await axios[methods](path, payload, config)
-      console.log('are we here?')
       this.clearErrors()
       this.submitted()
       return onComplete ? onComplete(data) : data
     } catch (error) {
-      console.log('caught error in plugin', error.response.status)
-
       this.submitFailed()
 
       if (error.response?.status === 422) {
