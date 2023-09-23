@@ -1,15 +1,14 @@
 import { useProgrammatic } from '@oruga-ui/oruga-next'
 import axios from 'axios'
-import SessionExpired from '../components/SessionExpired.vue'
-import TokenExpired from '../components/TokenExpired.vue'
-// import SessionExpired from '@laravel/components/SessionExpired.vue'
+import SessionExpired from '../components/WyxosSessionExpired.vue'
+import TokenExpired from '../components/WyxosTokenExpired.vue'
 
 export default async function errorHandler(error, options) {
   const errors = {
     401: 'Authentication required. Please reload the page and sign in.',
     403: 'You do not have permission to perform this action.',
     404: 'The page or action you are looking for could not be found.',
-    419: 'Your session has likely expired. Please reload the page and try again.',
+    419: 'Your session has likely expired. Try again or reload the page.',
     422: 'The action attempted was invalid. Please review your input and try again.',
     500: 'An unexpected error has occurred. This issue has been reported.',
     503: 'The site is currently under maintenance. Please try again later.'
@@ -46,7 +45,7 @@ export default async function errorHandler(error, options) {
 
   if (error.response?.status === 401) {
     oruga.modal.open({
-      component: SessionExpired,
+      component: options.components?.SessionExpired || SessionExpired,
       trapFocus: true,
       closable: false
     })
