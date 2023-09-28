@@ -174,7 +174,11 @@ export default class FormBuilder {
     return this.submitRequest('patch', path, { formatter, ...axiosConfig })
   }
 
-  submitRequest(method, path = null, { formatter = null, ...axiosConfig } = {}) {
+  submitRequest(
+    method,
+    path = null,
+    { formatter = null, ...axiosConfig } = {}
+  ) {
     // Validate inputs
     if (path && typeof path !== 'string')
       throw new Error('Path must be a string')
