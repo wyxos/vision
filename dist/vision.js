@@ -2886,7 +2886,7 @@ class Re {
     return this.submitRequest("post", t, { formatter: s, ...r });
   }
   submit(t = null, { formatter: s = null, ...r } = {}) {
-    return this.submitRequest("post", t, { formatter: s, ...r });
+    return t = t || this.paths.submit, this.submitRequest("post", t, { formatter: s, ...r });
   }
   delete(t = null, { formatter: s = null, ...r } = {}) {
     return this.submitRequest("delete", t, { formatter: s, ...r });
@@ -2897,9 +2897,9 @@ class Re {
   patch(t, { formatter: s = null, ...r } = {}) {
     return this.submitRequest("patch", t, { formatter: s, ...r });
   }
-  submitRequest(t, s, { formatter: r = null, ...a } = {}) {
-    if (!s && typeof s != "string")
-      throw new Error("Path must be a string or null");
+  submitRequest(t, s = null, { formatter: r = null, ...a } = {}) {
+    if (s && typeof s != "string")
+      throw new Error("Path must be a string");
     if (r !== null && typeof r != "function")
       throw new Error("Formatter must be a function");
     this.clearErrors(), this.submitting();
@@ -2925,7 +2925,7 @@ class Re {
   async load(t = "", { updateLoading: s = !0, updateOriginal: r = !0, ...a } = {}) {
     this.states.load.loading();
     try {
-      const { data: n } = await T.get(t || this.loadPath, a);
+      const { data: n } = await T.get(t || this.paths.load, a);
       return r && Object.assign(this.original, n.form), Object.assign(this.form, n.form), n.model && Object.assign(this.model, n.model), s && this.loaded(), n;
     } catch (n) {
       throw this.states.load.failed(), n;
