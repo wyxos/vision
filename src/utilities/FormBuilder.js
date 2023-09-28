@@ -157,6 +157,8 @@ export default class FormBuilder {
   }
 
   submit(path = null, { formatter = null, ...axiosConfig } = {}) {
+    path = path || this.paths.submit
+
     return this.submitRequest('post', path, { formatter, ...axiosConfig })
   }
 
@@ -172,10 +174,10 @@ export default class FormBuilder {
     return this.submitRequest('patch', path, { formatter, ...axiosConfig })
   }
 
-  submitRequest(method, path, { formatter = null, ...axiosConfig } = {}) {
+  submitRequest(method, path = null, { formatter = null, ...axiosConfig } = {}) {
     // Validate inputs
-    if (!path && typeof path !== 'string')
-      throw new Error('Path must be a string or null')
+    if (path && typeof path !== 'string')
+      throw new Error('Path must be a string')
     if (formatter !== null && typeof formatter !== 'function')
       throw new Error('Formatter must be a function')
 
@@ -240,7 +242,7 @@ export default class FormBuilder {
     this.states.load.loading()
 
     try {
-      const { data } = await axios.get(path || this.loadPath, axiosConfig)
+      const { data } = await axios.get(path || this.paths.load, axiosConfig)
 
       if (updateOriginal) {
         Object.assign(this.original, data.form)
