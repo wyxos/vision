@@ -61,7 +61,7 @@ program
   });
 
 program
-  .command("route:create")
+  .command("make:route")
   .description("Create a new Vue route")
   .action(async () => {
     const projectPath = process.cwd();
