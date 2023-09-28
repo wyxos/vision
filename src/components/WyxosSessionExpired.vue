@@ -56,7 +56,10 @@ export default {
           label="Password"
           type="password"></wyxos-input>
         <div class="buttons">
-          <w-button class="button is-danger" :disabled="login.isSubmitting" @click="onLogout()">
+          <w-button
+            class="button is-danger"
+            :disabled="login.isSubmitting"
+            @click="onLogout()">
             Logout
           </w-button>
           <w-button
