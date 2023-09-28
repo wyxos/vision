@@ -4,34 +4,26 @@ import useFormErrors from './useFormErrors'
 import State from './LoadState'
 
 export default class FormBuilder {
-  loadPath = ''
-  submitPath = ''
-  submitMethod = 'post'
   errors = null
-  errorBag = ''
+  errorBag = 'default'
   model = reactive({})
   form = reactive({})
   original = {}
   states = {
-    load: new State(),
-    submit: new State()
+    load: State.create(),
+    submit: State.create()
   }
 
-  constructor({
-    submitPath,
-    submitMethod = 'post',
-    loadPath = '',
-    bag = 'default',
-    form = {}
-  } = {}) {
-    this.submitPath = submitPath
-    this.submitMethod = submitMethod
-    this.loadPath = loadPath
-    this.errorBag = bag
+  paths = {
+    load: null,
+    submit: null
+  }
+
+  constructor(form = {}) {
     this.errors = useFormErrors()
     this.errors.createBag(this.errorBag)
     this.setAttributes(form)
-    this.states.load.loaded()
+    this.loaded()
 
     return new Proxy(this, {
       get(target, name, receiver) {
@@ -129,8 +121,10 @@ export default class FormBuilder {
     return new this(options)
   }
 
-  setPath(path) {
-    this.submitPath = path
+  setPaths(paths = {}) {
+    Object.assign(this.paths, paths)
+
+    return this
   }
 
   setErrors(bag) {
@@ -154,44 +148,60 @@ export default class FormBuilder {
     this.errors.clear(key, this.errorBag)
   }
 
-  async submit(
-    { path = this.submitPath, formatter = null, config = {} } = {},
-    onComplete = null
-  ) {
+  get(path = null, { formatter = null, ...axiosConfig } = {}) {
+    return this.submitRequest('get', path, { formatter, ...axiosConfig });
+  }
+
+  post(path = null, { formatter = null, ...axiosConfig } = {}) {
+    return this.submitRequest('post', path, { formatter, ...axiosConfig });
+  }
+
+  submit(path = null, { formatter = null, ...axiosConfig } = {}){
+    return this.submitRequest('post', path, { formatter, ...axiosConfig });
+  }
+
+  delete(path = null, { formatter = null, ...axiosConfig } = {}) {
+    return this.submitRequest('delete', path, { formatter, ...axiosConfig });
+  }
+
+  put(path = null, { formatter = null, ...axiosConfig } = {}) {
+    return this.submitRequest('put', path, { formatter, ...axiosConfig });
+  }
+
+  patch(path, { formatter = null, ...axiosConfig } = {}) {
+    return this.submitRequest('patch', path, { formatter, ...axiosConfig });
+  }
+
+  submitRequest(method, path, { formatter = null, ...axiosConfig } = {}) {
     // Validate inputs
-    if (typeof path !== 'string') throw new Error('Path must be a string')
-    if (formatter !== null && typeof formatter !== 'function')
-      throw new Error('Formatter must be a function')
-    if (typeof config !== 'object') throw new Error('Config must be an object')
+    if (!path && typeof path !== 'string') throw new Error('Path must be a string or null');
+    if (formatter !== null && typeof formatter !== 'function') throw new Error('Formatter must be a function');
 
-    this.clearErrors()
-    this.submitting()
+    this.clearErrors();
+    this.submitting();
 
-    const cleanJson = JSON.parse(JSON.stringify(this.form))
-    const payload = formatter ? formatter(this.form) : cleanJson
+    const payload = formatter ? formatter(this.form) : { ...this.form };
 
-    if (!path) {
-      return this.handleSubmissionFailure('No url defined.')
+    let request;
+
+    if (['get', 'delete'].includes(method)) {
+      axiosConfig.params = payload;
+      request = axios[method](path, axiosConfig);
+    } else {
+      request = axios[method](path, payload, axiosConfig);
     }
 
-    const methods = config?.method || this.submitMethod || 'post'
-
-    try {
-      const { data } = await axios[methods](path, payload, config)
-      this.clearErrors()
-      this.submitted()
-      return onComplete ? onComplete(data) : data
-    } catch (error) {
-      this.submitFailed()
-
-      if (error.response?.status === 422) {
-        this.handleSubmissionFailure(error)
-
-        return Promise.reject(error)
-      }
-
-      return Promise.reject(error)
-    }
+    return request
+        .then(response => {
+          this.clearErrors();
+          this.submitted()
+          return response.data;
+        })
+        .catch(error => {
+          this.submitFailed()
+          this.errors.set(error, this.errorBag);
+          return Promise.reject(error);
+        });
   }
 
   clearErrors() {
@@ -221,64 +231,67 @@ export default class FormBuilder {
     return data
   }
 
-  async load({ path = '', params = {}, updateOriginal = true } = {}) {
-    this.loading()
+  async load(path = '', { updateLoading = true, updateOriginal = true, ...axiosConfig } = {}) {
+    this.states.load.loading();
 
-    const url = path || this.loadPath
+    try {
+      const { data } = await axios.get(path || this.loadPath, axiosConfig);
 
-    if (!url) {
-      this.loadFailed()
+      if (updateOriginal) {
+        Object.assign(this.original, data.form);
+      }
 
-      throw Error('Url is not defined for the load method.')
+      Object.assign(this.form, data.form);
+
+      if (data.model) {
+        Object.assign(this.model, data.model);
+      }
+
+      if (updateLoading) {
+        this.loaded();
+      }
+
+      return data;
+    } catch (error) {
+      this.states.load.failed();
+      throw error;
     }
-
-    const { data } = await axios
-      .get(url, {
-        params
-      })
-      .catch((error) => {
-        this.loadFailed()
-
-        throw error
-      })
-
-    if (updateOriginal) {
-      Object.assign(this.original, data.form)
-    }
-
-    Object.assign(this.form, data.form)
-
-    if (data.model) {
-      Object.assign(this.model, data.model)
-    }
-
-    this.loaded()
-
-    return data
   }
 
   loading() {
     this.states.load.loading()
+
+    return this
   }
 
   loaded() {
     this.states.load.loaded()
+
+    return this
   }
 
   loadFailed() {
     this.states.load.failed()
+
+    return this
   }
 
   submitting() {
     this.states.submit.loading()
+
+    return this
   }
 
   submitFailed() {
     this.states.submit.failed()
+
+    return this
   }
 
   submitted() {
     this.states.submit.loaded()
+
+    return this
   }
 
   reset() {
