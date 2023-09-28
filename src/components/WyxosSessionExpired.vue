@@ -29,6 +29,9 @@ export default {
       await this.login.submit()
 
       this.$emit('close', { action: true })
+    },
+    onLogout() {
+      window.location.href = '/'
     }
   }
 }
@@ -53,7 +56,7 @@ export default {
           label="Password"
           type="password"></wyxos-input>
         <div class="buttons">
-          <w-button class="button is-danger" :disabled="login.isSubmitting">
+          <w-button class="button is-danger" :disabled="login.isSubmitting" @click="onLogout()">
             Logout
           </w-button>
           <w-button
