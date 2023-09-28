@@ -149,59 +149,61 @@ export default class FormBuilder {
   }
 
   get(path = null, { formatter = null, ...axiosConfig } = {}) {
-    return this.submitRequest('get', path, { formatter, ...axiosConfig });
+    return this.submitRequest('get', path, { formatter, ...axiosConfig })
   }
 
   post(path = null, { formatter = null, ...axiosConfig } = {}) {
-    return this.submitRequest('post', path, { formatter, ...axiosConfig });
+    return this.submitRequest('post', path, { formatter, ...axiosConfig })
   }
 
-  submit(path = null, { formatter = null, ...axiosConfig } = {}){
-    return this.submitRequest('post', path, { formatter, ...axiosConfig });
+  submit(path = null, { formatter = null, ...axiosConfig } = {}) {
+    return this.submitRequest('post', path, { formatter, ...axiosConfig })
   }
 
   delete(path = null, { formatter = null, ...axiosConfig } = {}) {
-    return this.submitRequest('delete', path, { formatter, ...axiosConfig });
+    return this.submitRequest('delete', path, { formatter, ...axiosConfig })
   }
 
   put(path = null, { formatter = null, ...axiosConfig } = {}) {
-    return this.submitRequest('put', path, { formatter, ...axiosConfig });
+    return this.submitRequest('put', path, { formatter, ...axiosConfig })
   }
 
   patch(path, { formatter = null, ...axiosConfig } = {}) {
-    return this.submitRequest('patch', path, { formatter, ...axiosConfig });
+    return this.submitRequest('patch', path, { formatter, ...axiosConfig })
   }
 
   submitRequest(method, path, { formatter = null, ...axiosConfig } = {}) {
     // Validate inputs
-    if (!path && typeof path !== 'string') throw new Error('Path must be a string or null');
-    if (formatter !== null && typeof formatter !== 'function') throw new Error('Formatter must be a function');
+    if (!path && typeof path !== 'string')
+      throw new Error('Path must be a string or null')
+    if (formatter !== null && typeof formatter !== 'function')
+      throw new Error('Formatter must be a function')
 
-    this.clearErrors();
-    this.submitting();
+    this.clearErrors()
+    this.submitting()
 
-    const payload = formatter ? formatter(this.form) : { ...this.form };
+    const payload = formatter ? formatter(this.form) : { ...this.form }
 
-    let request;
+    let request
 
     if (['get', 'delete'].includes(method)) {
-      axiosConfig.params = payload;
-      request = axios[method](path, axiosConfig);
+      axiosConfig.params = payload
+      request = axios[method](path, axiosConfig)
     } else {
-      request = axios[method](path, payload, axiosConfig);
+      request = axios[method](path, payload, axiosConfig)
     }
 
     return request
-        .then(response => {
-          this.clearErrors();
-          this.submitted()
-          return response.data;
-        })
-        .catch(error => {
-          this.submitFailed()
-          this.errors.set(error, this.errorBag);
-          return Promise.reject(error);
-        });
+      .then((response) => {
+        this.clearErrors()
+        this.submitted()
+        return response.data
+      })
+      .catch((error) => {
+        this.submitFailed()
+        this.errors.set(error, this.errorBag)
+        return Promise.reject(error)
+      })
   }
 
   clearErrors() {
@@ -231,30 +233,33 @@ export default class FormBuilder {
     return data
   }
 
-  async load(path = '', { updateLoading = true, updateOriginal = true, ...axiosConfig } = {}) {
-    this.states.load.loading();
+  async load(
+    path = '',
+    { updateLoading = true, updateOriginal = true, ...axiosConfig } = {}
+  ) {
+    this.states.load.loading()
 
     try {
-      const { data } = await axios.get(path || this.loadPath, axiosConfig);
+      const { data } = await axios.get(path || this.loadPath, axiosConfig)
 
       if (updateOriginal) {
-        Object.assign(this.original, data.form);
+        Object.assign(this.original, data.form)
       }
 
-      Object.assign(this.form, data.form);
+      Object.assign(this.form, data.form)
 
       if (data.model) {
-        Object.assign(this.model, data.model);
+        Object.assign(this.model, data.model)
       }
 
       if (updateLoading) {
-        this.loaded();
+        this.loaded()
       }
 
-      return data;
+      return data
     } catch (error) {
-      this.states.load.failed();
-      throw error;
+      this.states.load.failed()
+      throw error
     }
   }
 
