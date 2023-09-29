@@ -1,11 +1,6 @@
 #!/usr/bin/env node
 
 import { program } from "commander";
-import path from "path";
-import { fileURLToPath } from "url";
-import fs from "fs";
-import { execSync } from "child_process";
-import inquirer from "inquirer";
 import Toggle from "./commands/Toggle.mjs";
 import MakeRoute from "./commands/MakeRoute.mjs";
 // ... other imports
