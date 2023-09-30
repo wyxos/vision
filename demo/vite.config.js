@@ -19,10 +19,10 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      '@' : './src',
+      '@': './src',
       '@components': './src/components',
       '@utilities': './src/utilities',
-      '@commands' : './src/commands'
+      '@commands': './src/commands'
     },
     dedupe: ['vue']
   },
