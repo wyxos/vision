@@ -5,6 +5,7 @@ import {execSync} from "child_process";
 
 export default () => {
     const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
     const packageJSONPath = path.join(process.cwd(), "package.json");
 
     if (!fs.existsSync(packageJSONPath)) {
