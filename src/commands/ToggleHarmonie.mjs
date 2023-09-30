@@ -5,6 +5,7 @@ import {fileURLToPath} from 'url';
 import { execSync } from "child_process";
 import os from 'os';
 import { NodeSSH } from 'node-ssh'
+import Command from "../Command.mjs";
 
 const ssh = new NodeSSH()
 
@@ -59,68 +60,74 @@ async function getHomesteadConfig() {
     return answers;
 }
 
-export default async () => {
-    const __dirname = path.dirname(fileURLToPath(import.meta.url))
-    const composerPath = path.join(process.cwd(), 'composer.json')
+export default class ToggleHarmonie extends Command {
+    signature = "toggle:harmonie"
 
-    if (!fs.existsSync(composerPath)) {
-        console.log("composer.json not found")
-        process.exit(1)
-    }
+    description = "Toggle wyxos/harmonie vendor between local and online versions"
 
-    const composerJSON = JSON.parse(fs.readFileSync(composerPath, 'utf8'))
-    const packageName = 'wyxos/harmonie'
-    const localPaths = [
-        '../../../wyxos/php/harmonie',
-        '../../harmonie'
-    ]
+    async handle(){
+        const __dirname = path.dirname(fileURLToPath(import.meta.url))
+        const composerPath = path.join(process.cwd(), 'composer.json')
 
-    const { ip, username, sshPath, projectPath } = await getHomesteadConfig()
+        if (!fs.existsSync(composerPath)) {
+            console.log("composer.json not found")
+            process.exit(1)
+        }
 
-    try {
-        await ssh.connect({
-            host: ip,
-            username: username,
-            privateKey: fs.readFileSync(sshPath).toString('utf8'),
-        })
+        const composerJSON = JSON.parse(fs.readFileSync(composerPath, 'utf8'))
+        const packageName = 'wyxos/harmonie'
+        const localPaths = [
+            '../../../wyxos/php/harmonie',
+            '../../harmonie'
+        ]
 
-        if (composerJSON.repositories && composerJSON.repositories.some(repo => repo.type === 'path' && localPaths.includes(repo.url))) {
-            const result = await ssh.execCommand(`composer show ${packageName} --latest`, { cwd: projectPath })
+        const { ip, username, sshPath, projectPath } = await getHomesteadConfig()
 
-            const latestVersion = result.stdout.split('\n')
-                .find(line => line.includes('versions'))
-                .split(':')
-                .pop()
-                .trim()
-                .match(/\d+\.\d+/)[0];
-
-            composerJSON.require[packageName] = `^${latestVersion}`
-            composerJSON.repositories = composerJSON.repositories.filter(repo => repo.type !== 'path' || !localPaths.includes(repo.url));
-            fs.writeFileSync(composerPath, JSON.stringify(composerJSON, null, 2))
-            console.log(`Toggled ${packageName}`)
-
-            await ssh.execCommand('composer update', { cwd: projectPath })
-        } else {
-            // Switch to local version
-            if (!composerJSON.repositories) {
-                composerJSON.repositories = []
-            }
-
-            const existingPath = localPaths.find(p => fs.existsSync(path.join(__dirname, p))) || localPaths[0]
-            composerJSON.repositories.push({
-                "type": "path",
-                "url": existingPath,
-                "options": { "symlink": true }
+        try {
+            await ssh.connect({
+                host: ip,
+                username: username,
+                privateKey: fs.readFileSync(sshPath).toString('utf8'),
             })
 
-            composerJSON.require[packageName] = '*'
-            fs.writeFileSync(composerPath, JSON.stringify(composerJSON, null, 2))
+            if (composerJSON.repositories && composerJSON.repositories.some(repo => repo.type === 'path' && localPaths.includes(repo.url))) {
+                const result = await ssh.execCommand(`composer show ${packageName} --latest`, { cwd: projectPath })
 
-            await ssh.execCommand('composer update', { cwd: projectPath })
+                const latestVersion = result.stdout.split('\n')
+                    .find(line => line.includes('versions'))
+                    .split(':')
+                    .pop()
+                    .trim()
+                    .match(/\d+\.\d+/)[0];
+
+                composerJSON.require[packageName] = `^${latestVersion}`
+                composerJSON.repositories = composerJSON.repositories.filter(repo => repo.type !== 'path' || !localPaths.includes(repo.url));
+                fs.writeFileSync(composerPath, JSON.stringify(composerJSON, null, 2))
+                console.log(`Toggled ${packageName}`)
+
+                await ssh.execCommand('composer update', { cwd: projectPath })
+            } else {
+                // Switch to local version
+                if (!composerJSON.repositories) {
+                    composerJSON.repositories = []
+                }
+
+                const existingPath = localPaths.find(p => fs.existsSync(path.join(__dirname, p))) || localPaths[0]
+                composerJSON.repositories.push({
+                    "type": "path",
+                    "url": existingPath,
+                    "options": { "symlink": true }
+                })
+
+                composerJSON.require[packageName] = '*'
+                fs.writeFileSync(composerPath, JSON.stringify(composerJSON, null, 2))
+
+                await ssh.execCommand('composer update', { cwd: projectPath })
+            }
+        } catch (error) {
+            console.error('Failed:', error)
+        } finally {
+            ssh.dispose()
         }
-    } catch (error) {
-        console.error('Failed:', error)
-    } finally {
-        ssh.dispose()
     }
 }
