@@ -2,7 +2,10 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@wyxos-helpers/*": ["./src/*"]
+      "@" : ["./src"],
+      "@components": ["./src/components"],
+      "@utilities": ["./src/utilities"],
+      "@commands" :[ "./src/commands"]
     }
   }
 }

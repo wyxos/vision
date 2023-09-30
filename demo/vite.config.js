@@ -18,6 +18,12 @@ export default defineConfig({
     })
   ],
   resolve: {
+    alias: {
+      '@' : './src',
+      '@components': './src/components',
+      '@utilities': './src/utilities',
+      '@commands' : './src/commands'
+    },
     dedupe: ['vue']
   },
   build: {

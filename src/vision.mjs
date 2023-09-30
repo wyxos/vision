@@ -1,25 +1,36 @@
 #!/usr/bin/env node
 
 import { program } from "commander";
-import Toggle from "./commands/Toggle.mjs";
-import MakeRoute from "./commands/MakeRoute.mjs";
-import ToggleHarmonie from "./commands/ToggleHarmonie.mjs";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath, pathToFileURL } from 'url';
 
-program.version("0.0.1");
+async function setupProgram() {
+    program.version("0.0.1");
 
-program
-  .command("toggle")
-  .description("Toggle wyxos/vision package between local and online versions")
-  .action(Toggle);
+    const __dirname = path.dirname(fileURLToPath(import.meta.url));
+    const dirPath = path.join(__dirname, 'commands');
 
-program
-    .command("toggle:harmonie")
-    .description("Toggle wyxos/harmonie vendor between local and online versions")
-    .action(ToggleHarmonie);
+    const files = fs.readdirSync(dirPath);
 
-program
-  .command("make:route")
-  .description("Create a new Vue route")
-  .action(MakeRoute);
+    for (const file of files) {
+        if (path.extname(file) === '.mjs') {
+            const filePath = path.join(dirPath, file);
+            const fileURL = pathToFileURL(filePath).href;
 
-program.parse(process.argv);
+            const module = await import(fileURL);
+            const Module = module.default;
+
+            const instance = new Module();
+
+            program
+                .command(instance.signature)
+                .description(instance.description)
+                .action(() => instance.handle());
+        }
+    }
+
+    program.parse(process.argv);
+}
+
+setupProgram().catch(err => console.error(err));
