@@ -19,6 +19,8 @@ if (fs.existsSync(sshDir)) {
 const homesteadConfigPath = path.join(process.cwd(), 'homestead-ssh.json');
 
 async function getHomesteadConfig() {
+    let configFileCreated = false;
+
     if (fs.existsSync(homesteadConfigPath)) {
         return JSON.parse(fs.readFileSync(homesteadConfigPath, "utf8"));
     }
@@ -56,6 +58,25 @@ async function getHomesteadConfig() {
     const answers = await inquirer.prompt(questions);
 
     fs.writeFileSync(homesteadConfigPath, JSON.stringify(answers, null, 2));
+
+    configFileCreated = true;
+
+    // Add to .gitignore if the config file was created
+    if (configFileCreated) {
+        const gitignorePath = path.join(process.cwd(), '.gitignore');
+        let gitignoreContent = "";
+
+        // Read existing .gitignore if it exists
+        if (fs.existsSync(gitignorePath)) {
+            gitignoreContent = fs.readFileSync(gitignorePath, 'utf8');
+        }
+
+        // Add entry to .gitignore if not already present
+        if (!gitignoreContent.includes('homestead-ssh.json')) {
+            gitignoreContent += '\nhomestead-ssh.json';
+            fs.writeFileSync(gitignorePath, gitignoreContent);
+        }
+    }
 
     return answers;
 }
