@@ -1,23 +1,54 @@
 <script>
+import FormBuilder from "../utilities/FormBuilder.js";
+
 export default {
   name: 'WyxosButton',
   props: {
-    loading: {
-      default: false,
-      type: Boolean
+    form: {
+      type: FormBuilder,
+      required: true
     },
-    text: {
-      type: String,
-      default: 'Processing...'
+    labels: {
+      type: Object,
+      default(){
+        return {
+          submit: 'Submit',
+          submitting: 'Processing',
+          submitted: 'Complete',
+          failed: 'Retry'
+        }
+      }
+    },
+  },
+  data() {
+    return {
+      mergedLabels: {
+        submit: 'Submit',
+        submitting: 'Processing',
+        submitted: 'Complete',
+        failed: 'Retry'
+      }
+    };
+  },
+  created() {
+    this.mergedLabels = { ...this.mergedLabels, ...this.labels };
+  },
+  watch: {
+    labels: {
+      deep: true,
+      handler(newVal) {
+        this.mergedLabels = { ...this.mergedLabels, ...newVal };
+      }
     }
   }
 }
 </script>
 
 <template>
-  <o-button :disabled="loading">
-    <slot v-if="!loading">Submit</slot>
-    <slot v-if="loading && text" name="loading">{{ text }}</slot>
-    <i v-if="loading" class="fas fa-spinner fa-spin"></i>
+  <o-button :disabled="Boolean(form.isSubmitting || form.isSubmitted)" native-type="submit">
+    <span v-if="!form.isSubmitted && !form.isSubmitting && !form.isSubmitFailed">{{ mergedLabels.submit }}</span>
+    <span v-if="form.isSubmitting">{{ mergedLabels.submitting }} <i class="fas fa-spinner fa-spin"></i></span>
+    <span v-if="form.isSubmitted">{{ mergedLabels.submitted }}</span>
+    <span v-if="form.isSubmitFailed">{{ mergedLabels.failed }}</span>
   </o-button>
 </template>

@@ -79,16 +79,26 @@ export default class Listing {
     return this.state.isFilterActive
   }
 
-  static create(params, options) {
-    if (!options) {
-      throw Error('Listing options have not been provided.')
-    }
+  get isEmpty(){
+    return this.isLoaded && this.query.items.length === 0
+  }
 
+  get isDirty() {
+    return JSON.stringify(this.structure) !== JSON.stringify(this.params)
+  }
+
+  get isSearchEmpty(){
+    return this.isLoaded && this.isDirty && this.query.items.length === 0
+  }
+
+  setUrl(url){
+    this.baseUrl = url
+
+    return this
+  }
+
+  static create(params = {}, options = {}) {
     const instance = new Listing()
-
-    if (!params) {
-      throw Error('Structure of search query required.')
-    }
 
     instance.errors = useFormErrors()
     instance.errors.createBag(this.errorBag)

@@ -47,6 +47,14 @@ export default class LoadState {
     })
   }
 
+  reset(){
+    Object.assign(this.state, {
+      isLoading: false,
+      isLoaded: false,
+      isFailure: false
+    })
+  }
+
   static create() {
     return new LoadState()
   }
