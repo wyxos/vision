@@ -26,7 +26,7 @@ export default {
   },
   methods: {
     async proceed() {
-      await this.login.submit()
+      await this.login.submit('/login')
 
       this.$emit('close', { action: true })
     },

@@ -127,6 +127,12 @@ export default class FormBuilder {
     return this
   }
 
+  setSubmit(url){
+    this.paths.submit = url
+
+    return this
+  }
+
   setErrors(bag) {
     this.errorBag = bag || 'default'
 
@@ -158,6 +164,10 @@ export default class FormBuilder {
 
   submit(path = null, { formatter = null, ...axiosConfig } = {}) {
     path = path || this.paths.submit
+
+    if(!path){
+      throw Error('No valid URL defined for submti method.')
+    }
 
     return this.submitRequest('post', path, { formatter, ...axiosConfig })
   }
@@ -203,6 +213,9 @@ export default class FormBuilder {
       .then((response) => {
         this.clearErrors()
         this.submitted()
+
+        setTimeout(() => this.states.submit.reset(), 2000)
+
         return response.data
       })
       .catch((error) => {
