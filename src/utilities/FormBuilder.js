@@ -127,7 +127,7 @@ export default class FormBuilder {
     return this
   }
 
-  setSubmit(url){
+  setSubmit(url) {
     this.paths.submit = url
 
     return this
@@ -165,7 +165,7 @@ export default class FormBuilder {
   submit(path = null, { formatter = null, ...axiosConfig } = {}) {
     path = path || this.paths.submit
 
-    if(!path){
+    if (!path) {
       throw Error('No valid URL defined for submti method.')
     }
 
