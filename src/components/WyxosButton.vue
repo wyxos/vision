@@ -1,5 +1,5 @@
 <script>
-import FormBuilder from "../utilities/FormBuilder.js";
+import FormBuilder from '../utilities/FormBuilder.js'
 
 export default {
   name: 'WyxosButton',
@@ -10,7 +10,7 @@ export default {
     },
     labels: {
       type: Object,
-      default(){
+      default() {
         return {
           submit: 'Submit',
           submitting: 'Processing',
@@ -18,7 +18,7 @@ export default {
           failed: 'Retry'
         }
       }
-    },
+    }
   },
   data() {
     return {
@@ -28,26 +28,33 @@ export default {
         submitted: 'Complete',
         failed: 'Retry'
       }
-    };
-  },
-  created() {
-    this.mergedLabels = { ...this.mergedLabels, ...this.labels };
+    }
   },
   watch: {
     labels: {
       deep: true,
       handler(newVal) {
-        this.mergedLabels = { ...this.mergedLabels, ...newVal };
+        this.mergedLabels = { ...this.mergedLabels, ...newVal }
       }
     }
+  },
+  created() {
+    this.mergedLabels = { ...this.mergedLabels, ...this.labels }
   }
 }
 </script>
 
 <template>
-  <o-button :disabled="Boolean(form.isSubmitting || form.isSubmitted)" native-type="submit">
-    <span v-if="!form.isSubmitted && !form.isSubmitting && !form.isSubmitFailed">{{ mergedLabels.submit }}</span>
-    <span v-if="form.isSubmitting">{{ mergedLabels.submitting }} <i class="fas fa-spinner fa-spin"></i></span>
+  <o-button
+    :disabled="Boolean(form.isSubmitting || form.isSubmitted)"
+    native-type="submit">
+    <span
+      v-if="!form.isSubmitted && !form.isSubmitting && !form.isSubmitFailed"
+      >{{ mergedLabels.submit }}</span
+    >
+    <span v-if="form.isSubmitting"
+      >{{ mergedLabels.submitting }} <i class="fas fa-spinner fa-spin"></i
+    ></span>
     <span v-if="form.isSubmitted">{{ mergedLabels.submitted }}</span>
     <span v-if="form.isSubmitFailed">{{ mergedLabels.failed }}</span>
   </o-button>

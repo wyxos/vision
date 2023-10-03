@@ -47,7 +47,7 @@ export default class LoadState {
     })
   }
 
-  reset(){
+  reset() {
     Object.assign(this.state, {
       isLoading: false,
       isLoaded: false,

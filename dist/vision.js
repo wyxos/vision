@@ -307,9 +307,6 @@ const C = (e, t) => {
       }
     };
   },
-  created() {
-    this.mergedLabels = { ...this.mergedLabels, ...this.labels };
-  },
   watch: {
     labels: {
       deep: !0,
@@ -317,6 +314,9 @@ const C = (e, t) => {
         this.mergedLabels = { ...this.mergedLabels, ...e };
       }
     }
+  },
+  created() {
+    this.mergedLabels = { ...this.mergedLabels, ...this.labels };
   }
 }, Fr = { key: 0 }, Pr = { key: 1 }, Nr = /* @__PURE__ */ D("i", { class: "fas fa-spinner fa-spin" }, null, -1), Wr = { key: 2 }, Rr = { key: 3 };
 function Lr(e, t, s, r, a, i) {
@@ -3910,7 +3910,7 @@ function Ll(e, t, s, r, a, i) {
   const n = F("o-table");
   return S(), X(n, Ot(Mt(i.allPropsAndEvents)), Yr({
     empty: N(() => [
-      s.listing.isEmpty ? (S(), R("p", Wl, " No records found. ")) : J("", !0),
+      s.listing.isEmpty ? (S(), R("p", Wl, "No records found.")) : J("", !0),
       s.listing.isSearchEmpty ? (S(), R("p", Rl, " No results for your query. Please adjust your search and try again. ")) : J("", !0)
     ]),
     _: 2

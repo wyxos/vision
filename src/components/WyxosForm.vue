@@ -1,6 +1,6 @@
 <script>
 import FormBuilder from '../utilities/FormBuilder'
-import Listing from "../utilities/Listing.js";
+import Listing from '../utilities/Listing.js'
 
 export default {
   name: 'WyxosForm',
@@ -31,13 +31,13 @@ export default {
         await this.form.submit()
       }
 
-      if(this.reset){
+      if (this.reset) {
         this.form.reset()
       }
 
       this.$emit('submitted')
 
-      if(this.listing){
+      if (this.listing) {
         return this.listing.reload()
       }
     }

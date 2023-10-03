@@ -79,7 +79,7 @@ export default class Listing {
     return this.state.isFilterActive
   }
 
-  get isEmpty(){
+  get isEmpty() {
     return this.isLoaded && this.query.items.length === 0
   }
 
@@ -87,11 +87,11 @@ export default class Listing {
     return JSON.stringify(this.structure) !== JSON.stringify(this.params)
   }
 
-  get isSearchEmpty(){
+  get isSearchEmpty() {
     return this.isLoaded && this.isDirty && this.query.items.length === 0
   }
 
-  setUrl(url){
+  setUrl(url) {
     this.baseUrl = url
 
     return this
