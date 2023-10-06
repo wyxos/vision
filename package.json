@@ -5,7 +5,8 @@
   "type": "module",
   "files": [
     "dist",
-    "src/commands"
+    "src/commands",
+    "src/Command.mjs"
   ],
   "main": "./dist/vision.umd.cjs",
   "module": "./dist/vision.js",
