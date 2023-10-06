@@ -1,9 +1,7 @@
 <template>
-  <li>
-    <slot :logout="logout">
-      <button class="button is-primary" @click="logout()">Sign out</button>
-    </slot>
-  </li>
+  <slot :logout="logout">
+    <button class="button is-primary" @click="logout()">Sign out</button>
+  </slot>
 </template>
 
 <script>
@@ -32,6 +30,8 @@ export default {
           errorHandler(error)
         })
         .catch(errorHandler)
+
+      console.log('data', data)
 
       window.location.href = data?.redirect || '/'
     }
