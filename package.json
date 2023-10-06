@@ -4,7 +4,8 @@
   "description": "",
   "type": "module",
   "files": [
-    "dist"
+    "dist",
+    "src/commands"
   ],
   "main": "./dist/vision.umd.cjs",
   "module": "./dist/vision.js",
