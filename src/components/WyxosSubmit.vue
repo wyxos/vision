@@ -46,14 +46,14 @@ export default {
 
 <template>
   <o-button
-      :disabled="Boolean(form.isSubmitting || form.isSubmitted)"
-      native-type="submit">
+    :disabled="Boolean(form.isSubmitting || form.isSubmitted)"
+    native-type="submit">
     <span
-        v-if="!form.isSubmitted && !form.isSubmitting && !form.isSubmitFailed"
-    >{{ mergedLabels.submit }}</span
+      v-if="!form.isSubmitted && !form.isSubmitting && !form.isSubmitFailed"
+      >{{ mergedLabels.submit }}</span
     >
     <span v-if="form.isSubmitting"
-    >{{ mergedLabels.submitting }} <i class="fas fa-spinner fa-spin"></i
+      >{{ mergedLabels.submitting }} <i class="fas fa-spinner fa-spin"></i
     ></span>
     <span v-if="form.isSubmitted">{{ mergedLabels.submitted }}</span>
     <span v-if="form.isSubmitFailed">{{ mergedLabels.failed }}</span>

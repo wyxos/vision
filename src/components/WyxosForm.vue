@@ -50,7 +50,7 @@ export default {
 </script>
 
 <template>
-  <form :class="formClass" v-if="form.isLoaded" @submit.prevent="handle()">
+  <form v-if="form.isLoaded" :class="formClass" @submit.prevent="handle()">
     <slot></slot>
   </form>
   <o-loading v-if="form.isLoading" :active="true"></o-loading>
