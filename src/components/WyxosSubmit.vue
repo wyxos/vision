@@ -2,7 +2,7 @@
 import FormBuilder from '../utilities/FormBuilder.js'
 
 export default {
-  name: 'WyxosButton',
+  name: 'WyxosSubmit',
   props: {
     form: {
       type: FormBuilder,

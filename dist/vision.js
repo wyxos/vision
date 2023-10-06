@@ -4277,7 +4277,7 @@ const fu = /* @__PURE__ */ L(du, [["render", hu]]), mu = /* @__PURE__ */ Object.
   __proto__: null,
   default: fu
 }, Symbol.toStringTag, { value: "Module" })), yu = {
-  name: "WyxosButton",
+  name: "WyxosSubmit",
   props: {
     form: {
       type: De,
