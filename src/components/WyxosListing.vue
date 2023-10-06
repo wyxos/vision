@@ -34,7 +34,9 @@ export default {
       <p v-if="listing.isSearchEmpty">
         No results for your query. Please adjust your search and try again.
       </p>
-      <p v-if="listing.isFailure">Failure to load the list. Try again or reload the page.</p>
+      <p v-if="listing.isFailure">
+        Failure to load the list. Try again or reload the page.
+      </p>
     </template>
   </o-table>
 </template>
