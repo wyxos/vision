@@ -20,6 +20,10 @@ export default {
     reset: {
       type: Boolean,
       default: false
+    },
+    formClass: {
+      type: [String, Array, Object],
+      default: null
     }
   },
   emits: ['submitted'],
@@ -46,13 +50,11 @@ export default {
 </script>
 
 <template>
-  <div>
-    <form v-if="form.isLoaded" @submit.prevent="handle()">
-      <slot></slot>
-    </form>
-    <o-loading :active="form.isLoading"></o-loading>
-    <o-button v-if="form.isFailure" @click="form.load()">
-      An error occurred. Try again?
-    </o-button>
-  </div>
+  <form :class="formClass" v-if="form.isLoaded" @submit.prevent="handle()">
+    <slot></slot>
+  </form>
+  <o-loading v-if="form.isLoading" :active="true"></o-loading>
+  <o-button v-if="form.isFailure" @click="form.load()">
+    Error. Retry or refresh.
+  </o-button>
 </template>

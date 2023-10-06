@@ -2,7 +2,6 @@ import fs from 'fs'
 import path from 'path'
 import inquirer from 'inquirer';
 import {fileURLToPath} from 'url';
-import { execSync } from "child_process";
 import os from 'os';
 import { NodeSSH } from 'node-ssh'
 import Command from "../Command.mjs";
@@ -30,7 +29,7 @@ async function getHomesteadConfig() {
     const questions = [
         {
             type: 'input',
-            name: 'ip',
+            name: 'host',
             message: 'Enter the IP address:',
             default: '192.168.56.56',
         },
@@ -42,14 +41,14 @@ async function getHomesteadConfig() {
         },
         {
             type: 'list',
-            name: 'sshPath',
+            name: 'privateKeyPath',
             message: 'Select the SSH key:',
             choices: sshFiles.map(file => path.join(sshDir, file)),
             default: sshFiles[0] || 'id_rsa',
         },
         {
             type: 'input',
-            name: 'projectPath',
+            name: 'cwd',
             message: 'Enter the project path:',
             default: `/home/vagrant/code/${projectName}`,
         },
@@ -102,17 +101,17 @@ export default class ToggleHarmonie extends Command {
             '../../harmonie'
         ]
 
-        const { ip, username, sshPath, projectPath } = await getHomesteadConfig()
+        const { host, username, privateKeyPath, cwd } = await getHomesteadConfig()
 
         try {
             await ssh.connect({
-                host: ip,
+                host: host,
                 username: username,
-                privateKey: fs.readFileSync(sshPath).toString('utf8'),
+                privateKey: fs.readFileSync(privateKeyPath).toString('utf8'),
             })
 
             if (composerJSON.repositories && composerJSON.repositories.some(repo => repo.type === 'path' && localPaths.includes(repo.url))) {
-                const result = await ssh.execCommand(`composer show ${packageName} --latest`, { cwd: projectPath })
+                const result = await ssh.execCommand(`composer show ${packageName} --latest`, { cwd: cwd })
 
                 const latestVersion = result.stdout.split('\n')
                     .find(line => line.includes('versions'))
@@ -126,7 +125,7 @@ export default class ToggleHarmonie extends Command {
                 fs.writeFileSync(composerPath, JSON.stringify(composerJSON, null, 2))
                 console.log(`Toggled ${packageName}`)
 
-                await ssh.execCommand('composer update', { cwd: projectPath })
+                await ssh.execCommand('composer update', { cwd: cwd })
             } else {
                 // Switch to local version
                 if (!composerJSON.repositories) {
@@ -143,7 +142,7 @@ export default class ToggleHarmonie extends Command {
                 composerJSON.require[packageName] = '*'
                 fs.writeFileSync(composerPath, JSON.stringify(composerJSON, null, 2))
 
-                await ssh.execCommand('composer update', { cwd: projectPath })
+                await ssh.execCommand('composer update', { cwd: cwd })
             }
         } catch (error) {
             console.error('Failed:', error)
