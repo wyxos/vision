@@ -139,7 +139,7 @@ export default class ToggleHarmonie extends Command {
                     "options": { "symlink": true }
                 })
 
-                composerJSON.require[packageName] = '*'
+                composerJSON.require[packageName] = 'dev-main'
                 fs.writeFileSync(composerPath, JSON.stringify(composerJSON, null, 2))
 
                 await ssh.execCommand('composer update', { cwd: cwd })

@@ -166,7 +166,7 @@ export default class FormBuilder {
     path = path || this.paths.submit
 
     if (!path) {
-      throw Error('No valid URL defined for submti method.')
+      throw Error('No valid URL defined for submit method.')
     }
 
     return this.submitRequest('post', path, { formatter, ...axiosConfig })
