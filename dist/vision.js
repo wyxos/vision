@@ -2897,7 +2897,7 @@ class De {
   }
   submit(t = null, { formatter: s = null, ...r } = {}) {
     if (t = t || this.paths.submit, !t)
-      throw Error("No valid URL defined for submti method.");
+      throw Error("No valid URL defined for submit method.");
     return this.submitRequest("post", t, { formatter: s, ...r });
   }
   delete(t = null, { formatter: s = null, ...r } = {}) {
