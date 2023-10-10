@@ -1,7 +1,3 @@
-import { config as dotenvConfig } from "dotenv";
-
-dotenvConfig();
-
 import chalk from "chalk";
 import inquirer from "inquirer";
 import { execSync } from "child_process";
@@ -70,7 +66,7 @@ const release = async () => {
     console.log(chalk.green(`Successfully released version ${version}`));
     console.log(chalk.green("Publishing to npm..."));
     execSyncOut("npm login");
-    execSyncOut(`npm publish --access public --otp=${process.env.NPM_TOKEN}`);
+    execSyncOut("npm publish --access public");
   } catch (error) {
     console.error(chalk.red("Release process failed. Error:", error));
   }
