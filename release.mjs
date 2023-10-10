@@ -65,7 +65,7 @@ const release = async () => {
     await pushChanges();
     console.log(chalk.green(`Successfully released version ${version}`));
     console.log(chalk.green("Publishing to npm..."));
-    execSyncOut("npm login");
+    // execSyncOut("npm login");
     execSyncOut("npm publish --access public --verbose");
   } catch (error) {
     console.error(chalk.red("Release process failed. Error:", error));
