@@ -47,6 +47,7 @@
   "devDependencies": {
     "@vitejs/plugin-vue": "latest",
     "chalk": "latest",
+    "dotenv": "^16.3.1",
     "eslint": "latest",
     "eslint-config-prettier": "latest",
     "eslint-config-standard": "latest",
