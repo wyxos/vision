@@ -19,6 +19,9 @@ export default class FormBuilder {
     submit: null
   }
 
+  // Add an abort controller property
+  abortController = null;
+
   constructor(form = {}) {
     this.errors = useFormErrors()
     this.errors.createBag(this.errorBag)
@@ -127,6 +130,12 @@ export default class FormBuilder {
     return this
   }
 
+  setLoad(url) {
+    this.paths.load = url
+
+    return this
+  }
+
   setSubmit(url) {
     this.paths.submit = url
 
@@ -195,8 +204,19 @@ export default class FormBuilder {
     if (formatter !== null && typeof formatter !== 'function')
       throw new Error('Formatter must be a function')
 
-    this.clearErrors()
-    this.submitting()
+    // If there's an ongoing request, abort it
+    if (this.abortController) {
+      this.abortController.abort();
+    }
+
+    // Create a new AbortController
+    this.abortController = new AbortController();
+
+    // Add the signal to the axios config
+    axiosConfig.signal = this.abortController.signal;
+
+    this.clearErrors();
+    this.submitting();
 
     const payload = formatter ? formatter(this.form) : { ...this.form }
 
@@ -211,6 +231,9 @@ export default class FormBuilder {
 
     return request
       .then((response) => {
+        // After a successful request, nullify the abortController
+        this.abortController = null;
+
         this.clearErrors()
         this.submitted()
 
@@ -219,9 +242,13 @@ export default class FormBuilder {
         return response.data
       })
       .catch((error) => {
-        this.submitFailed()
-        this.errors.set(error, this.errorBag)
-        return Promise.reject(error)
+        if (error.name === 'AbortError') {
+          console.log('Request aborted:', error.message);
+        } else {
+          this.submitFailed();
+          this.errors.set(error, this.errorBag);
+        }
+        return Promise.reject(error);
       })
   }
 

@@ -56,18 +56,20 @@ export default {
 </script>
 
 <template>
-  <o-modal :active="true">
+  <o-modal :active="true" @blur="$emit('close', {action: false})">
     <h2>{{ title }}</h2>
     <p>{{ message }}</p>
-    <div class="button-group">
+    <div class="flex gap-6">
       <wyxos-button
         :disabled="state.isLoading"
+        class="button is-danger"
         native-type="button"
         @click="$emit('close', { action: false })">
         {{ cancelText }}
       </wyxos-button>
       <wyxos-button
         :loading="state.isLoading"
+        class="button"
         native-type="button"
         @click="proceed()"
         >{{ confirmText }}
