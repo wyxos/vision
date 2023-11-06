@@ -16,6 +16,15 @@ const install = (app, options = { vision: {}, oruga: {} }) => {
     MappedComponents[name] = component
   })
 
+  app.config.globalProperties.$v = {
+    to: (name, params) => {
+      return {
+        name,
+        params
+      }
+    },
+  };
+
   errorHandlerSetup(options)
 }
 
