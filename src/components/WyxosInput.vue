@@ -70,23 +70,18 @@ export default {
   },
   methods: {
     onInput(value) {
-      if (!this.name) {
-        this.$emit('update:modelValue', value)
-
-        return
-      }
-
+      // Clearing the error if form object exists, else clear using errors helper.
       if (this.form) {
-        this.form.clearError(this.name)
-
-        this.$emit('update:modelValue', value)
-
-        return
+        this.form.clearError(this.name);
+      } else {
+        this.errors.clear(this.name, this.bag);
       }
 
-      this.errors.clear(this.name, this.bag)
+      console.log('new', this.name, value)
 
-      this.$emit('update:modelValue', value)
+      // Emitting the new value to the parent.
+      // This is all you need to update the parent's state.
+      this.$emit('update:modelValue', value);
     },
     getError() {
       if (!this.name) {
@@ -105,15 +100,15 @@ export default {
 <template>
   <o-field :label="label" :class="fieldClass" v-bind="{ ...getError() }">
     <o-input
-      :readonly="readonly"
-      :class="inputClass"
-      :root-class="inputRootClass"
-      :name="name"
-      :type="type"
-      :clearable="clearable"
-      :disabled="disabled"
-      :model-value="modelValue"
-      :placeholder="placeholder"
-      @update:model-value="onInput($event)"></o-input>
+        :readonly="readonly"
+        :class="inputClass"
+        :root-class="inputRootClass"
+        :name="name"
+        :type="type"
+        :clearable="clearable"
+        :disabled="disabled"
+        :model-value="modelValue"
+        :placeholder="placeholder"
+        @update:model-value="onInput($event)"></o-input>
   </o-field>
 </template>

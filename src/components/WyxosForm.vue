@@ -18,7 +18,7 @@ export default {
       default: null
     },
     reset: {
-      type: Boolean,
+      type: [Boolean, Function],
       default: false
     },
     formClass: {
@@ -36,7 +36,12 @@ export default {
       }
 
       if (this.reset) {
-        this.form.reset()
+        if (typeof this.reset === 'function') {
+          this.reset()
+        } else {
+          // Reset the entire form if reset is not a function
+          this.form.reset();
+        }
       }
 
       this.$emit('submitted')
