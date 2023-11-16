@@ -1,9 +1,3 @@
-<template>
-  <slot :logout="logout">
-    <button class="button is-primary" @click="logout()">Sign out</button>
-  </slot>
-</template>
-
 <script>
 import axios from 'axios'
 import errorHandler from '../utilities/errorHandler'
@@ -18,18 +12,18 @@ export default {
   },
   methods: {
     async logout() {
-      const { data } = await axios
-        .post(this.path)
-        .catch((error) => {
-          if (error.response.status === 401) {
-            window.location.href = '/'
+      const {data} = await axios
+          .post(this.path)
+          .catch((error) => {
+            if (error.response.status === 401) {
+              window.location.href = '/'
 
-            return
-          }
+              return
+            }
 
-          errorHandler(error)
-        })
-        .catch(errorHandler)
+            errorHandler(error)
+          })
+          .catch(errorHandler)
 
       console.log('data', data)
 
@@ -38,3 +32,9 @@ export default {
   }
 }
 </script>
+
+<template>
+  <slot :logout="logout">
+    <button class="button is-primary" @click="logout()">Sign out</button>
+  </slot>
+</template>
