@@ -1,5 +1,5 @@
 import { useProgrammatic } from '@oruga-ui/oruga-next'
-import WyxosPrompt from "../components/WyxosPrompt.vue";
+import WyxosPrompt from '../components/WyxosPrompt.vue'
 
 export default async function confirm(props = {}) {
   const { oruga } = useProgrammatic()

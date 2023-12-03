@@ -12,18 +12,18 @@ export default {
   },
   methods: {
     async logout() {
-      const {data} = await axios
-          .post(this.path)
-          .catch((error) => {
-            if (error.response.status === 401) {
-              window.location.href = '/'
+      const { data } = await axios
+        .post(this.path)
+        .catch((error) => {
+          if (error.response.status === 401) {
+            window.location.href = '/'
 
-              return
-            }
+            return
+          }
 
-            errorHandler(error)
-          })
-          .catch(errorHandler)
+          errorHandler(error)
+        })
+        .catch(errorHandler)
 
       console.log('data', data)
 
