@@ -77,8 +77,6 @@ export default {
         this.errors.clear(this.name, this.bag);
       }
 
-      console.log('new', this.name, value)
-
       // Emitting the new value to the parent.
       // This is all you need to update the parent's state.
       this.$emit('update:modelValue', value);

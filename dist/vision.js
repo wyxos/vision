@@ -1329,7 +1329,7 @@ const mt = /* @__PURE__ */ y(ct, [["render", ft]]), gt = /* @__PURE__ */ Object.
   },
   methods: {
     onInput(s) {
-      this.form ? this.form.clearError(this.name) : this.errors.clear(this.name, this.bag), console.log("new", this.name, s), this.$emit("update:modelValue", s);
+      this.form ? this.form.clearError(this.name) : this.errors.clear(this.name, this.bag), this.$emit("update:modelValue", s);
     },
     getError() {
       if (this.name)
@@ -2220,7 +2220,7 @@ class Vs {
         return Reflect.has(e, t) ? Reflect.get(e, t, r) : t in e.attributes ? e.attributes[t] : null;
       },
       set(e, t, r, i) {
-        return Reflect.has(e, t) ? Reflect.set(e, t, r, i) : t in e.attributes ? (e.attributes[t] = r, !0) : null;
+        return !Reflect.has(e, t) && !(t in e.attributes) ? (Reflect.set(e, t, r, i), !0) : t in e.attributes ? (e.attributes[t] = r, !0) : Reflect.set(e, t, r, i);
       }
     });
   }
@@ -2237,23 +2237,29 @@ class Vs {
     return !!this.attributes.user;
   }
   async load() {
-    this.state.loading(), await p.get("/sanctum/csrf-cookie").catch((t) => {
-      throw this.state.failed(), t;
+    this.loading(), await p.get("/sanctum/csrf-cookie").catch((t) => {
+      throw this.failed(), t;
     });
     const { data: e } = await p.get("/api/user");
     if (!("user" in e))
       throw Error("Instance of user is not defined.");
     Object.keys(e).forEach((t) => {
       this.attributes[t] = e[t];
-    }), this.state.loaded();
+    }), this.loaded();
   }
-  getUser() {
-    return this.attributes.user;
+  loading() {
+    return this.state.loading();
+  }
+  loaded() {
+    return this.state.loaded();
+  }
+  failed() {
+    return this.state.failed();
   }
   reset() {
     this.attributes = O({
       user: null
-    });
+    }), this.state.reset();
   }
 }
 const Us = new Vs();
