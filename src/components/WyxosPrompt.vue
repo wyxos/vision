@@ -56,7 +56,7 @@ export default {
 </script>
 
 <template>
-  <o-modal :active="true" @blur="$emit('close', {action: false})">
+  <o-modal :active="true" @blur="$emit('close', { action: false })">
     <h2>{{ title }}</h2>
     <p>{{ message }}</p>
     <div class="flex gap-6">

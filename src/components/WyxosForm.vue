@@ -40,7 +40,7 @@ export default {
           this.reset()
         } else {
           // Reset the entire form if reset is not a function
-          this.form.reset();
+          this.form.reset()
         }
       }
 

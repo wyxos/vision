@@ -62,8 +62,8 @@ export default {
     },
     updateQuery() {
       this.$emit(
-          'update:modelValue',
-          this.query ? moment(this.query).format(this.submitFormat) : null
+        'update:modelValue',
+        this.query ? moment(this.query).format(this.submitFormat) : null
       )
 
       this.form?.clearError(this.name)
@@ -75,9 +75,9 @@ export default {
 <template>
   <o-field :label="label" v-bind="form?.getError(name)">
     <o-datepicker
-        v-model="query"
-        v-bind="options"
-        :date-formatter="dateFormatter"
-        @update:model-value="updateQuery"></o-datepicker>
+      v-model="query"
+      v-bind="options"
+      :date-formatter="dateFormatter"
+      @update:model-value="updateQuery"></o-datepicker>
   </o-field>
 </template>

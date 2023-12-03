@@ -1846,7 +1846,7 @@ const me = /* @__PURE__ */ y(ts, [["render", rs]]), is = /* @__PURE__ */ Object.
       });
     }
   }
-}, ns = /* @__PURE__ */ h("i", { class: "fas fa-trash" }, null, -1), os = { class: "content p-6" }, ls = /* @__PURE__ */ h("h3", { class: "title" }, "Delete", -1), us = /* @__PURE__ */ h("p", { class: "mb-4" }, "Are you sur you want to delete this record?", -1), ds = { class: "buttons flex gap-6 justify-end" };
+}, ns = /* @__PURE__ */ h("i", { class: "fas fa-trash" }, null, -1), os = { class: "content p-6" }, ls = /* @__PURE__ */ h("h3", { class: "title" }, "Delete", -1), us = /* @__PURE__ */ h("p", { class: "mb-4" }, " Are you sur you want to delete this record? ", -1), ds = { class: "buttons flex gap-6 justify-end" };
 function cs(s, e, t, r, i, a) {
   const n = f("o-button"), o = f("w-button"), l = f("o-modal");
   return c(), v(o, {

@@ -1,6 +1,6 @@
 <script>
-import Listing from "../utilities/Listing.js";
-import FormBuilder from "../utilities/FormBuilder.js";
+import Listing from '../utilities/Listing.js'
+import FormBuilder from '../utilities/FormBuilder.js'
 
 export default {
   name: 'WyxosRemove',
@@ -31,19 +31,20 @@ export default {
     },
     remove() {
       // execute axios.delete pointing to the route received from props
-      this.destroy.delete(this.route)
-          .then(() => {
-            this.$emit('removed')
+      this.destroy
+        .delete(this.route)
+        .then(() => {
+          this.$emit('removed')
 
-            if (this.listing) {
-              this.listing.reload()
-            }
+          if (this.listing) {
+            this.listing.reload()
+          }
 
-            this.isVisible = false
-          })
-          .catch(() => {
-            this.$emit('failed')
-          })
+          this.isVisible = false
+        })
+        .catch(() => {
+          this.$emit('failed')
+        })
     }
   }
 }
@@ -56,10 +57,19 @@ export default {
       <o-modal v-model:active="isVisible">
         <div class="content p-6">
           <slot name="title"><h3 class="title">Delete</h3></slot>
-          <slot name="message"><p class="mb-4">Are you sur you want to delete this record?</p></slot>
+          <slot name="message"
+            ><p class="mb-4">
+              Are you sur you want to delete this record?
+            </p></slot
+          >
           <div class="buttons flex gap-6 justify-end">
-            <o-button class="button is-secondary" @click="isVisible = false">Cancel</o-button>
-            <w-button :loading="destroy.isSubmitting" class="button is-danger" @click="remove()">
+            <o-button class="button is-secondary" @click="isVisible = false"
+              >Cancel</o-button
+            >
+            <w-button
+              :loading="destroy.isSubmitting"
+              class="button is-danger"
+              @click="remove()">
               <slot name="confirm">Confirm</slot>
             </w-button>
           </div>
@@ -67,5 +77,4 @@ export default {
       </o-modal>
     </teleport>
   </w-button>
-
 </template>
