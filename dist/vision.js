@@ -942,7 +942,9 @@ class A {
   }
   get events() {
     return {
-      pageChange: (e) => this.onPageChange(e)
+      pageChange: (e) => {
+        e.preventDefault(), this.onPageChange(e);
+      }
     };
   }
   get isLoading() {
