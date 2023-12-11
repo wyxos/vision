@@ -83,7 +83,7 @@ export default {
     },
     getError() {
       if (!this.name) {
-        return
+        return this.errors.get(this.name)
       }
 
       if (this.form) {
@@ -98,15 +98,15 @@ export default {
 <template>
   <o-field :label="label" :class="fieldClass" v-bind="{ ...getError() }">
     <o-input
-      :readonly="readonly"
-      :class="inputClass"
-      :root-class="inputRootClass"
-      :name="name"
-      :type="type"
-      :clearable="clearable"
-      :disabled="disabled"
-      :model-value="modelValue"
-      :placeholder="placeholder"
-      @update:model-value="onInput($event)"></o-input>
+        :readonly="readonly"
+        :class="inputClass"
+        :root-class="inputRootClass"
+        :name="name"
+        :type="type"
+        :clearable="clearable"
+        :disabled="disabled"
+        :model-value="modelValue"
+        :placeholder="placeholder"
+        @update:model-value="onInput($event)"></o-input>
   </o-field>
 </template>
