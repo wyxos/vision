@@ -1333,8 +1333,7 @@ const ft = /* @__PURE__ */ y(ct, [["render", ht]]), mt = /* @__PURE__ */ Object.
       this.form ? this.form.clearError(this.name) : this.errors.clear(this.name, this.bag), this.$emit("update:modelValue", s);
     },
     getError() {
-      if (this.name)
-        return this.form ? this.form.getError(this.name) : this.errors.get(this.name);
+      return this.name ? this.form ? this.form.getError(this.name) : this.errors.get(this.name) : this.errors.get(this.name);
     }
   }
 };
