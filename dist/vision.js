@@ -253,7 +253,7 @@ function L() {
       const r = t.find(
         (i) => Array.isArray(s) ? s.includes(i.key) : i.key === s
       );
-      return console.log("target", s, r), r ? {
+      return r ? {
         message: r.message,
         variant: "danger"
       } : {
