@@ -10,7 +10,7 @@ export default {
       required: true
     },
     submit: {
-      type: Function,
+      type: [Function, Promise],
       default: null
     },
     listing: {
@@ -58,8 +58,8 @@ export default {
   <form v-if="form.isLoaded" :class="formClass" @submit.prevent="handle()">
     <slot></slot>
   </form>
-  <o-loading v-if="form.isLoading" :active="true"></o-loading>
-  <o-button v-if="form.isFailure" @click="form.load()">
+  <o-loading v-else-if="form.isLoading" :active="true"></o-loading>
+  <o-button v-else-if="form.isFailure" @click="form.load()">
     Error. Retry or refresh.
   </o-button>
 </template>
