@@ -1,6 +1,5 @@
 <script>
 import axios from 'axios'
-import errorHandler from '../utilities/errorHandler'
 
 export default {
   name: 'WyxosLogout',
@@ -12,20 +11,15 @@ export default {
   },
   methods: {
     async logout() {
-      const { data } = await axios
-        .post(this.path)
-        .catch((error) => {
-          if (error.response.status === 401) {
-            window.location.href = '/'
+      const {data} = await axios
+          .post(this.path)
+          .catch((error) => {
+            if (error.response.status === 401) {
+              window.location.href = '/'
+            }
 
-            return
-          }
-
-          errorHandler(error)
-        })
-        .catch(errorHandler)
-
-      console.log('data', data)
+            throw error
+          })
 
       window.location.href = data?.redirect || '/'
     }
