@@ -11,15 +11,13 @@ export default {
   },
   methods: {
     async logout() {
-      const {data} = await axios
-          .post(this.path)
-          .catch((error) => {
-            if (error.response.status === 401) {
-              window.location.href = '/'
-            }
+      const { data } = await axios.post(this.path).catch((error) => {
+        if (error.response.status === 401) {
+          window.location.href = '/'
+        }
 
-            throw error
-          })
+        throw error
+      })
 
       window.location.href = data?.redirect || '/'
     }
