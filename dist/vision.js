@@ -420,7 +420,7 @@ class C {
     return this.states.submit.loaded(), t;
   }
   async load(e = "", { updateLoading: t = !0, updateOriginal: r = !0, ...i } = {}) {
-    this.states.load.loading();
+    this.clearErrors(), this.states.load.loading();
     try {
       const { data: a } = await p.get(e || this.paths.load, i);
       return r && Object.assign(this.original, a.form), Object.assign(this.form, a.form), a.model && Object.assign(this.model, a.model), t && this.loaded(), a;
