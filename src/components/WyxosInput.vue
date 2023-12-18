@@ -58,6 +58,10 @@ export default {
     placeholder: {
       type: String,
       default: null
+    },
+    passwordReveal: {
+      type: Boolean,
+      default: false
     }
   },
   emits: ['update:modelValue'],
@@ -100,15 +104,16 @@ export default {
 <template>
   <o-field :label="label" :class="fieldClass" v-bind="getError">
     <o-input
-      :readonly="readonly"
-      :class="inputClass"
-      :root-class="inputRootClass"
-      :name="name"
-      :type="type"
-      :clearable="clearable"
-      :disabled="disabled"
-      :model-value="modelValue"
-      :placeholder="placeholder"
-      @update:model-value="onInput($event)"></o-input>
+        :readonly="readonly"
+        :class="inputClass"
+        :root-class="inputRootClass"
+        :name="name"
+        :type="type"
+        :clearable="clearable"
+        :disabled="disabled"
+        :model-value="modelValue"
+        :placeholder="placeholder"
+        :password-reveal="passwordReveal"
+        @update:model-value="onInput($event)"></o-input>
   </o-field>
 </template>
