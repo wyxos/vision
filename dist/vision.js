@@ -1,7 +1,7 @@
 var pe = Object.defineProperty;
 var ye = (s, e, t) => e in s ? pe(s, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : s[e] = t;
 var u = (s, e, t) => (ye(s, typeof e != "symbol" ? e + "" : e, t), t);
-import { resolveComponent as f, openBlock as c, createBlock as w, withCtx as m, renderSlot as q, createTextVNode as x, createCommentVNode as v, toDisplayString as b, createElementBlock as _, normalizeProps as W, guardReactiveProps as I, createElementVNode as h, reactive as O, createVNode as S, normalizeClass as A, mergeProps as T, defineComponent as X, withModifiers as G, createSlots as be, renderList as Z, Fragment as ee, Teleport as _e, ref as k } from "vue";
+import { resolveComponent as f, openBlock as c, createBlock as w, withCtx as m, renderSlot as q, createTextVNode as x, createCommentVNode as v, toDisplayString as b, createElementBlock as _, normalizeProps as W, guardReactiveProps as I, createElementVNode as h, reactive as O, createVNode as S, normalizeClass as A, mergeProps as T, defineComponent as X, withModifiers as G, createSlots as be, renderList as Z, Fragment as ee, Teleport as _e, ref as R } from "vue";
 import V from "moment";
 import p from "axios";
 import Se, { useProgrammatic as U } from "@oruga-ui/oruga-next";
@@ -177,11 +177,11 @@ const Te = {
       }), this.state.loaded()), this.$emit("close", { action: !0 });
     }
   }
-}, Le = { class: "bg-white p-6" }, Pe = { class: "title" }, Ve = { class: "mb-6" }, ke = {
+}, Le = { class: "bg-white p-6" }, Pe = { class: "title" }, Ve = { class: "mb-6" }, Re = {
   class: "buttons",
   role: "group"
 };
-function Re(s, e, t, r, i, a) {
+function ke(s, e, t, r, i, a) {
   const n = f("wyxos-button"), o = f("o-modal");
   return c(), w(o, {
     active: !0,
@@ -194,7 +194,7 @@ function Re(s, e, t, r, i, a) {
             h("h3", Pe, b(t.title), 1)
           ]),
           h("p", Ve, b(t.message), 1),
-          h("footer", ke, [
+          h("footer", Re, [
             S(n, {
               disabled: r.state.isLoading,
               class: "button secondary",
@@ -224,7 +224,7 @@ function Re(s, e, t, r, i, a) {
     _: 1
   });
 }
-const Ae = /* @__PURE__ */ y(Te, [["render", Re]]), We = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const Ae = /* @__PURE__ */ y(Te, [["render", ke]]), We = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: Ae
 }, Symbol.toStringTag, { value: "Module" })), E = O({
@@ -905,7 +905,7 @@ const K = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   stringify: ne,
   stringifyUrl: le
 }, Symbol.toStringTag, { value: "Module" }));
-class R {
+class k {
   constructor() {
     u(this, "cancelTokenSource", null);
     u(this, "api", null);
@@ -977,7 +977,7 @@ class R {
     return this.baseUrl = e, this;
   }
   static create(e = {}, t = {}) {
-    const r = new R();
+    const r = new k();
     return r.errors = L(), r.errors.createBag(this.errorBag), r.options = Object.assign(
       {
         enableSearchUpdate: !0,
@@ -1166,7 +1166,7 @@ const at = {
       default: null
     },
     listing: {
-      type: R,
+      type: k,
       default: null
     },
     reset: {
@@ -1319,6 +1319,10 @@ const ht = /* @__PURE__ */ y(ut, [["render", ct]]), ft = /* @__PURE__ */ Object.
     placeholder: {
       type: String,
       default: null
+    },
+    passwordReveal: {
+      type: Boolean,
+      default: !1
     }
   },
   emits: ["update:modelValue"],
@@ -1356,8 +1360,9 @@ function gt(s, e, t, r, i, a) {
         disabled: t.disabled,
         "model-value": t.modelValue,
         placeholder: t.placeholder,
+        "password-reveal": t.passwordReveal,
         "onUpdate:modelValue": e[0] || (e[0] = (l) => a.onInput(l))
-      }, null, 8, ["readonly", "class", "root-class", "name", "type", "clearable", "disabled", "model-value", "placeholder"])
+      }, null, 8, ["readonly", "class", "root-class", "name", "type", "clearable", "disabled", "model-value", "placeholder", "password-reveal"])
     ]),
     _: 1
   }, 16, ["label", "class"]);
@@ -1369,7 +1374,7 @@ const pt = /* @__PURE__ */ y(mt, [["render", gt]]), yt = /* @__PURE__ */ Object.
   name: "WyxosListing",
   props: {
     listing: {
-      type: R,
+      type: k,
       required: !0
     }
   },
@@ -1557,17 +1562,17 @@ const Tt = /* @__PURE__ */ y(Ct, [["render", Et]]), Lt = /* @__PURE__ */ Object.
       default: "percent"
     }
   }
-}), Vt = ["value", "max"], kt = { key: 0 };
-function Rt(s, e, t, r, i, a) {
+}), Vt = ["value", "max"], Rt = { key: 0 };
+function kt(s, e, t, r, i, a) {
   return c(), _(ee, null, [
     h("progress", {
       value: s.value,
       max: s.max
     }, null, 8, Vt),
-    s.showValue ? (c(), _("span", kt, b(s.value) + " / " + b(s.max), 1)) : v("", !0)
+    s.showValue ? (c(), _("span", Rt, b(s.value) + " / " + b(s.max), 1)) : v("", !0)
   ], 64);
 }
-const At = /* @__PURE__ */ y(Pt, [["render", Rt]]), Wt = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const At = /* @__PURE__ */ y(Pt, [["render", kt]]), Wt = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: At
 }, Symbol.toStringTag, { value: "Module" })), It = {
@@ -1656,7 +1661,7 @@ const de = /* @__PURE__ */ y(It, [["render", Bt]]), Ut = /* @__PURE__ */ Object.
   name: "WyxosRemove",
   props: {
     listing: {
-      type: R,
+      type: k,
       default: null
     },
     route: {
@@ -1970,8 +1975,8 @@ const ys = /* @__PURE__ */ y(ds, [["render", ps]]), bs = /* @__PURE__ */ Object.
 class z {
   constructor(e = {}) {
     u(this, "state", new F());
-    u(this, "result", k([]));
-    u(this, "value", k(null));
+    u(this, "result", R([]));
+    u(this, "value", R(null));
     u(this, "timeout", null);
     u(this, "options", {
       url: null,
@@ -2317,7 +2322,7 @@ class Ds {
 }
 class fe {
   constructor() {
-    u(this, "state", k(!1));
+    u(this, "state", R(!1));
   }
   get isVisible() {
     return this.state;
@@ -2426,8 +2431,8 @@ class Ys {
 }
 class Js {
   constructor(e) {
-    u(this, "current", k(null));
-    u(this, "history", k([]));
+    u(this, "current", R(null));
+    u(this, "history", R([]));
     u(this, "flow", []);
     this.current.value = e;
   }
@@ -2503,7 +2508,7 @@ class me {
 function Vs(s) {
   p.interceptors.response.use(null, (e) => Ps(e, s));
 }
-const Q = /* @__PURE__ */ Object.assign({ "./components/WyxosButton.vue": xe, "./components/WyxosCollection.vue": Ee, "./components/WyxosConfirm.vue": We, "./components/WyxosDatepicker.vue": Ue, "./components/WyxosError.vue": He, "./components/WyxosForm.vue": lt, "./components/WyxosImage.vue": ft, "./components/WyxosInput.vue": yt, "./components/WyxosListing.vue": Ot, "./components/WyxosLiveInput.vue": jt, "./components/WyxosLogout.vue": Lt, "./components/WyxosProgress.vue": Wt, "./components/WyxosPrompt.vue": Ut, "./components/WyxosRemove.vue": Xt, "./components/WyxosSelect.vue": ss, "./components/WyxosSessionExpired.vue": us, "./components/WyxosSubmit.vue": bs, "./components/WyxosTags.vue": vs, "./components/WyxosTokenExpired.vue": Cs }), ge = {}, ks = (s, e = { vision: {}, oruga: {} }) => {
+const Q = /* @__PURE__ */ Object.assign({ "./components/WyxosButton.vue": xe, "./components/WyxosCollection.vue": Ee, "./components/WyxosConfirm.vue": We, "./components/WyxosDatepicker.vue": Ue, "./components/WyxosError.vue": He, "./components/WyxosForm.vue": lt, "./components/WyxosImage.vue": ft, "./components/WyxosInput.vue": yt, "./components/WyxosListing.vue": Ot, "./components/WyxosLiveInput.vue": jt, "./components/WyxosLogout.vue": Lt, "./components/WyxosProgress.vue": Wt, "./components/WyxosPrompt.vue": Ut, "./components/WyxosRemove.vue": Xt, "./components/WyxosSelect.vue": ss, "./components/WyxosSessionExpired.vue": us, "./components/WyxosSubmit.vue": bs, "./components/WyxosTags.vue": vs, "./components/WyxosTokenExpired.vue": Cs }), ge = {}, Rs = (s, e = { vision: {}, oruga: {} }) => {
   s.use(Se, e.oruga), Object.keys(Q).forEach((t) => {
     const r = Q[t];
     if (r && r.default) {
@@ -2518,13 +2523,13 @@ const Q = /* @__PURE__ */ Object.assign({ "./components/WyxosButton.vue": xe, ".
     })
   }, Vs(e);
 }, Ks = {
-  install: ks,
+  install: Rs,
   ...ge
 };
 export {
   Ds as FileRequest,
   C as FormBuilder,
-  R as Listing,
+  k as Listing,
   F as LoadState,
   fe as Modal,
   zs as Option,
