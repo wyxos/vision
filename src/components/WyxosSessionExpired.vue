@@ -6,11 +6,8 @@ export default {
   emits: ['close'],
   setup() {
     const login = FormBuilder.create({
-      form: {
-        email: null,
-        password: null
-      },
-      submitPath: ``
+      email: null,
+      password: null
     })
 
     return {

@@ -1831,11 +1831,8 @@ const ts = /* @__PURE__ */ y(Gt, [["render", es]]), ss = /* @__PURE__ */ Object.
   setup() {
     return {
       login: C.create({
-        form: {
-          email: null,
-          password: null
-        },
-        submitPath: ""
+        email: null,
+        password: null
       })
     };
   },
