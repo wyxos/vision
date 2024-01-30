@@ -68,18 +68,18 @@ export default {
       if (this.modelValue && this.modelValue.length) {
         this.isInternalChange = true
 
-        const {result} = await this.search.restore(
-            this.path,
-            this.restoreFormatter({
-              values: this.modelValue
-            })
+        const { result } = await this.search.restore(
+          this.path,
+          this.restoreFormatter({
+            values: this.modelValue
+          })
         )
 
         this.query = result
 
         this.$emit(
-            'update:modelValue',
-            this.query.map((value) => this.formatter(value))
+          'update:modelValue',
+          this.query.map((value) => this.formatter(value))
         )
         this.$emit('update:query', this.query)
       }
@@ -90,8 +90,8 @@ export default {
         payload: this.payloadFormatter({
           value,
           exclude: this.query
-              .map((item) => this.excludeFormatter(item))
-              .filter(Boolean)
+            .map((item) => this.excludeFormatter(item))
+            .filter(Boolean)
         })
       })
     },
@@ -136,15 +136,15 @@ export default {
 </script>
 <template>
   <o-inputitems
-      ref="tagInput"
-      v-model="query"
-      :data="search.result.value"
-      :open-on-focus="openOnFocus"
-      allow-autocomplete
-      v-bind="$attrs"
-      @add="addedTag($event)"
-      @remove="removedTag($event)"
-      @typing="searchTags($event)"
-      @focus="searchTags('')">
+    ref="tagInput"
+    v-model="query"
+    :data="search.result.value"
+    :open-on-focus="openOnFocus"
+    allow-autocomplete
+    v-bind="$attrs"
+    @add="addedTag($event)"
+    @remove="removedTag($event)"
+    @typing="searchTags($event)"
+    @focus="searchTags('')">
   </o-inputitems>
 </template>
