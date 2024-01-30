@@ -528,7 +528,7 @@ const Ie = {
     }
   }
 };
-function Ne(s, e, t, r, i, a) {
+function Be(s, e, t, r, i, a) {
   var l;
   const n = f("o-datepicker"), o = f("o-field");
   return c(), w(o, T({ label: t.label }, (l = t.form) == null ? void 0 : l.getError(t.name)), {
@@ -544,9 +544,9 @@ function Ne(s, e, t, r, i, a) {
     _: 1
   }, 16, ["label"]);
 }
-const Be = /* @__PURE__ */ y(Ie, [["render", Ne]]), Ue = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const Ne = /* @__PURE__ */ y(Ie, [["render", Be]]), Ue = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
-  default: Be
+  default: Ne
 }, Symbol.toStringTag, { value: "Module" })), Me = X({
   name: "WyxosError",
   props: {
@@ -573,7 +573,7 @@ const Je = /* @__PURE__ */ y(Me, [["render", Ye]]), He = /* @__PURE__ */ Object.
   __proto__: null,
   default: Je
 }, Symbol.toStringTag, { value: "Module" })), te = "%[a-f0-9]{2}", Y = new RegExp("(" + te + ")|([^%]+?)", "gi"), J = new RegExp("(" + te + ")+", "gi");
-function N(s, e) {
+function B(s, e) {
   try {
     return [decodeURIComponent(s.join(""))];
   } catch {
@@ -582,7 +582,7 @@ function N(s, e) {
     return s;
   e = e || 1;
   const t = s.slice(0, e), r = s.slice(e);
-  return Array.prototype.concat.call([], N(t), N(r));
+  return Array.prototype.concat.call([], B(t), B(r));
 }
 function Ke(s) {
   try {
@@ -590,7 +590,7 @@ function Ke(s) {
   } catch {
     let e = s.match(Y) || [];
     for (let t = 1; t < e.length; t++)
-      s = N(e, t).join(""), e = s.match(Y) || [];
+      s = B(e, t).join(""), e = s.match(Y) || [];
     return s;
   }
 }
@@ -652,7 +652,7 @@ function Ge(s, e) {
     }
   return t;
 }
-const Ze = (s) => s == null, et = (s) => encodeURIComponent(s).replace(/[!'()*]/g, (e) => `%${e.charCodeAt(0).toString(16).toUpperCase()}`), B = Symbol("encodeFragmentIdentifier");
+const Ze = (s) => s == null, et = (s) => encodeURIComponent(s).replace(/[!'()*]/g, (e) => `%${e.charCodeAt(0).toString(16).toUpperCase()}`), N = Symbol("encodeFragmentIdentifier");
 function tt(s) {
   switch (s.arrayFormat) {
     case "index":
@@ -862,7 +862,7 @@ function le(s, e) {
   e = {
     encode: !0,
     strict: !0,
-    [B]: !0,
+    [N]: !0,
     ...e
   };
   const t = ae(s.url).split("?")[0] || "", r = M(s.url), i = {
@@ -874,14 +874,14 @@ function le(s, e) {
   let n = rt(s.url);
   if (s.fragmentIdentifier) {
     const o = new URL(t);
-    o.hash = s.fragmentIdentifier, n = e[B] ? o.hash : `#${s.fragmentIdentifier}`;
+    o.hash = s.fragmentIdentifier, n = e[N] ? o.hash : `#${s.fragmentIdentifier}`;
   }
   return `${t}${a}${n}`;
 }
 function ue(s, e, t) {
   t = {
     parseFragmentIdentifier: !0,
-    [B]: !1,
+    [N]: !1,
     ...t
   };
   const { url: r, query: i, fragmentIdentifier: a } = oe(s, t);
@@ -1616,8 +1616,8 @@ const At = /* @__PURE__ */ y(Pt, [["render", kt]]), Wt = /* @__PURE__ */ Object.
       }), this.state.loaded()), this.$emit("close", { action: !0 });
     }
   }
-}, Nt = { class: "flex gap-6" };
-function Bt(s, e, t, r, i, a) {
+}, Bt = { class: "flex gap-6" };
+function Nt(s, e, t, r, i, a) {
   const n = f("wyxos-button"), o = f("o-modal");
   return c(), w(o, {
     active: !0,
@@ -1626,7 +1626,7 @@ function Bt(s, e, t, r, i, a) {
     default: m(() => [
       h("h2", null, b(t.title), 1),
       h("p", null, b(t.message), 1),
-      h("div", Nt, [
+      h("div", Bt, [
         S(n, {
           disabled: r.state.isLoading,
           class: "button is-danger",
@@ -1654,7 +1654,7 @@ function Bt(s, e, t, r, i, a) {
     _: 1
   });
 }
-const de = /* @__PURE__ */ y(It, [["render", Bt]]), Ut = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const de = /* @__PURE__ */ y(It, [["render", Nt]]), Ut = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: de
 }, Symbol.toStringTag, { value: "Module" })), Mt = {
@@ -2049,6 +2049,10 @@ const _s = {
     payloadFormatter: {
       type: Function,
       default: (s) => s
+    },
+    openOnFocus: {
+      type: Boolean,
+      default: !1
     }
   },
   emits: ["update:modelValue", "update:query"],
@@ -2115,6 +2119,9 @@ const _s = {
     },
     addItem() {
       this.$refs.tagInput.addItem();
+    },
+    focus() {
+      console.log(this.openOnFocus), this.openOnFocus && this.searchTags("");
     }
   }
 };
@@ -2125,12 +2132,14 @@ function Ss(s, e, t, r, i, a) {
     modelValue: i.query,
     "onUpdate:modelValue": e[0] || (e[0] = (o) => i.query = o),
     data: r.search.result.value,
+    "open-on-focus": t.openOnFocus,
     "allow-autocomplete": ""
   }, s.$attrs, {
     onAdd: e[1] || (e[1] = (o) => a.addedTag(o)),
     onRemove: e[2] || (e[2] = (o) => a.removedTag(o)),
-    onTyping: e[3] || (e[3] = (o) => a.searchTags(o))
-  }), null, 16, ["modelValue", "data"]);
+    onTyping: e[3] || (e[3] = (o) => a.searchTags(o)),
+    onFocus: e[4] || (e[4] = (o) => a.searchTags(""))
+  }), null, 16, ["modelValue", "data", "open-on-focus"]);
 }
 const ws = /* @__PURE__ */ y(_s, [["render", Ss]]), vs = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
@@ -2224,7 +2233,7 @@ class Es {
     }), this.state.reset();
   }
 }
-const Bs = new Es();
+const Ns = new Es();
 async function Us(s = {}) {
   const { oruga: e } = U();
   return (await e.modal.open({
@@ -2537,7 +2546,7 @@ export {
   Oe as WyxosButton,
   Ce as WyxosCollection,
   Ae as WyxosConfirm,
-  Be as WyxosDatepicker,
+  Ne as WyxosDatepicker,
   Je as WyxosError,
   ot as WyxosForm,
   ht as WyxosImage,
@@ -2553,7 +2562,7 @@ export {
   ys as WyxosSubmit,
   ws as WyxosTags,
   he as WyxosTokenExpired,
-  Bs as auth,
+  Ns as auth,
   Us as confirm,
   Ms as dateRender,
   Ks as default,
