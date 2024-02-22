@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
-import { program } from "commander";
+import {program} from "commander";
 import fs from "fs";
 import path from "path";
-import { fileURLToPath, pathToFileURL } from 'url';
+import {fileURLToPath, pathToFileURL} from 'url';
 
 async function setupProgram() {
     program.version("0.0.1");
@@ -26,7 +26,10 @@ async function setupProgram() {
             program
                 .command(instance.signature)
                 .description(instance.description)
-                .action(() => instance.handle());
+                .action((...args) => {
+                    const options = args.pop();
+                    instance.handle(...args);
+                });
         }
     }
 
