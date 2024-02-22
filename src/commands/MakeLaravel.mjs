@@ -8,21 +8,27 @@ import os from "os";
 
 const CONFIG_PATH = path.join(os.homedir(), '.vision', 'config.json');
 
-export default class SetupLaravel extends Command {
-    signature = "setup:laravel <projectName>";
+export default class MakeLaravel extends Command {
+    signature = "make:laravel <projectName>";
     description = "Automate setup of a Laravel project in Homestead.";
+    config = null
+    projectName = null
 
     async handle(projectName) {
+        this.projectName = projectName
+
         try {
             this.checkAdminPrivileges();
-            const config = await this.getConfig();
+            this.config = await this.getConfig();
             // Extract necessary parts from the config
-            const {homesteadDir, projectMapping, projectSubPath} = config;
+            const {homesteadDir, projectMapping, projectSubPath} = this.config;
 
             // Adjust the createLaravelProject call to include new parameters
-            await this.createLaravelProject(projectName, projectMapping, projectSubPath, homesteadDir)
-            await this.updateHomesteadYaml(projectName, homesteadDir, projectMapping, projectSubPath)
-            await this.updateWindowsHostsFile(projectName, homesteadDir)
+            await this.createLaravelProject()
+            await this.updateHomesteadYaml()
+            await this.updateWindowsHostsFile(this.projectName, homesteadDir)
+
+            await this.postSetup()
 
             // Reload Homestead
             console.log('Reloading Homestead...');
@@ -30,50 +36,133 @@ export default class SetupLaravel extends Command {
                 stdio: ['ignore', 'ignore', 'pipe'] // Ignore stdout and stdin, but capture stderr
             });
 
-            // Correct Windows path for NPM operations
-            const projectPathOnWindows = path.join(config.projectMapping.map, config.projectSubPath, projectName).replace(/\\/g, '/');
+            await this.nodeDependencies()
 
-            // Prompt for NPM package installation
-            const {installNpm} = await inquirer.prompt({
-                type: 'confirm',
-                name: 'installNpm',
-                message: 'Do you want to install NPM packages now?',
-                default: true,
-            });
-
-            if (installNpm) {
-                console.log('Installing NPM packages...');
-                execSync(`cd "${projectPathOnWindows}" && npm install`, {stdio: 'inherit'});
-            }
-
-            // Prompt for compiling for development
-            const {compileDev} = await inquirer.prompt({
-                type: 'confirm',
-                name: 'compileDev',
-                message: 'Do you want to compile for development now?',
-                default: true,
-            });
-
-            if (compileDev) {
-                console.log('Compiling for development...');
-                execSync(`cd "${projectPathOnWindows}" && npm run dev`, {stdio: 'inherit'});
-            }
-
-            console.log(`Laravel project created: ${projectName}`);
-            console.log(`\nYou can now access your project at https://${projectName}.test`);
+            console.log(`Laravel project created: ${this.projectName}`);
+            console.log(`\nYou can now access your project at https://${this.projectName}.test`);
         } catch (error) {
-            console.log(`Setup failed for ${projectName}: ${error.message}`);
+            console.log(`Setup failed for ${this.projectName}: ${error.message}`);
             console.error(`Consider checking your Homestead.yaml configuration or ensuring your Homestead VM is running.`);
             throw error
         }
     }
 
-    createLaravelProject(projectName, projectMapping, projectSubPath, homesteadDir) {
+    appendToFile(filePath, content) {
+        fs.appendFileSync(filePath, content, {encoding: 'utf8'});
+    }
+
+    git(command, cwd) {
+        execSync(`git ${command}`, {stdio: 'inherit', cwd});
+    }
+
+    getHomesteadProjectPath() {
+        return path.join(this.config.projectMapping.to, this.config.projectSubPath, this.projectName).replace(/\\/g, '/');
+    }
+
+    composer(command) {
+        const cmd = `vagrant ssh -c "cd ${this.getHomesteadProjectPath()} && composer ${command}"`;
+        this.executeInHomestead(cmd, this.config.homesteadDir);
+    }
+
+    artisan(command) {
+        const cmd = `vagrant ssh -c "cd ${this.getHomesteadProjectPath()} && php artisan ${command}"`;
+        this.executeInHomestead(cmd, this.config.homesteadDir);
+    }
+
+    executeInHomestead(command, cwd) {
+        try {
+            execSync(command, {stdio: 'inherit', cwd});
+        } catch (error) {
+            console.error(`Command failed: ${error.message}`);
+            throw error
+        }
+    }
+
+    async nodeDependencies() {
+        // Correct Windows path for NPM operations
+        const projectPathOnWindows = path.join(this.config.projectMapping.map, this.config.projectSubPath, this.projectName).replace(/\\/g, '/');
+
+        // Prompt for NPM package installation
+        const {installNpm} = await inquirer.prompt({
+            type: 'confirm',
+            name: 'installNpm',
+            message: 'Do you want to install NPM packages now?',
+            default: true,
+        });
+
+        if (installNpm) {
+            console.log('Installing NPM packages...');
+            execSync(`cd "${projectPathOnWindows}" && npm install`, {stdio: 'inherit'});
+        }
+
+        // Prompt for compiling for development
+        const {compileDev} = await inquirer.prompt({
+            type: 'confirm',
+            name: 'compileDev',
+            message: 'Do you want to compile for development now?',
+            default: true,
+        });
+
+        if (compileDev) {
+            console.log('Compiling for development...');
+            execSync(`cd "${projectPathOnWindows}" && npm run dev`, {stdio: 'inherit'});
+        }
+    }
+
+    async postSetup() {
+        const projectPathOnWindows = path.join(this.config.projectMapping.map, this.config.projectSubPath, this.projectName).replace(/\\/g, '/');
+
+        try {
+            try {
+                // Construct the path to the composer.lock file
+                const composerLockPath = path.join(projectPathOnWindows, 'composer.lock');
+
+                // Check if the file exists before trying to delete it
+                if (fs.existsSync(composerLockPath)) {
+                    fs.unlinkSync(composerLockPath);
+                    console.log('composer.lock removed successfully.');
+                } else {
+                    console.log('composer.lock does not exist, no need to remove.');
+                }
+            } catch (error) {
+                console.error(`Failed to remove composer.lock: ${error.message}`);
+                throw error
+            }
+
+            // Append entries to .gitignore
+            const gitignorePath = path.join(projectPathOnWindows, '.gitignore');
+            this.appendToFile(gitignorePath, '/package-lock.json\n/composer.lock\n/.env.testing\n');
+
+            console.log('Initializing git...');
+            this.git('init', projectPathOnWindows);
+
+            this.git('add .', projectPathOnWindows);
+
+            this.git('commit -m "feat: initial commit"', projectPathOnWindows);
+
+            // Composer and Artisan commands
+            this.composer('require wyxos/harmonie');
+            this.composer('require laravel/breeze --dev');
+            this.artisan('breeze:install');
+
+            // More Composer and Artisan commands as per your requirements...
+
+            console.log('Post-setup tasks completed successfully.');
+        } catch (error) {
+            console.error(`Post-setup tasks failed: ${error.message}`);
+            // Handle errors or rethrow as needed
+            throw error
+        }
+    }
+
+    createLaravelProject() {
+        const {projectMapping, projectSubPath, homesteadDir} = this.config
+
         return new Promise((resolve, reject) => {
             // Ensure we're executing the command in the Homestead directory
             // Windows CMD command to change directory and execute vagrant ssh
             console.log('SSH into Vagrant and creating the project...');
-            const cmd = `cd /d "${homesteadDir}" && vagrant ssh -c "cd ${projectMapping.to.replace(/\\/g, '/')}/${projectSubPath} && laravel new ${projectName}"`;
+            const cmd = `cd /d "${homesteadDir}" && vagrant ssh -c "cd ${projectMapping.to.replace(/\\/g, '/')}/${projectSubPath} && laravel new ${this.projectName}"`;
 
             exec(cmd, {shell: 'cmd.exe'}, (error, stdout, stderr) => {
                 if (error) {
@@ -82,7 +171,7 @@ export default class SetupLaravel extends Command {
                 }
                 console.log(stdout);
 
-                console.log(`Project ${projectName} created.`)
+                console.log(`Project ${this.projectName} created.`)
                 resolve();
             });
         });
@@ -98,32 +187,33 @@ export default class SetupLaravel extends Command {
         }
     }
 
-    updateHomesteadYaml(projectName, homesteadDir, projectMapping, projectSubPath) {
+    updateHomesteadYaml() {
+        const {homesteadDir, projectMapping, projectSubPath} = this.config
         console.log('Updating Homestead.yaml...');
         const homesteadPath = path.join(homesteadDir, 'Homestead.yaml');
         const yamlContent = fs.readFileSync(homesteadPath, 'utf8');
         let homesteadConfig = yaml.load(yamlContent);
 
         // Construct the correct 'to' path by incorporating the projectMapping and projectSubPath
-        const fullPathTo = path.join(projectMapping.to, projectSubPath, projectName, "public").replace(/\\/g, '/');
+        const fullPathTo = path.join(projectMapping.to, projectSubPath, this.projectName, "public").replace(/\\/g, '/');
 
         // Check if the site already exists
-        const siteExists = homesteadConfig.sites.some(site => site.map === `${projectName}.test`);
+        const siteExists = homesteadConfig.sites.some(site => site.map === `${this.projectName}.test`);
         if (!siteExists) {
             homesteadConfig.sites.push({
-                map: `${projectName}.test`,
+                map: `${this.projectName}.test`,
                 to: fullPathTo
             });
         } else {
-            console.log(`Site entry for ${projectName}.test already exists.`);
+            console.log(`Site entry for ${this.projectName}.test already exists.`);
         }
 
         // Check if the database already exists
-        const dbExists = homesteadConfig.databases.includes(projectName);
+        const dbExists = homesteadConfig.databases.includes(this.projectName);
         if (!dbExists) {
-            homesteadConfig.databases.push(projectName);
+            homesteadConfig.databases.push(this.projectName);
         } else {
-            console.log(`Database entry for ${projectName} already exists.`);
+            console.log(`Database entry for ${this.projectName} already exists.`);
         }
 
         // Only write back to Homestead.yaml if changes were made
@@ -136,7 +226,7 @@ export default class SetupLaravel extends Command {
         }
     }
 
-    async updateWindowsHostsFile(projectName, homesteadDir) {
+    async updateWindowsHostsFile(homesteadDir) {
         console.log('Updating Windows hosts file...');
         // Define the path to the Homestead.yaml file
         const homesteadPath = path.join(homesteadDir, 'Homestead.yaml');
@@ -151,7 +241,7 @@ export default class SetupLaravel extends Command {
 
             // Define the hosts file path and the entry to append
             const hostsPath = 'C:/Windows/System32/drivers/etc/hosts';
-            const entry = `${ipAddress} ${projectName}.test`;
+            const entry = `${ipAddress} ${this.projectName}.test`;
 
             // Read the current content of the hosts file
             const hostsContent = fs.readFileSync(hostsPath, 'utf8');
@@ -160,9 +250,9 @@ export default class SetupLaravel extends Command {
             if (!hostsContent.includes(entry)) {
                 // Append the new entry to the hosts file
                 fs.appendFileSync(hostsPath, `\n${entry}`);
-                console.log(`Windows hosts file updated with ${projectName}.test`);
+                console.log(`Windows hosts file updated with ${this.projectName}.test`);
             } else {
-                console.log(`The host entry for ${projectName}.test already exists. No update needed.`);
+                console.log(`The host entry for ${this.projectName}.test already exists. No update needed.`);
             }
         } catch (error) {
             console.error(`Failed to update Windows hosts file: ${error.message}`);
