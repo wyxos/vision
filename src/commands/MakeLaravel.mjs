@@ -92,7 +92,9 @@ export default class MakeLaravel extends Command {
 
         if (installNpm) {
             console.log('Installing NPM packages...');
-            execSync(`cd "${projectPathOnWindows}" && npm install`, {stdio: 'inherit'});
+            execSync(`cd "${projectPathOnWindows}" && npm install`, {
+                stdio: ['ignore', 'ignore', 'pipe'] // Ignore stdout and stdin, but capture stderr
+            });
         }
 
         // Prompt for compiling for development
