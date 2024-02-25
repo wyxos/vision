@@ -1,0 +1,12 @@
+@import '@oruga-ui/oruga-next/dist/oruga.min.css';
+
+@import 'tailwindcss/base';
+
+@import 'tailwindcss/components';
+@import './button.css';
+
+@import 'tailwindcss/utilities';
+
+html {
+    @apply scroll-smooth
+}

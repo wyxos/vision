@@ -1,0 +1,9 @@
+{
+  "phpVersion": "8.1",
+  "trailingComma": "none",
+  "bracketSameLine": true,
+  "semi": false,
+  "singleQuote": true,
+  "trailingCommaPHP": false,
+  "printWidth": 120
+}

@@ -5,6 +5,11 @@ import yaml from 'js-yaml';
 import Command from "../Command.mjs";
 import inquirer from "inquirer";
 import os from "os";
+import {fileURLToPath} from 'url';
+import {dirname, join} from 'path';
+
+// Derive the directory name of the current module
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const CONFIG_PATH = path.join(os.homedir(), '.vision', 'config.json');
 
@@ -26,15 +31,17 @@ export default class MakeLaravel extends Command {
             // Adjust the createLaravelProject call to include new parameters
             await this.createLaravelProject()
             await this.updateHomesteadYaml()
-            await this.updateWindowsHostsFile(this.projectName, homesteadDir)
+            await this.updateWindowsHostsFile(homesteadDir)
 
             await this.postSetup()
 
             // Reload Homestead
             console.log('Reloading Homestead...');
-            execSync(`cd /d "${homesteadDir}" && vagrant reload --provision`, {
-                stdio: ['ignore', 'ignore', 'pipe'] // Ignore stdout and stdin, but capture stderr
-            });
+            this.execSyncSilent(`cd /d "${homesteadDir}" && vagrant reload --provision`);
+
+            await this.copyStubsToProject()
+
+            await this.updateEnvFile()
 
             await this.nodeDependencies()
 
@@ -47,12 +54,63 @@ export default class MakeLaravel extends Command {
         }
     }
 
+    copyStubsToProject() {
+        console.log('Scaffolding...');
+        const projectPathOnWindows = path.join(this.config.projectMapping.map, this.config.projectSubPath, this.projectName).replace(/\\/g, '/');
+
+        // Your existing approach to determine the source directory
+        const src = path.join(__dirname, '..', '..', 'stubs');
+        const dest = projectPathOnWindows;
+
+        // Start the copying process
+        this.copyDirectoryRecursive(src, dest);
+
+        // Git commands remain unchanged
+        this.git('add .', projectPathOnWindows);
+        this.git('commit -m "chore: scaffold"', projectPathOnWindows);
+    }
+
+    copyDirectoryRecursive(src, dest) {
+        // Ensure the destination directory exists
+        if (!fs.existsSync(dest)) {
+            fs.mkdirSync(dest, {recursive: true});
+        }
+
+        // Read the source directory contents
+        const entries = fs.readdirSync(src, {withFileTypes: true});
+
+        entries.forEach(entry => {
+            const srcPath = path.join(src, entry.name);
+            const destPath = path.join(dest, entry.name);
+
+            if (entry.isDirectory()) {
+                // Recurse into the subdirectory
+                this.copyDirectoryRecursive(srcPath, destPath);
+            } else {
+                // Copy the file from srcPath to destPath
+                fs.copyFileSync(srcPath, destPath);
+            }
+        });
+    }
+
+    execSyncSilent(command, options = {}) {
+        try {
+            return execSync(command, {
+                stdio: ['ignore', 'ignore', 'pipe'],
+                ...options,
+            })
+        } catch (error) {
+            console.error(`Command failed: ${error.message}`);
+            throw error
+        }
+    }
+
     appendToFile(filePath, content) {
         fs.appendFileSync(filePath, content, {encoding: 'utf8'});
     }
 
     git(command, cwd) {
-        execSync(`git ${command}`, {stdio: 'inherit', cwd});
+        this.execSyncSilent(`git ${command}`, {cwd});
     }
 
     getHomesteadProjectPath() {
@@ -60,22 +118,57 @@ export default class MakeLaravel extends Command {
     }
 
     composer(command) {
-        const cmd = `vagrant ssh -c "cd ${this.getHomesteadProjectPath()} && composer ${command}"`;
-        this.executeInHomestead(cmd, this.config.homesteadDir);
+        const cmd = `cd /d "${this.config.homesteadDir}" && vagrant ssh -c "cd ${this.getHomesteadProjectPath()} && composer ${command}"`;
+        try {
+            execSync(cmd, {stdio: 'inherit'});
+        } catch (error) {
+            console.error(`Composer command failed: ${error}`);
+            throw new Error(`Failed to execute composer command: ${command}`);
+        }
     }
 
     artisan(command) {
-        const cmd = `vagrant ssh -c "cd ${this.getHomesteadProjectPath()} && php artisan ${command}"`;
-        this.executeInHomestead(cmd, this.config.homesteadDir);
+        const cmd = `cd /d "${this.config.homesteadDir}" && vagrant ssh -c "cd ${this.getHomesteadProjectPath()} && php artisan ${command}"`;
+        try {
+            execSync(cmd, {stdio: 'inherit'});
+        } catch (error) {
+            console.error(`Artisan command failed: ${error}`);
+            throw new Error(`Failed to execute artisan command: ${command}`);
+        }
     }
 
-    executeInHomestead(command, cwd) {
-        try {
-            execSync(command, {stdio: 'inherit', cwd});
-        } catch (error) {
-            console.error(`Command failed: ${error.message}`);
-            throw error
-        }
+    async updateEnvFile() {
+        const projectPath = path.join(this.config.projectMapping.map, this.config.projectSubPath, this.projectName).replace(/\\/g, '/');
+        const envFilePath = path.join(projectPath, '.env');
+        const envContents = fs.readFileSync(envFilePath, 'utf-8');
+        const lines = envContents.split(/\r?\n/);
+
+        // Extract the domain from APP_URL
+        const appUrlMatch = envContents.match(/^APP_URL=(https?:\/\/)?(.+)$/m);
+        const appDomain = appUrlMatch ? appUrlMatch[2] : 'example.test';
+
+        const updatedLines = lines.map(line => {
+            if (line.startsWith('APP_URL=')) {
+                return `APP_URL=https://\${appDomain}`;
+            } else if (line.startsWith('DB_USERNAME=')) {
+                return 'DB_USERNAME=homestead';
+            } else if (line.startsWith('DB_PASSWORD=')) {
+                return 'DB_PASSWORD=secret';
+            } else if (line.startsWith('MAIL_FROM_ADDRESS=')) {
+                return `MAIL_FROM_ADDRESS=hello@$\${appDomain}`;
+            } else {
+                return line;
+            }
+        });
+
+        // Add new entries
+        updatedLines.push(`APP_DOMAIN=\${appDomain}`);
+        updatedLines.push(`SANCTUM_STATEFUL_DOMAINS=\${appDomain}`);
+        updatedLines.push(`SESSION_DOMAIN=.\${appDomain}`);
+        updatedLines.push(`SESSION_SECURE_COOKIE=true`);
+
+        // Write the updated content back to the .env file
+        fs.writeFileSync(envFilePath, updatedLines.join('\n'));
     }
 
     async nodeDependencies() {
@@ -83,32 +176,43 @@ export default class MakeLaravel extends Command {
         const projectPathOnWindows = path.join(this.config.projectMapping.map, this.config.projectSubPath, this.projectName).replace(/\\/g, '/');
 
         // Prompt for NPM package installation
-        const {installNpm} = await inquirer.prompt({
-            type: 'confirm',
-            name: 'installNpm',
-            message: 'Do you want to install NPM packages now?',
-            default: true,
-        });
+        // const {installNpm} = await inquirer.prompt({
+        //     type: 'confirm',
+        //     name: 'installNpm',
+        //     message: 'Do you want to install NPM packages now?',
+        //     default: true,
+        // });
 
-        if (installNpm) {
-            console.log('Installing NPM packages...');
-            execSync(`cd "${projectPathOnWindows}" && npm install`, {
-                stdio: ['ignore', 'ignore', 'pipe'] // Ignore stdout and stdin, but capture stderr
-            });
-        }
+        // if (installNpm) {
+        console.log('Installing NPM packages...');
+        this.execSyncSilent(`cd "${projectPathOnWindows}" && npm install`);
+        // }
+
+        // Prompt for opening the project in PHPStorm
+        // const {openInPhpStorm} = await inquirer.prompt({
+        //     type: 'confirm',
+        //     name: 'openInPhpStorm',
+        //     message: 'Do you want to open the project in PHPStorm now?',
+        //     default: false, // Defaulting to false to not assume all users utilize PHPStorm
+        // });
+        //
+        // if (openInPhpStorm) {
+        //     console.log('Opening the project in PHPStorm...');
+        // }
+        this.execSyncSilent(`cd "${projectPathOnWindows}" && ps .`, {shell: true});
 
         // Prompt for compiling for development
-        const {compileDev} = await inquirer.prompt({
-            type: 'confirm',
-            name: 'compileDev',
-            message: 'Do you want to compile for development now?',
-            default: true,
-        });
+        // const {compileDev} = await inquirer.prompt({
+        //     type: 'confirm',
+        //     name: 'compileDev',
+        //     message: 'Do you want to compile for development now?',
+        //     default: true,
+        // });
 
-        if (compileDev) {
-            console.log('Compiling for development...');
-            execSync(`cd "${projectPathOnWindows}" && npm run dev`, {stdio: 'inherit'});
-        }
+        // if (compileDev) {
+        //     console.log('Compiling for development...');
+        //     this.execSyncSilent(`cd "${projectPathOnWindows}" && npm run dev`);
+        // }
     }
 
     async postSetup() {
@@ -142,18 +246,61 @@ export default class MakeLaravel extends Command {
 
             this.git('commit -m "feat: initial commit"', projectPathOnWindows);
 
-            // Composer and Artisan commands
-            this.composer('require wyxos/harmonie');
-            this.composer('require laravel/breeze --dev');
-            this.artisan('breeze:install');
+            await this.installComposerDependencies()
 
-            // More Composer and Artisan commands as per your requirements...
+            await this.installNodeDevDependencies()
 
             console.log('Post-setup tasks completed successfully.');
         } catch (error) {
             console.error(`Post-setup tasks failed: ${error.message}`);
             // Handle errors or rethrow as needed
             throw error
+        }
+    }
+
+    async installNodeDevDependencies() {
+        console.log('Installing node dependencies...')
+        const projectPathOnWindows = path.join(this.config.projectMapping.map, this.config.projectSubPath, this.projectName).replace(/\\/g, '/');
+
+        const devDependencies = [
+            'laravel-vite-plugin',
+            'vite-plugin-mkcert',
+            '@vitejs/plugin-vue',
+            'vue vue-router',
+            '@oruga-ui/oruga-next',
+            '@tailwindcss/forms',
+            '@tailwindcss/typography',
+            'vue-inline-svg',
+            '@tailwindcss/nesting',
+            'postcss-import',
+            '@wyxos/vision',
+            'eslint',
+            'eslint-config-prettier',
+            'eslint-config-standard',
+            'eslint-plugin-import',
+            'eslint-plugin-json',
+            'eslint-plugin-n',
+            'eslint-plugin-node',
+            'eslint-plugin-promise',
+            'eslint-plugin-vue',
+            'prettier',
+            '@prettier/plugin-php',
+            'vite-plugin-eslint',
+        ];
+
+        try {
+            this.execSyncSilent(`npm install -D ${devDependencies.join(' ')}`, {
+                cwd: projectPathOnWindows // Ensure this is the path to the project root in Windows
+            });
+
+            this.git('add .', projectPathOnWindows);
+
+            this.git('commit -m "chore: node dependencies"', projectPathOnWindows);
+
+            console.log('Node dependencies installed successfully.');
+        } catch (error) {
+            console.error(`Failed to install NPM dev dependencies: ${error.message}`);
+            // Handle or rethrow error as needed
         }
     }
 
@@ -259,6 +406,8 @@ export default class MakeLaravel extends Command {
         } catch (error) {
             console.error(`Failed to update Windows hosts file: ${error.message}`);
             // Consider additional error handling or user instructions here
+
+            throw error
         }
     }
 
@@ -341,5 +490,39 @@ export default class MakeLaravel extends Command {
             fs.mkdirSync(configDir, {recursive: true});
         }
         fs.writeFileSync(CONFIG_PATH, JSON.stringify(config, null, 2), 'utf8');
+    }
+
+    async installComposerDependencies() {
+        console.log('Installing php dependencies...');
+        const projectPathOnWindows = path.join(this.config.projectMapping.map, this.config.projectSubPath, this.projectName).replace(/\\/g, '/');
+
+        // Composer and Artisan commands
+        this.composer('require wyxos/harmonie');
+
+        this.composer('require laravel/breeze --dev');
+
+        this.artisan('breeze:install blade --no-interaction');
+
+        this.composer('require laravel/horizon')
+
+        this.artisan('horizon:install');
+
+        this.composer('require laravel/scout')
+
+        this.artisan('vendor:publish --provider="Laravel\\Scout\\ScoutServiceProvider"')
+
+        this.composer('require spatie/laravel-permission')
+
+        this.artisan('vendor:publish --provider="Spatie\\Permission\\PermissionServiceProvider"')
+
+        this.composer('require spatie/laravel-tags')
+
+        this.artisan('vendor:publish --provider="Spatie\\Tags\\TagsServiceProvider" --tag="tags-migrations"')
+
+        this.composer('require barryvdh/laravel-debugbar --dev')
+
+        this.git('add .', projectPathOnWindows);
+
+        this.git('commit -m "chore: php dependencies"', projectPathOnWindows);
     }
 }

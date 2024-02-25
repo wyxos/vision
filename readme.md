@@ -1,83 +1,90 @@
 # @wyxos/vision
 
-`@wyxos/vision` is a comprehensive package of reusable Vue components and utility classes designed to streamline the
-development of web applications. It provides a collection of ready-to-use components and functionalities that can be
-easily integrated into Vue-based projects, enabling developers to build robust and user-friendly interfaces.
+`@wyxos/vision` is a Laravel plugin designed to scaffold and enhance web applications by providing a set of Vue.js
+components, utilities, and CLI commands. It integrates seamlessly with Laravel, offering tools for rapid SPA (Single
+Page Application) development, streamlined forms and listings management, and custom command utilities for efficient
+project configuration and management.
 
 ## Features
 
-- **Components**: The package includes a wide range of Vue components, such as buttons, forms, image display, date
-  picker, tags, and more. These components are designed with flexibility and customization in mind, allowing developers
-  to adapt them to suit their specific project requirements.
+- **Vue.js Components**: Leverage a variety of components like `WyxosForm`, `WyxosImage`, and `WyxosInput` for building
+  dynamic, responsive user interfaces with minimal boilerplate.
+- **Utilities**: Utilize helper classes such as `FormBuilder`, `Listing`, and `Auth` to simplify form handling, data
+  listing, and authentication processes.
+- **CLI Commands**: Automate routine tasks with commands like `make:route` for route and component generation,
+  and `toggle` commands to switch between different library configurations or versions.
 
-- **Utility Classes**: `@wyxos/vision` provides utility classes that assist with common tasks encountered during web
-  development. These utility classes include load state management, form errors handling, and a search utility. They
-  help simplify complex operations and improve code organization.
+## Getting Started
+
+To get started with `@wyxos/vision`, ensure you have a Laravel project set up. Then, run the following command to
+install the plugin and scaffold your project with the necessary configurations and dependencies:
+
+```bash
+npx @wyxos/vision make:laravel <projectName>
+```
 
 ## Installation
 
-Install the package using npm or yarn:
+The plugin can be installed directly from npm:
 
 ```bash
 npm install @wyxos/vision
+```
 
-# or
+Or, if you prefer using Yarn:
 
+```bash
 yarn add @wyxos/vision
 ```
 
 ## Usage
 
-Once installed, import the components and utility classes from `@wyxos/vision` into your Vue project and start using
-them in your templates and scripts. Detailed documentation and examples for each component and utility class can be
-found in the package's documentation.
+After installation, you can start using the Vue.js components and utilities in your Laravel project. Here's a quick
+example of how you might use the `WyxosForm` component:
 
 ```vue
 
 <template>
-  <div>
-    <wyxos-button @click="submitForm">Submit</wyxos-button>
-    <wyxos-form :form="form">
-      <wyxos-input label="Name" name="name"></wyxos-input>
-    </wyxos-form>
-    <wyxos-image src="/path/to/image.jpg"></wyxos-image>
-  </div>
+  <WyxosForm :form="form" @submit="submitForm">
+    <WyxosInput label="Username" v-model="form.username"/>
+    <WyxosInput label="Password" type="password" v-model="form.password"/>
+    <o-button @click="form.submit">Submit</o-button>
+  </WyxosForm>
 </template>
 
 <script>
-import {WyxosButton, WyxosForm, WyxosInput, WyxosImage} from '@wyxos/vision'
+  import {WyxosForm, WyxosInput} from '@wyxos/vision';
+  import FormBuilder from '@wyxos/vision/utilities/FormBuilder';
 
-export default {
-  components: {
-    WyxosButton,
-    WyxosForm,
-    WyxosInput,
-    WyxosImage
-  },
-  data() {
-    return {
-      form: /* form data */
-    }
-  },
-  methods: {
-    submitForm() {
-      // Handle form submission logic
+  export default {
+    components: {
+      WyxosForm,
+      WyxosInput
+    },
+    data() {
+      return {
+        form: new FormBuilder({
+          username: '',
+          password: '',
+        })
+      };
+    },
+    methods: {
+      submitForm() {
+        // Handle form submission
+      }
     }
   }
-}
 </script>
 ```
 
-[//]: # (## Documentation)
-
-[//]: # (For detailed usage instructions and examples, please refer to the [documentation]&#40;link-to-documentation&#41; of `@wyxos/vision`.)
+For more detailed documentation on components and utilities, refer to
+the [official documentation](https://github.com/wyxos/vision).
 
 ## Contributing
 
-Contributions to `@wyxos/vision` are welcome! If you encounter any issues, have suggestions for improvements, or would
-like to add new features, please open an issue or submit a pull request on
-the [GitHub repository](https://github.com/wyxos/vision/issues).
+Contributions are welcome! If you'd like to contribute, please fork the repository and submit a pull request.
 
 ## License
 
-`@wyxos/vision` is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+`@wyxos/vision` is licensed under the MIT License. See the LICENSE file for more details.
