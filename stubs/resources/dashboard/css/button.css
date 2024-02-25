@@ -1,0 +1,11 @@
+.button {
+    @apply block bg-blue-800 text-white text-center text-2xl p-2 rounded;
+
+    &.is-small {
+        @apply p-1 px-2 text-sm;
+    }
+
+    &.is-danger {
+        @apply bg-red-600;
+    }
+}

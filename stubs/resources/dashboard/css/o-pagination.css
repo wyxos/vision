@@ -1,0 +1,20 @@
+.o-table__pagination {
+    @apply mt-4;
+}
+
+.o-pag, .o-pag__list {
+    @apply flex gap-2;
+}
+
+.o-pag__link{
+    @apply p-2 leading-4 rounded bg-white hover:bg-blue-800 hover:text-white;
+}
+
+.o-pag__link.o-pag__link--current{
+    @apply bg-blue-800
+}
+
+.o-pag__link--disabled{
+    @apply opacity-50
+}
+
