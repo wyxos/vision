@@ -41,12 +41,12 @@
     "js-yaml": "^4.1.0",
     "query-string": "^8.1.0",
     "inquirer": "^9.2.12",
-    "node-ssh": "^13.1.0"
+    "node-ssh": "^13.1.0",
+    "axios": "^1.6.2"
   },
   "devDependencies": {
     "@oruga-ui/oruga-next": "^0.7.0",
     "@vitejs/plugin-vue": "^4.4.1",
-    "axios": "^1.6.2",
     "chalk": "^5.3.0",
     "dotenv": "^16.3.1",
     "eslint": "^8.53.0",
