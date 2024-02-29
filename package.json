@@ -6,6 +6,7 @@
   "files": [
     "dist",
     "src/commands",
+    "src/helpers",
     "src/Command.mjs"
   ],
   "main": "./dist/vision.umd.cjs",
