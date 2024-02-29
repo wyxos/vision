@@ -6,7 +6,8 @@
   "files": [
     "dist",
     "src/commands",
-    "src/helpers/**/*",
+    "src/helpers",
+    "src/RuncloudSetup",
     "src/Command.mjs"
   ],
   "main": "./dist/vision.umd.cjs",
