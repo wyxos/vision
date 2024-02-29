@@ -33,7 +33,7 @@ export default {
       default: false
     }
   },
-  emits: ['update:modelValue', 'update:query'],
+  emits: ['update:modelValue', 'update:query', 'change'],
   setup() {
     const search = Search.create()
 
@@ -103,6 +103,8 @@ export default {
       this.$emit('update:modelValue', reformat)
 
       this.$emit('update:query', this.query)
+
+      this.$emit('change')
     },
     removedTag() {
       this.isInternalChange = true
@@ -112,6 +114,8 @@ export default {
       this.$emit('update:modelValue', reformat)
 
       this.$emit('update:query', this.query)
+
+      this.$emit('change')
     },
     reset() {
       this.isInternalChange = true

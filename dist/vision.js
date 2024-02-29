@@ -2055,7 +2055,7 @@ const _s = {
       default: !1
     }
   },
-  emits: ["update:modelValue", "update:query"],
+  emits: ["update:modelValue", "update:query", "change"],
   setup() {
     return {
       search: z.create()
@@ -2107,12 +2107,12 @@ const _s = {
     addedTag() {
       this.isInternalChange = !0;
       const s = this.query.map((e) => this.formatter(e));
-      this.$emit("update:modelValue", s), this.$emit("update:query", this.query);
+      this.$emit("update:modelValue", s), this.$emit("update:query", this.query), this.$emit("change");
     },
     removedTag() {
       this.isInternalChange = !0;
       const s = this.query.map((e) => this.formatter(e));
-      this.$emit("update:modelValue", s), this.$emit("update:query", this.query);
+      this.$emit("update:modelValue", s), this.$emit("update:query", this.query), this.$emit("change");
     },
     reset() {
       this.isInternalChange = !0, this.query = [], this.$emit("update:modelValue", this.query), this.$emit("update:query", this.query);
