@@ -277,8 +277,10 @@ export default class MakeLaravel extends Command {
 
         return new Promise(async (resolve, reject) => {
             console.log('Checking if the project already exists...');
-            const projectPath = `${projectMapping.to.replace(/\\/g, '/')}/${projectSubPath}/${this.projectName}`;
+            const projectPath = getHomesteadProjectPath(this.projectName);
             const checkCmd = `cd /d "${homesteadDir}" && vagrant ssh -c "if [ -d '${projectPath}' ]; then echo 'exists'; else echo 'not exists'; fi"`;
+
+            const localProjectPath = getProjectPathOnWindows(this.config, this.projectName);
 
             try {
                 const exists = execSync(checkCmd, {shell: 'cmd.exe'}).toString().trim();
@@ -293,19 +295,27 @@ export default class MakeLaravel extends Command {
 
                     if (!answers.overwrite) {
                         console.log('Project creation cancelled.');
-                        return resolve();
+                        return reject(Error('Cannot proceed.'));
                     }
 
                     console.log('Deleting existing project...');
-                    const deleteCmd = `cd /d "${homesteadDir}" && vagrant ssh -c "rm -rf '${projectPath}'"`;
-                    execSync(deleteCmd, {shell: 'cmd.exe'});
+                    fs.rmSync(localProjectPath, {recursive: true, force: true});
                 }
 
                 console.log('SSH into Vagrant and creating the project...');
-                const createCmd = `cd /d "${homesteadDir}" && vagrant ssh -c "cd ${projectMapping.to.replace(/\\/g, '/')}/${projectSubPath} && laravel new ${this.projectName}"`;
+                const cmd = `cd /d "${homesteadDir}" && vagrant ssh -c "cd ${projectMapping.to.replace(/\\/g, '/')}/${projectSubPath} && laravel new ${this.projectName}"`;
 
-                // Note: Adjust the spawn command as per your requirement or environment
-                const process = spawn('cmd.exe', ['/c', createCmd], {stdio: 'inherit'});
+                // Split the command by spaces to pass into spawn
+                const parts = cmd.split(' ');
+                const process = spawn(parts[0], parts.slice(1), {shell: 'cmd.exe'});
+
+                process.stdout.on('data', (data) => {
+                    console.log(data.toString());
+                });
+
+                process.stderr.on('data', (data) => {
+                    console.error(data.toString());
+                });
 
                 process.on('exit', (code) => {
                     if (code !== 0) {
