@@ -66,6 +66,10 @@ export function getHomesteadProjectPath(projectName) {
     return path.join(config.projectMapping.to, config.projectSubPath, projectName).replace(/\\/g, '/')
 }
 
+export function getProjectPathOnWindows(config, projectName) {
+    return path.join(config.projectMapping.map, config.projectSubPath, projectName).replace(/\\/g, '/')
+}
+
 export function composer(homesteadPath, command) {
     const config = readJsonFile(getRuncloudConfigPath())
 

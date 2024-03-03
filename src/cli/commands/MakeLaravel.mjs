@@ -5,9 +5,19 @@ import yaml from 'js-yaml';
 import Command from "../Command.mjs";
 import ensureVisionConfigExists from "../command-helpers/MakeLaravel/ensureVisionConfigExists.mjs";
 import {getVisionConfig} from "../helpers/configPaths.mjs";
-import installComposerDependencies from "../command-helpers/MakeLaravel/installComposerDependencies.mjs";
-import {checkAdminPrivileges, git} from "../helpers/cliInteractions.mjs";
-import installNodeDevDependencies from "../command-helpers/MakeLaravel/installNodeDevDependencies.mjs";
+import {
+    artisan,
+    checkAdminPrivileges,
+    composer,
+    getHomesteadProjectPath,
+    getProjectPathOnWindows,
+    git
+} from "../helpers/cliInteractions.mjs";
+import {fileURLToPath} from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const stubsPath = path.join(__dirname, '../../stubs/MakeLaravel');
 
 export default class MakeLaravel extends Command {
     signature = "make:laravel <projectName>";
@@ -34,7 +44,7 @@ export default class MakeLaravel extends Command {
             console.log('Reloading Homestead...');
             this.execSyncSilent(`cd /d "${this.config.homesteadDir}" && vagrant reload --provision`);
 
-            await this.copyStubsToProject()
+            await this.copyStubs(this.projectName)
 
             await this.updateEnvFile()
 
@@ -47,6 +57,21 @@ export default class MakeLaravel extends Command {
             console.error(`Consider checking your Homestead.yaml configuration or ensuring your Homestead VM is running.`);
             throw error
         }
+    }
+
+    copyStubs(projectName) {
+        console.log('Scaffolding...');
+
+        const config = getVisionConfig()
+        const projectPathOnWindows = path.join(config.projectMapping.map, config.projectSubPath, projectName).replace(/\\/g, '/');
+
+
+        // Start the copying process
+        this.copyDirectoryRecursive(stubsPath, projectPathOnWindows);
+
+        // Git commands remain unchanged
+        git('add .', projectPathOnWindows);
+        git('commit -m "chore: scaffold"', projectPathOnWindows);
     }
 
 
@@ -91,7 +116,7 @@ export default class MakeLaravel extends Command {
 
 
     async updateEnvFile() {
-        const projectPath = path.join(this.config.projectMapping.map, this.config.projectSubPath, this.projectName).replace(/\\/g, '/');
+        const projectPath = getProjectPathOnWindows(this.config, this.projectName);
         const envFilePath = path.join(projectPath, '.env');
         const envContents = fs.readFileSync(envFilePath, 'utf-8');
         const lines = envContents.split(/\r?\n/);
@@ -126,7 +151,7 @@ export default class MakeLaravel extends Command {
 
     async nodeDependencies() {
         // Correct Windows path for NPM operations
-        const projectPathOnWindows = path.join(this.config.projectMapping.map, this.config.projectSubPath, this.projectName).replace(/\\/g, '/');
+        const projectPathOnWindows = getProjectPathOnWindows(this.config, this.projectName);
 
         console.log('Installing NPM packages...');
         this.execSyncSilent(`cd "${projectPathOnWindows}" && npm install`);
@@ -135,51 +160,82 @@ export default class MakeLaravel extends Command {
     }
 
     async postSetup() {
-        const projectPathOnWindows = path.join(this.config.projectMapping.map, this.config.projectSubPath, this.projectName).replace(/\\/g, '/');
+        const projectPathOnWindows = getProjectPathOnWindows(this.config, this.projectName);
 
         try {
-            try {
-                // Construct the path to the composer.lock file
-                const composerLockPath = path.join(projectPathOnWindows, 'composer.lock');
+            // Construct the path to the composer.lock file
+            const composerLockPath = path.join(projectPathOnWindows, 'composer.lock');
 
-                // Check if the file exists before trying to delete it
-                if (fs.existsSync(composerLockPath)) {
-                    fs.unlinkSync(composerLockPath);
-                    console.log('composer.lock removed successfully.');
-                } else {
-                    console.log('composer.lock does not exist, no need to remove.');
-                }
-            } catch (error) {
-                console.error(`Failed to remove composer.lock: ${error.message}`);
-                throw error
+            // Check if the file exists before trying to delete it
+            if (fs.existsSync(composerLockPath)) {
+                fs.unlinkSync(composerLockPath);
+                console.log('composer.lock removed successfully.');
+            } else {
+                console.log('composer.lock does not exist, no need to remove.');
             }
-
-            // Append entries to .gitignore
-            const gitignorePath = path.join(projectPathOnWindows, '.gitignore');
-            this.appendToFile(gitignorePath, '/package-lock.json\n/composer.lock\n/.env.testing\n');
-
-            console.log('Initializing git...');
-            git('init', projectPathOnWindows);
-
-            git('add .', projectPathOnWindows);
-
-            git('commit -m "feat: initial commit"', projectPathOnWindows);
-
-            await installComposerDependencies(this.projectName)
-
-            await installNodeDevDependencies(this.projectName)
-
-            console.log('Post-setup tasks completed successfully.');
         } catch (error) {
-            console.error(`Post-setup tasks failed: ${error.message}`);
-
+            console.error(`Failed to remove composer.lock: ${error.message}`);
             throw error
         }
+
+        // Append entries to .gitignore
+        const gitignorePath = path.join(projectPathOnWindows, '.gitignore');
+        this.appendToFile(gitignorePath, '/package-lock.json\n/composer.lock\n/.env.testing\n');
+
+        console.log('Initializing git...');
+        git('init', projectPathOnWindows);
+
+        git('add .', projectPathOnWindows);
+
+        git('commit -m "feat: initial commit"', projectPathOnWindows);
+
+        await this.installComposerDependencies()
+
+        await this.installNodeDevDependencies(this.projectName)
+
+        console.log('Post-setup tasks completed successfully.');
+    }
+
+    installComposerDependencies() {
+        console.log('Installing php dependencies...');
+
+        const projectPathOnWindows = getProjectPathOnWindows(this.config, this.projectName);
+
+        const homesteadProjectPath = getHomesteadProjectPath(this.projectName);
+
+        composer(homesteadProjectPath, 'require wyxos/harmonie');
+
+        composer(homesteadProjectPath, 'require laravel/breeze --dev');
+
+        artisan(homesteadProjectPath, 'breeze:install blade --no-interaction');
+
+        composer(homesteadProjectPath, 'require laravel/horizon')
+
+        artisan(homesteadProjectPath, 'horizon:install');
+
+        composer(homesteadProjectPath, 'require laravel/scout')
+
+        artisan(homesteadProjectPath, 'vendor:publish --provider="Laravel\\Scout\\ScoutServiceProvider"')
+
+        composer(homesteadProjectPath, 'require spatie/laravel-permission')
+
+        artisan(homesteadProjectPath, 'vendor:publish  --provider="Spatie\\Permission\\PermissionServiceProvider"')
+
+        composer(homesteadProjectPath, 'require spatie/laravel-tags')
+
+        artisan(homesteadProjectPath, 'vendor:publish --provider="Spatie\\Tags\\TagsServiceProvider"' +
+            ' --tag="tags-migrations"')
+
+        composer(homesteadProjectPath, 'require barryvdh/laravel-debugbar --dev')
+
+        git('add .', projectPathOnWindows);
+
+        git('commit -m "chore: php dependencies"', projectPathOnWindows);
     }
 
     async installNodeDevDependencies() {
         console.log('Installing node dependencies...')
-        const projectPathOnWindows = path.join(this.config.projectMapping.map, this.config.projectSubPath, this.projectName).replace(/\\/g, '/');
+        const projectPathOnWindows = getProjectPathOnWindows(this.config, this.projectName);
 
         const devDependencies = [
             'laravel-vite-plugin',
@@ -207,20 +263,15 @@ export default class MakeLaravel extends Command {
             'vite-plugin-eslint',
         ];
 
-        try {
-            this.execSyncSilent(`npm install -D ${devDependencies.join(' ')}`, {
-                cwd: projectPathOnWindows // Ensure this is the path to the project root in Windows
-            });
+        this.execSyncSilent(`npm install -D ${devDependencies.join(' ')}`, {
+            cwd: projectPathOnWindows // Ensure this is the path to the project root in Windows
+        });
 
-            git('add .', projectPathOnWindows);
+        git('add .', projectPathOnWindows);
 
-            git('commit -m "chore: node dependencies"', projectPathOnWindows);
+        git('commit -m "chore: node dependencies"', projectPathOnWindows);
 
-            console.log('Node dependencies installed successfully.');
-        } catch (error) {
-            console.error(`Failed to install NPM dev dependencies: ${error.message}`);
-            // Handle or rethrow error as needed
-        }
+        console.log('Node dependencies installed successfully.');
     }
 
     createLaravelProject() {
@@ -299,34 +350,27 @@ export default class MakeLaravel extends Command {
         // Define the path to the Homestead.yaml file
         const homesteadPath = path.join(homesteadDir, 'Homestead.yaml');
 
-        try {
-            // Read the Homestead.yaml content
-            const yamlContent = fs.readFileSync(homesteadPath, 'utf8');
-            const homesteadConfig = yaml.load(yamlContent);
+        // Read the Homestead.yaml content
+        const yamlContent = fs.readFileSync(homesteadPath, 'utf8');
+        const homesteadConfig = yaml.load(yamlContent);
 
-            // Extract the IP address from the Homestead configuration
-            const ipAddress = homesteadConfig.ip;
+        // Extract the IP address from the Homestead configuration
+        const ipAddress = homesteadConfig.ip;
 
-            // Define the hosts file path and the entry to append
-            const hostsPath = 'C:/Windows/System32/drivers/etc/hosts';
-            const entry = `${ipAddress} ${this.projectName}.test`;
+        // Define the hosts file path and the entry to append
+        const hostsPath = 'C:/Windows/System32/drivers/etc/hosts';
+        const entry = `${ipAddress} ${this.projectName}.test`;
 
-            // Read the current content of the hosts file
-            const hostsContent = fs.readFileSync(hostsPath, 'utf8');
+        // Read the current content of the hosts file
+        const hostsContent = fs.readFileSync(hostsPath, 'utf8');
 
-            // Check if the entry already exists in the hosts file
-            if (!hostsContent.includes(entry)) {
-                // Append the new entry to the hosts file
-                fs.appendFileSync(hostsPath, `\n${entry}`);
-                console.log(`Windows hosts file updated with ${this.projectName}.test`);
-            } else {
-                console.log(`The host entry for ${this.projectName}.test already exists. No update needed.`);
-            }
-        } catch (error) {
-            console.error(`Failed to update Windows hosts file: ${error.message}`);
-            // Consider additional error handling or user instructions here
-
-            throw error
+        // Check if the entry already exists in the hosts file
+        if (!hostsContent.includes(entry)) {
+            // Append the new entry to the hosts file
+            fs.appendFileSync(hostsPath, `\n${entry}`);
+            console.log(`Windows hosts file updated with ${this.projectName}.test`);
+        } else {
+            console.log(`The host entry for ${this.projectName}.test already exists. No update needed.`);
         }
     }
 }
