@@ -1,6 +1,6 @@
-import {fetchPhpVersions, fetchSystemUsers, runcloudApi} from "../helpers/runcloudApi.mjs";
+import {fetchPhpVersions, fetchSystemUsers, runcloudApi} from "../../helpers/runcloudApi.mjs";
 import inquirer from "inquirer";
-import {getProjectName} from "../helpers/cliInteractions.mjs";
+import {getProjectName} from "../../helpers/cliInteractions.mjs";
 
 export default async function createWebApp(server) {
     // After obtaining the server ID...

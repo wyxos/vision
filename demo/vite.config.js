@@ -4,6 +4,8 @@ import eslint from 'vite-plugin-eslint'
 import path from 'path'
 import utilityImportPlugin from '../utility-import-plugin'
 
+console.log('___DIRNAME__', __dirname)
+
 // https://vitejs.dev/config/
 export default defineConfig({
   root: __dirname,
@@ -19,10 +21,12 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      '@': './src',
-      '@components': './src/components',
-      '@utilities': './src/utilities',
-      '@commands': './src/commands'
+      '@': path.join(__dirname, '../src'),
+      '@frontend': path.join(__dirname, '../src/frontend'),
+      '@components': path.join(__dirname, '../src/frontend/components'),
+      '@utilities': path.join(__dirname, '../src/frontend/utilities'),
+      '@cli': path.join(__dirname, '../src/cli'),
+      '@commands': path.join(__dirname, '../src/cli/commands')
     },
     dedupe: ['vue', 'moment']
   },
@@ -30,7 +34,7 @@ export default defineConfig({
     sourcemap: true,
     outDir: '../dist',
     lib: {
-      entry: path.resolve(__dirname, '../src/main.js'),
+      entry: path.resolve(__dirname, '../src/frontend/main.js'),
       name: 'Vision',
       // the proper extensions will be added
       fileName: 'vision'

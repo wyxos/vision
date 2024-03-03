@@ -1,12 +1,12 @@
-import {readJsonFile, writeJsonFile} from "../helpers/jsonUtils.mjs";
-import {getRuncloudConfigPath} from "../helpers/configPaths.mjs";
-import {runcloudApi} from "../helpers/runcloudApi.mjs";
+import {readJsonFile, writeJsonFile} from "../../helpers/jsonUtils.mjs";
+import {getRuncloudConfigPath} from "../../helpers/configPaths.mjs";
+import {runcloudApi} from "../../helpers/runcloudApi.mjs";
 import inquirer from "inquirer";
 import path from "path";
 import fs from "fs";
 
 export default async function updateConfig(server, app, repo) {
-    const config = await readJsonFile(getRuncloudConfigPath());
+    const config = readJsonFile(getRuncloudConfigPath());
 
     // Fetch the list of domains attached to the app
     const domainsResponse = await runcloudApi('GET', `servers/${server.id}/webapps/${app.id}/domains`);
