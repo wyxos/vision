@@ -15,6 +15,7 @@ import {
 } from "../helpers/cliInteractions.mjs";
 import {fileURLToPath} from "url";
 import {appendToFile} from "../helpers/fileInteractions.mjs";
+import {spawn} from 'node:child_process'
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
