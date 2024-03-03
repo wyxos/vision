@@ -18,3 +18,7 @@ ${entry}
         console.log(`.gitignore created and ${entry} added.`);
     }
 }
+
+export function appendToFile(filePath, content) {
+    fs.appendFileSync(filePath, content, {encoding: 'utf8'});
+}
