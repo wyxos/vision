@@ -14,6 +14,7 @@ import {
     git
 } from "../helpers/cliInteractions.mjs";
 import {fileURLToPath} from "url";
+import {appendToFile} from "../helpers/fileInteractions.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -110,11 +111,6 @@ export default class MakeLaravel extends Command {
         }
     }
 
-    appendToFile(filePath, content) {
-        fs.appendFileSync(filePath, content, {encoding: 'utf8'});
-    }
-
-
     async updateEnvFile() {
         const projectPath = getProjectPathOnWindows(this.config, this.projectName);
         const envFilePath = path.join(projectPath, '.env');
@@ -140,7 +136,7 @@ export default class MakeLaravel extends Command {
         });
 
         // Add new entries
-        updatedLines.push(`APP_DOMAIN=\${appDomain}`);
+        updatedLines.push(`APP_DOMAIN=${appDomain}`);
         updatedLines.push(`SANCTUM_STATEFUL_DOMAINS=\${appDomain}`);
         updatedLines.push(`SESSION_DOMAIN=.\${appDomain}`);
         updatedLines.push(`SESSION_SECURE_COOKIE=true`);
@@ -180,7 +176,7 @@ export default class MakeLaravel extends Command {
 
         // Append entries to .gitignore
         const gitignorePath = path.join(projectPathOnWindows, '.gitignore');
-        this.appendToFile(gitignorePath, '/package-lock.json\n/composer.lock\n/.env.testing\n');
+        appendToFile(gitignorePath, '/package-lock.json\n/composer.lock\n/.env.testing\n');
 
         console.log('Initializing git...');
         git('init', projectPathOnWindows);
