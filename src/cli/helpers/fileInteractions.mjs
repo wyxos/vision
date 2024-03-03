@@ -1,5 +1,5 @@
 import fs from "fs";
-import {getGitignorePath} from "./configPaths.mjs";
+import {getGitignorePath} from "./cliInteractions.mjs";
 
 export function appendGitIgnore(entry) {
     if (fs.existsSync(getGitignorePath())) {

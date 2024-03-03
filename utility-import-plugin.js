@@ -13,8 +13,6 @@ export default function utilityImportPlugin() {
       const utilitiesDir = path.resolve(__dirname, 'src/frontend/utilities')
       const componentsDir = path.resolve(__dirname, 'src/frontend/components')
 
-      console.log('___DIRNAME IMPORT___', __dirname)
-
       // Get all utility and component file names
       const utilityFiles = await fs.readdir(utilitiesDir)
       const componentFiles = await fs.readdir(componentsDir)

@@ -4,8 +4,6 @@ import eslint from 'vite-plugin-eslint'
 import path from 'path'
 import utilityImportPlugin from '../utility-import-plugin'
 
-console.log('___DIRNAME__', __dirname)
-
 // https://vitejs.dev/config/
 export default defineConfig({
   root: __dirname,
