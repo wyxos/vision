@@ -2,7 +2,7 @@
 import readline from 'readline';
 import path from "path";
 import {execSync} from "child_process";
-import {getRuncloudConfigPath} from "./configPaths.mjs";
+import {getVisionConfig, getVisionConfigPath} from "./configPaths.mjs";
 import {readJsonFile} from "./jsonUtils.mjs";
 import fs from "fs";
 
@@ -61,7 +61,11 @@ export function git(command, cwd) {
 }
 
 export function getHomesteadProjectPath(projectName) {
-    const config = readJsonFile(getRuncloudConfigPath())
+    if (!projectName) {
+        throw Error('Project name required.')
+    }
+
+    const config = readJsonFile(getVisionConfigPath())
 
     return path.join(config.projectMapping.to, config.projectSubPath, projectName).replace(/\\/g, '/')
 }
@@ -71,7 +75,7 @@ export function getProjectPathOnWindows(config, projectName) {
 }
 
 export function composer(homesteadPath, command) {
-    const config = readJsonFile(getRuncloudConfigPath())
+    const config = getVisionConfig()
 
     const cmd = `cd /d "${config.homesteadDir}" && vagrant ssh -c "cd ${homesteadPath} && composer ${command}"`;
     try {
@@ -83,7 +87,7 @@ export function composer(homesteadPath, command) {
 }
 
 export function artisan(homesteadPath, command) {
-    const config = readJsonFile(getRuncloudConfigPath())
+    const config = getVisionConfig()
 
     const cmd = `cd /d "${config.homesteadDir}" && vagrant ssh -c "cd ${homesteadPath} && php artisan ${command}"`;
     try {

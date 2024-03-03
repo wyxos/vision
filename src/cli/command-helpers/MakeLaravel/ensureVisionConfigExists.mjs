@@ -2,7 +2,7 @@ import fs from "fs";
 import inquirer from "inquirer";
 import path from "path";
 import yaml from "js-yaml";
-import {getVisionConfigPath} from "../../helpers/configPaths.mjs";
+import {getVisionConfig, getVisionConfigPath} from "../../helpers/configPaths.mjs";
 import {readJsonFile, writeJsonFile} from "../../helpers/jsonUtils.mjs";
 
 export default async function ensureVisionConfigExists() {
@@ -52,7 +52,7 @@ export default async function ensureVisionConfigExists() {
         await writeJsonFile(getVisionConfigPath(), config);
     } else {
         // Read and return the existing config
-        config = readJsonFile(getVisionConfigPath());
+        config = getVisionConfig();
 
         // Prompt for projectSubPath regardless of whether the config exists
         const projectSubPathAnswer = await inquirer.prompt([
