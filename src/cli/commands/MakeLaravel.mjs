@@ -44,7 +44,7 @@ export default class MakeLaravel extends Command {
             await this.postSetup()
 
             console.log('Reloading Homestead...');
-            this.execSyncSilent(`cd /d "${this.config.homesteadDir}" && vagrant reload --provision`);
+            execSyncSilent(`cd /d "${this.config.homesteadDir}" && vagrant reload --provision`);
 
             await this.copyStubs(this.projectName)
 
@@ -151,9 +151,9 @@ export default class MakeLaravel extends Command {
         const projectPathOnWindows = getProjectPathOnWindows(this.config, this.projectName);
 
         console.log('Installing NPM packages...');
-        this.execSyncSilent(`cd "${projectPathOnWindows}" && npm install`);
+        execSyncSilent(`cd "${projectPathOnWindows}" && npm install`);
 
-        this.execSyncSilent(`cd "${projectPathOnWindows}" && ps .`, {shell: true});
+        execSyncSilent(`cd "${projectPathOnWindows}" && ps .`, {shell: true});
     }
 
     async postSetup() {
@@ -260,7 +260,7 @@ export default class MakeLaravel extends Command {
             'vite-plugin-eslint',
         ];
 
-        this.execSyncSilent(`npm install -D ${devDependencies.join(' ')}`, {
+        execSyncSilent(`npm install -D ${devDependencies.join(' ')}`, {
             cwd: projectPathOnWindows // Ensure this is the path to the project root in Windows
         });
 

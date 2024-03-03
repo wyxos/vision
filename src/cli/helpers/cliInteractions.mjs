@@ -57,7 +57,7 @@ export function execSyncSilent(command, options = {}) {
 }
 
 export function git(command, cwd) {
-    this.execSyncSilent(`git ${command}`, {cwd});
+    execSyncSilent(`git ${command}`, {cwd});
 }
 
 export function getHomesteadProjectPath(projectName) {
