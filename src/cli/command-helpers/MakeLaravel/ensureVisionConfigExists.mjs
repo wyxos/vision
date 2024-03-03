@@ -59,7 +59,7 @@ export default async function ensureVisionConfigExists() {
             {
                 type: 'input',
                 name: 'projectSubPath',
-                message: 'Enter the subpath within the selected mapping for the project:',
+                message: 'Enter the sub path within the selected mapping for the project:',
                 default: config.projectSubPath || 'wyxos/php', // Use the value from the config as the default
             }
         ]);
