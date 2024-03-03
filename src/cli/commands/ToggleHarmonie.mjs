@@ -4,6 +4,7 @@ import {fileURLToPath} from 'url'
 import {execSync} from 'child_process'
 import Command from "../Command.mjs"
 import MakeLaravel from "./MakeLaravel.mjs";
+import ensureVisionConfigExists from "../command-helpers/MakeLaravel/ensureVisionConfigExists.mjs";
 
 export default class ToggleHarmonie extends Command {
     signature = "toggle:harmonie"
@@ -26,7 +27,7 @@ export default class ToggleHarmonie extends Command {
         ]
 
         // Removed SSH connection setup, replaced with homesteadConfig setup
-        const {homesteadDir} = await new MakeLaravel().getConfig()
+        const {homesteadDir} = await ensureVisionConfigExists()
 
         try {
             // Construct the command to run via vagrant ssh

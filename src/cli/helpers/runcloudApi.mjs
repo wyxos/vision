@@ -25,7 +25,7 @@ export async function fetchSystemUsers(serverId) {
 
 // Utility function to make authenticated Runcloud API requests
 export async function runcloudApi(method, endpoint, data = {}) {
-    const {apiKey, apiSecret} = await readJsonFile(getRuncloudConfigPath())
+    const {apiKey, apiSecret} = readJsonFile(getRuncloudConfigPath())
 
     const baseURL = 'https://manage.runcloud.io/api/v2';
     const url = `${baseURL}/${endpoint}`;

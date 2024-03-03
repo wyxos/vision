@@ -5,11 +5,8 @@
   "type": "module",
   "files": [
     "dist",
-    "src/commands",
-    "src/helpers",
-    "src/stubs",
-    "src/RuncloudSetup",
-    "src/Command.mjs"
+    "src/cli",
+    "stubs"
   ],
   "main": "./dist/vision.umd.cjs",
   "module": "./dist/vision.js",
@@ -20,7 +17,7 @@
     }
   },
   "bin": {
-    "vision": "./src/vision.mjs"
+    "vision": "src/cli/vision.mjs"
   },
   "scripts": {
     "dev": "vite --config demo/vite.config.js",

@@ -10,8 +10,10 @@ export default function utilityImportPlugin() {
       if (!id.endsWith('main.js')) return
 
       // Get the paths to the utilities and components directories
-      const utilitiesDir = path.resolve(__dirname, 'src/utilities')
-      const componentsDir = path.resolve(__dirname, 'src/components')
+      const utilitiesDir = path.resolve(__dirname, 'src/frontend/utilities')
+      const componentsDir = path.resolve(__dirname, 'src/frontend/components')
+
+      console.log('___DIRNAME IMPORT___', __dirname)
 
       // Get all utility and component file names
       const utilityFiles = await fs.readdir(utilitiesDir)
@@ -25,7 +27,7 @@ export default function utilityImportPlugin() {
         if (file.endsWith('.js')) {
           const variableName = path.basename(file, '.js')
           importStatements.push(
-            `import ${variableName} from './utilities/${file}';`
+            `import ${variableName} from '../../src/frontend/utilities/${file}';`
           )
           exportStatements.push(variableName)
         }
@@ -35,7 +37,7 @@ export default function utilityImportPlugin() {
         if (file.endsWith('.vue')) {
           const variableName = path.basename(file, '.vue')
           importStatements.push(
-            `import ${variableName} from './components/${file}';`
+            `import ${variableName} from '../../src/frontend/components/${file}';`
           )
           exportStatements.push(variableName)
         }

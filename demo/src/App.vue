@@ -4,7 +4,7 @@ import {
   WyxosButton,
   WyxosForm,
   WyxosInput
-} from '../../src/main.js'
+} from '../../src/frontend/main.js'
 
 export default {
   components: {
