@@ -8,7 +8,7 @@ import {getVisionConfig} from "../helpers/configPaths.mjs";
 import {
     artisan,
     checkAdminPrivileges,
-    composer,
+    composer, execSyncSilent,
     getHomesteadProjectPath,
     getProjectPathOnWindows,
     git
@@ -16,6 +16,7 @@ import {
 import {fileURLToPath} from "url";
 import {appendToFile} from "../helpers/fileInteractions.mjs";
 import {spawn} from 'node:child_process'
+import inquirer from "inquirer";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -274,30 +275,50 @@ export default class MakeLaravel extends Command {
     createLaravelProject() {
         const {projectMapping, projectSubPath, homesteadDir} = this.config;
 
-        return new Promise((resolve, reject) => {
-            console.log('SSH into Vagrant and creating the project...');
-            const cmd = `cd /d "${homesteadDir}" && vagrant ssh -c "cd ${projectMapping.to.replace(/\\/g, '/')}/${projectSubPath} && laravel new ${this.projectName}"`;
+        return new Promise(async (resolve, reject) => {
+            console.log('Checking if the project already exists...');
+            const projectPath = `${projectMapping.to.replace(/\\/g, '/')}/${projectSubPath}/${this.projectName}`;
+            const checkCmd = `cd /d "${homesteadDir}" && vagrant ssh -c "if [ -d '${projectPath}' ]; then echo 'exists'; else echo 'not exists'; fi"`;
 
-            // Split the command by spaces to pass into spawn
-            const parts = cmd.split(' ');
-            const process = spawn(parts[0], parts.slice(1), {shell: 'cmd.exe'});
+            try {
+                const exists = execSync(checkCmd, {shell: 'cmd.exe'}).toString().trim();
 
-            process.stdout.on('data', (data) => {
-                console.log(data.toString());
-            });
+                if (exists === 'exists') {
+                    const answers = await inquirer.prompt([{
+                        name: 'overwrite',
+                        type: 'confirm',
+                        message: `Project ${this.projectName} already exists. Overwrite?`,
+                        default: false
+                    }]);
 
-            process.stderr.on('data', (data) => {
-                console.error(data.toString());
-            });
+                    if (!answers.overwrite) {
+                        console.log('Project creation cancelled.');
+                        return resolve();
+                    }
 
-            process.on('exit', (code) => {
-                if (code !== 0) {
-                    console.error(`Error creating Laravel project with exit code ${code}`);
-                    return reject(`Exit code ${code}`);
+                    console.log('Deleting existing project...');
+                    const deleteCmd = `cd /d "${homesteadDir}" && vagrant ssh -c "rm -rf '${projectPath}'"`;
+                    execSync(deleteCmd, {shell: 'cmd.exe'});
                 }
-                console.log(`Project ${this.projectName} created.`);
-                resolve();
-            });
+
+                console.log('SSH into Vagrant and creating the project...');
+                const createCmd = `cd /d "${homesteadDir}" && vagrant ssh -c "cd ${projectMapping.to.replace(/\\/g, '/')}/${projectSubPath} && laravel new ${this.projectName}"`;
+
+                // Note: Adjust the spawn command as per your requirement or environment
+                const process = spawn('cmd.exe', ['/c', createCmd], {stdio: 'inherit'});
+
+                process.on('exit', (code) => {
+                    if (code !== 0) {
+                        console.error(`Error creating Laravel project with exit code ${code}`);
+                        return reject(`Exit code ${code}`);
+                    }
+                    console.log(`Project ${this.projectName} created.`);
+                    resolve();
+                });
+            } catch (error) {
+                console.error(`Command failed: ${error.message}`);
+                reject(error);
+            }
         });
     }
 
