@@ -20,7 +20,7 @@ import inquirer from "inquirer";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const stubsPath = path.join(__dirname, '../../stubs/MakeLaravel');
+const stubsPath = path.join(__dirname, '../../../stubs/MakeLaravel');
 
 export default class MakeLaravel extends Command {
     signature = "make:laravel <projectName>";
@@ -44,14 +44,14 @@ export default class MakeLaravel extends Command {
 
             await this.postSetup()
 
-            console.log('Reloading Homestead...');
-            execSyncSilent(`cd /d "${this.config.homesteadDir}" && vagrant reload --provision`);
-
             await this.copyStubs(this.projectName)
 
             await this.updateEnvFile()
 
             await this.nodeDependencies()
+
+            console.log('Reloading Homestead...');
+            execSyncSilent(`cd /d "${this.config.homesteadDir}" && vagrant reload --provision`);
 
             console.log(`Laravel project created: ${this.projectName}`);
             console.log(`\nYou can now access your project at https://${this.projectName}.test`);
@@ -67,7 +67,6 @@ export default class MakeLaravel extends Command {
 
         const config = getVisionConfig()
         const projectPathOnWindows = path.join(config.projectMapping.map, config.projectSubPath, projectName).replace(/\\/g, '/');
-
 
         // Start the copying process
         this.copyDirectoryRecursive(stubsPath, projectPathOnWindows);
