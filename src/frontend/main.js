@@ -1,5 +1,5 @@
 import Oruga from '@oruga-ui/oruga-next'
-import errorHandlerSetup from './errorHandlerSetup'
+import errorHandlerSetup from './errorHandlerSetup.js'
 
 const components = import.meta.glob('./components/*.vue', { eager: true })
 

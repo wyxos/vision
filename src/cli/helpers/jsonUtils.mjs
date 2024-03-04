@@ -1,13 +1,8 @@
 // jsonUtils.mjs
-import {promises as fs} from 'fs';
+import fs from 'fs';
 
-/**
- * Asynchronously reads and parses a JSON file.
- * @param {String} filePath - The path to the JSON file.
- * @returns {Promise<Object>} - The parsed JSON object.
- */
-export async function readJsonFile(filePath) {
-    const data = await fs.readFile(filePath, 'utf8');
+export function readJsonFile(filePath) {
+    const data = fs.readFileSync(filePath, 'utf8');
     return JSON.parse(data);
 }
 
@@ -31,13 +26,7 @@ export function updateJson(jsonObj) {
     return jsonObj; // Placeholder
 }
 
-/**
- * Asynchronously writes an object as JSON to a file.
- * @param {String} filePath - The path to the file where JSON will be written.
- * @param {Object} jsonObj - The JSON object to write.
- * @returns {Promise<void>}
- */
 export async function writeJsonFile(filePath, jsonObj) {
     const data = JSON.stringify(jsonObj, null, 2);
-    await fs.writeFile(filePath, data, 'utf8');
+    fs.writeFileSync(filePath, data, 'utf8');
 }

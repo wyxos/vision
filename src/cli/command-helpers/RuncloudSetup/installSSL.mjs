@@ -1,4 +1,4 @@
-import {runcloudApi} from "../helpers/runcloudApi.mjs";
+import {runcloudApi} from "../../helpers/runcloudApi.mjs";
 import inquirer from "inquirer";
 
 async function checkExistingSSL(serverId, webAppId) {
@@ -93,7 +93,7 @@ export default async function installSSL(server, app) {
     };
 
     // Install the SSL
-    const response = await runcloudApi(
+    await runcloudApi(
         'POST',
         `servers/${server.id}/webapps/${app.id}/ssl`,
         postData
