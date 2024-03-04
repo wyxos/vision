@@ -1,14 +1,12 @@
 {
   "name": "@wyxos/vision",
-  "version": "1.12.6",
+  "version": "1.12.15",
   "description": "",
   "type": "module",
   "files": [
     "dist",
-    "src/commands",
-    "src/helpers",
-    "src/RuncloudSetup",
-    "src/Command.mjs"
+    "src/cli",
+    "stubs"
   ],
   "main": "./dist/vision.umd.cjs",
   "module": "./dist/vision.js",
@@ -19,7 +17,7 @@
     }
   },
   "bin": {
-    "vision": "./src/vision.mjs"
+    "vision": "src/cli/vision.mjs"
   },
   "scripts": {
     "dev": "vite --config demo/vite.config.js",

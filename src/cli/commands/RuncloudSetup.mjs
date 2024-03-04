@@ -1,16 +1,16 @@
 import Command from "../Command.mjs";
 import {runcloudApi} from "../helpers/runcloudApi.mjs";
-import publishApp from "../RuncloudSetup/publishApp.mjs";
-import ensureConfigExists from "../RuncloudSetup/ensureConfigExists.mjs";
-import createWebApp from "../RuncloudSetup/createApp.mjs";
-import selectServer from "../RuncloudSetup/selectServer.mjs";
-import updateConfig from "../RuncloudSetup/updateConfig.mjs";
-import createDatabase from "../RuncloudSetup/createDatabase.mjs";
-import setupCronAndSupervisor from "../RuncloudSetup/setupCronAndSupervisor.mjs";
-import installSSL from "../RuncloudSetup/installSSL.mjs";
-import setupEnvironment from "../RuncloudSetup/setupEnvironment.mjs";
-import installDependencies from "../RuncloudSetup/installDependencies.mjs";
-import linkRepository from "../RuncloudSetup/linkRepository.mjs";
+import publishApp from "../command-helpers/RuncloudSetup/publishApp.mjs";
+import ensureRuncloudConfigExists from "../command-helpers/RuncloudSetup/ensureRuncloudConfigExists.mjs";
+import createWebApp from "../command-helpers/RuncloudSetup/createApp.mjs";
+import selectServer from "../command-helpers/RuncloudSetup/selectServer.mjs";
+import updateConfig from "../command-helpers/RuncloudSetup/updateConfig.mjs";
+import createDatabase from "../command-helpers/RuncloudSetup/createDatabase.mjs";
+import setupCronAndSupervisor from "../command-helpers/RuncloudSetup/setupCronAndSupervisor.mjs";
+import installSSL from "../command-helpers/RuncloudSetup/installSSL.mjs";
+import setupEnvironment from "../command-helpers/RuncloudSetup/setupEnvironment.mjs";
+import installDependencies from "../command-helpers/RuncloudSetup/installDependencies.mjs";
+import linkRepository from "../command-helpers/RuncloudSetup/linkRepository.mjs";
 
 
 export default class RuncloudSetup extends Command {
@@ -19,7 +19,7 @@ export default class RuncloudSetup extends Command {
 
     async handle() {
         try {
-            await ensureConfigExists()
+            await ensureRuncloudConfigExists()
 
             await this.testRuncloudApi()
 

@@ -1,4 +1,4 @@
-import {runcloudApi} from "../helpers/runcloudApi.mjs";
+import {runcloudApi} from "../../helpers/runcloudApi.mjs";
 import inquirer from "inquirer";
 
 export default async function createDatabase(server, app) {

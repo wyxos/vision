@@ -9,7 +9,7 @@ export default class Toggle extends Command {
 
     description = "Toggle wyxos/vision package between local and online versions"
 
-    handle(){
+    handle() {
         const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
         const packageJSONPath = path.join(process.cwd(), "package.json");
@@ -33,7 +33,7 @@ export default class Toggle extends Command {
         const dependencyKey = isDevDependency ? "devDependencies" : "dependencies";
 
         if (packageJSON[dependencyKey] && packageJSON[dependencyKey][packageName] && localPaths.includes(packageJSON[dependencyKey][packageName])) {
-            const latestVersion = execSync(`npm show ${packageName} version`, { encoding: 'utf8' }).trim();
+            const latestVersion = execSync(`npm show ${packageName} version`, {encoding: 'utf8'}).trim();
             packageJSON[dependencyKey][packageName] = `^${latestVersion}`;
         } else {
             const existingPath = localPaths.find(p => fs.existsSync(path.join(__dirname, p.replace("file:", "")))) || localPaths[0];
@@ -49,7 +49,7 @@ export default class Toggle extends Command {
 
 // Run npm update
         try {
-            execSync(`npm update ${packageName}`, { stdio: "inherit" });
+            execSync(`npm install`, {stdio: "inherit"});
             console.log(`Updated ${packageName}`);
         } catch (error) {
             console.error(`Failed to update ${packageName}:`, error);

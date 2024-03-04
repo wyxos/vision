@@ -1,9 +1,9 @@
-import {getProjectPath} from "../helpers/cliInteractions.mjs";
+import {getProjectPath} from "../../helpers/cliInteractions.mjs";
 import path from "path";
 import fs from "fs";
 import {NodeSSH} from "node-ssh";
 import inquirer from "inquirer";
-import {runcloudApi} from "../helpers/runcloudApi.mjs";
+import {runcloudApi} from "../../helpers/runcloudApi.mjs";
 
 export default async function setupEnvironment(config, server, app, database) {
     const projectPath = getProjectPath();

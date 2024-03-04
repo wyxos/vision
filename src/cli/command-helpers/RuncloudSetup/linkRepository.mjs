@@ -1,8 +1,8 @@
 import path from "path";
-import {getProjectPath} from "../helpers/cliInteractions.mjs";
+import {getProjectPath} from "../../helpers/cliInteractions.mjs";
 import fs from "fs";
 import inquirer from "inquirer";
-import {runcloudApi} from "../helpers/runcloudApi.mjs";
+import {runcloudApi} from "../../helpers/runcloudApi.mjs";
 
 function formatRepoUrl(repoUrl) {
     // SSH format: git@HOST:USERNAME/REPO.git

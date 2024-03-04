@@ -1,8 +1,9 @@
-import {getRuncloudConfigPath} from "../helpers/configPaths.mjs";
+import {getRuncloudConfigPath} from "../../helpers/configPaths.mjs";
 import fs from "fs";
 import inquirer from "inquirer";
+import storeApiCredentials from "./storeApiCredentials.mjs";
 
-export default async function ensureConfigExists() {
+export default async function ensureRuncloudConfigExists() {
     const configFilePath = getRuncloudConfigPath();
     let apiKey = null;
     let apiSecret = null;
@@ -33,7 +34,7 @@ export default async function ensureConfigExists() {
         apiKey = answers.apiKey;
         apiSecret = answers.apiSecret;
         // Store the API key and secret
-        await this.storeApiCredentials(apiKey, apiSecret);
+        await storeApiCredentials(apiKey, apiSecret);
         console.log('Runcloud API credentials stored successfully at the project root.');
     } else {
         console.log('Runcloud API credentials already exist.');

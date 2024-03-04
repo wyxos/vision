@@ -27,8 +27,11 @@ async function setupProgram() {
                 .command(instance.signature)
                 .description(instance.description)
                 .action((...args) => {
+                    // Extract options as the last argument
                     const options = args.pop();
-                    instance.handle(...args);
+
+                    // Pass all arguments, including options, to the handle method
+                    instance.handle(...args, options);
                 });
         }
     }

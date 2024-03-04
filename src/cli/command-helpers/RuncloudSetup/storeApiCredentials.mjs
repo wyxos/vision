@@ -1,7 +1,7 @@
-import {getRuncloudConfigPath} from "../helpers/configPaths.mjs";
+import {getRuncloudConfigPath} from "../../helpers/configPaths.mjs";
 import fs from "fs";
-import {writeJsonFile} from "../helpers/jsonUtils.mjs";
-import {appendGitIgnore} from "../helpers/fileInteractions.mjs";
+import {writeJsonFile} from "../../helpers/jsonUtils.mjs";
+import {appendGitIgnore} from "../../helpers/fileInteractions.mjs";
 
 export default async function storeApiCredentials(apiKey, apiSecret) {
     const configFilePath = getRuncloudConfigPath();
