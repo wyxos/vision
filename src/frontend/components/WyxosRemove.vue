@@ -32,19 +32,19 @@ export default {
     remove() {
       // execute axios.delete pointing to the route received from props
       this.destroy
-          .delete(this.route)
-          .then(() => {
-            this.$emit('removed')
+        .delete(this.route)
+        .then(() => {
+          this.$emit('removed')
 
-            if (this.listing) {
-              this.listing.reload()
-            }
+          if (this.listing) {
+            this.listing.reload()
+          }
 
-            this.isVisible = false
-          })
-          .catch(() => {
-            this.$emit('failed')
-          })
+          this.isVisible = false
+        })
+        .catch(() => {
+          this.$emit('failed')
+        })
     }
   }
 }
@@ -58,19 +58,18 @@ export default {
         <div class="content p-6">
           <slot name="title"><h3 class="title">Delete</h3></slot>
           <slot name="message"
-          ><p class="mb-4">
-            Are you sure you want to delete this record?
-          </p></slot
+            ><p class="mb-4">
+              Are you sure you want to delete this record?
+            </p></slot
           >
           <div class="buttons flex gap-6 justify-end">
             <o-button class="button is-secondary" @click="isVisible = false"
-            >Cancel
-            </o-button
-            >
+              >Cancel
+            </o-button>
             <w-button
-                :loading="destroy.isSubmitting"
-                class="button is-danger"
-                @click="remove()">
+              :loading="destroy.isSubmitting"
+              class="button is-danger"
+              @click="remove()">
               <slot name="confirm">Confirm</slot>
             </w-button>
           </div>
