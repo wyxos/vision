@@ -26,7 +26,7 @@ export function updateJson(jsonObj) {
     return jsonObj; // Placeholder
 }
 
-export async function writeJsonFile(filePath, jsonObj) {
+export function writeJsonFile(filePath, jsonObj) {
     const data = JSON.stringify(jsonObj, null, 2);
     fs.writeFileSync(filePath, data, 'utf8');
 }

@@ -1,4 +1,4 @@
-import {readJsonFile, writeJsonFile} from "../../helpers/jsonUtils.mjs";
+import {readJsonFile, writeJsonFile,} from "../../helpers/jsonUtils.mjs";
 import {getRuncloudConfigPath} from "../../helpers/configPaths.mjs";
 import {runcloudApi} from "../../helpers/runcloudApi.mjs";
 import inquirer from "inquirer";
@@ -54,7 +54,7 @@ export default async function updateConfig(server, app, repo) {
     }
 
     // Optionally save the updated config
-    await writeJsonFile(getRuncloudConfigPath(), updatedConfig);
+    writeJsonFile(getRuncloudConfigPath(), updatedConfig);
 
     return updatedConfig[selectedDomain]
 }
