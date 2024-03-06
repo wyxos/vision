@@ -4,6 +4,8 @@ import LoadState from './LoadState'
 import qs from 'query-string'
 import useFormErrors from './useFormErrors'
 
+let cancelTokenSource = null
+
 export default class Listing {
     cancelTokenSource = null
 
@@ -18,6 +20,8 @@ export default class Listing {
     errors = null
 
     errorBag = 'listing'
+
+    globalCancel = true
 
     attributes = reactive({
         query: {
@@ -288,13 +292,22 @@ export default class Listing {
     async load(path) {
         this.errors.clear(null, this.errorBag)
 
-        // if a request is ongoing, cancel it
-        if (this.cancelTokenSource) {
-            this.cancelTokenSource.cancel()
+        if (this.globalCancel) {
+            if (cancelTokenSource) {
+                cancelTokenSource.cancel()
+            }
+
+            cancelTokenSource = axios.CancelToken.source()
+        } else {
+            // if a request is ongoing, cancel it
+            if (this.cancelTokenSource) {
+                this.cancelTokenSource.cancel()
+            }
+
+            // create a new CancelToken
+            this.cancelTokenSource = axios.CancelToken.source()
         }
 
-        // create a new CancelToken
-        this.cancelTokenSource = axios.CancelToken.source()
 
         this.loading()
 
@@ -314,7 +327,7 @@ export default class Listing {
             const response = await axios
                 .get(url, {
                     params,
-                    cancelToken: this.cancelTokenSource.token
+                    cancelToken: this.globalCancel ? cancelTokenSource.token : this.cancelTokenSource.token
                 })
                 .catch((error) => {
                     this.failed()
