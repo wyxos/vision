@@ -13,9 +13,7 @@
     "ecmaVersion": 13,
     "sourceType": "module"
   },
-  "plugins": [
-    "vue"
-  ],
+  "plugins": ["vue"],
   "rules": {
     "import/no-extraneous-dependencies": 0,
     "global-require": 0,

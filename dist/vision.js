@@ -1098,12 +1098,7 @@ class I {
     });
     return n.patch && Object.assign(i, n.patch), (await this.fetch()).query.items.length || (this.attributes.params.page--, await this.load()), n;
   }
-  async destroy(e, {
-    props: t,
-    data: r,
-    config: i,
-    method: n = "delete"
-  }) {
+  async destroy(e, { props: t, data: r, config: i, method: n = "delete" }) {
     let a;
     const { index: o, row: l } = t;
     l.isProcessing = !0, n === "delete" ? a = await h.delete(e, i) : n === "post" && (a = await h.post(e, r, i));
@@ -1112,14 +1107,11 @@ class I {
       return l.isProcessing = !1, a.data;
     this.attributes.query.items.splice(o, 1);
     const C = this.attributes.query.items.map((O) => O.id);
-    return u.query.items.filter((O) => !C.includes(O.id)).forEach((O) => this.attributes.query.items.push(O)), a.data;
+    return u.query.items.filter(
+      (O) => !C.includes(O.id)
+    ).forEach((O) => this.attributes.query.items.push(O)), a.data;
   }
-  async update(e, {
-    props: t,
-    data: r,
-    config: i,
-    method: n = "patch"
-  }) {
+  async update(e, { props: t, data: r, config: i, method: n = "patch" }) {
     let a;
     const { index: o, row: l } = t;
     l.isProcessing = !0, n === "patch" ? a = await h.patch(e, i) : n === "post" && (a = await h.post(e, r, i));
@@ -1128,7 +1120,9 @@ class I {
       return l.isProcessing = !1, Object.assign(l, v), a.data;
     this.attributes.query.items.splice(o, 1);
     const C = this.attributes.query.items.map((O) => O.id);
-    return u.query.items.filter((O) => !C.includes(O.id)).forEach((O) => this.attributes.query.items.push(O)), a.data;
+    return u.query.items.filter(
+      (O) => !C.includes(O.id)
+    ).forEach((O) => this.attributes.query.items.push(O)), a.data;
   }
   async delete(e) {
     return this.processRowAndRefreshList({
@@ -1152,12 +1146,11 @@ class I {
     };
     let l = a.states[i];
     l || (l = a.states[i] = j.create()), l.loading();
-    const { data: u } = await h[n](
-      e || this.baseUrl,
-      r
-    ).catch((C) => {
-      throw l.failed(), C;
-    });
+    const { data: u } = await h[n](e || this.baseUrl, r).catch(
+      (C) => {
+        throw l.failed(), C;
+      }
+    );
     l.loaded(), u.row && Object.assign(a, u.row);
     const v = await this.fetch();
     if (this.attributes.query.items.splice(o, 1), !v.query.items.length)
