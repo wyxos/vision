@@ -27,7 +27,7 @@ export default class ToggleHarmonie extends Command {
         ]
 
         // Removed SSH connection setup, replaced with homesteadConfig setup
-        const {homesteadDir} = await ensureVisionConfigExists()
+        const {homesteadDir} = await ensureVisionConfigExists('homestead')
 
         try {
             // Construct the command to run via vagrant ssh

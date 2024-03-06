@@ -4,12 +4,93 @@ import path from "path";
 import yaml from "js-yaml";
 import {getVisionConfig, getVisionConfigPath} from "../../helpers/configPaths.mjs";
 import {readJsonFile, writeJsonFile} from "../../helpers/jsonUtils.mjs";
+import {exec} from "child_process";
 
-export default async function ensureVisionConfigExists() {
+import iconv from 'iconv-lite';
+
+function listWslDistributions() {
+    return new Promise((resolve, reject) => {
+        exec('wsl -l -q', {encoding: 'buffer'}, (error, stdout, stderr) => {
+            if (error) {
+                console.error(`exec error: ${error}`);
+                return reject(error);
+            }
+            // Convert from a potential UTF-16 buffer to a UTF-8 string
+            const output = iconv.decode(stdout, 'utf-16le').trim();
+            const distributions = output.split('\r\n');
+            resolve(distributions);
+        });
+    });
+}
+
+export default async function ensureVisionConfigExists(mode = 'valet') {
     let config = {};
 
+    if (mode === 'valet') {
+        const visionConfigPath = getVisionConfigPath();
+
+        let config = readJsonFile(visionConfigPath);
+
+        // Check if Valet config already exists and is valid
+        if (config.valet && config.valet.name && config.valet.path && config.valet.parkedAt) {
+            console.log('Valet configuration already exists.');
+
+            // Optional: Ask the user if they want to overwrite the existing configuration
+            const overwrite = await inquirer.prompt([{
+                name: 'overwrite',
+                type: 'confirm',
+                message: 'Valet configuration already exists. Do you want to overwrite it?',
+                default: false
+            }]);
+
+            if (!overwrite.overwrite) {
+                console.log('Skipping Valet setup.');
+                return config.valet; // Exit the setup if user chooses not to overwrite
+            }
+        }
+
+        const distributions = await listWslDistributions();
+        const answers = await inquirer.prompt([
+            {
+                name: 'selectedDistribution',
+                type: 'list',
+                message: 'Select your WSL2 distribution:',
+                choices: distributions,
+            },
+            {
+                type: 'input',
+                name: 'parkedAt',
+                message: 'Enter the full path where your Valet projects are parked:',
+                // You can include a default value or leave it empty for the user to fill
+                default: config.valet && config.valet.parkedAt ? config.valet.parkedAt : '/home/username/code',
+                validate: input => !!input || 'Valet projects path is required.'
+            }
+        ]);
+
+        const selectedDistribution = answers.selectedDistribution;
+        console.log(`Selected Distribution: ${selectedDistribution}`);
+
+        // Use the WSL convention to access the root of the distribution from Windows
+        const distributionPath = `\\\\wsl$\\${selectedDistribution}`;
+
+        // Store the distribution name and the path
+        config.valet = {
+            name: selectedDistribution,
+            path: distributionPath,
+            parkedAt: answers.parkedAt
+        };
+
+        writeJsonFile(visionConfigPath, config);
+
+        console.log(`Configuration updated with selected distribution and path.`);
+
+        return config.valet
+    }
+
     // Check if the config file exists
-    if (!fs.existsSync(getVisionConfigPath())) {
+    const visionConfigPath = getVisionConfigPath();
+
+    if (!fs.existsSync(visionConfigPath)) {
         const baseConfig = await inquirer.prompt([
             {
                 type: 'input',
@@ -46,10 +127,14 @@ export default async function ensureVisionConfigExists() {
             }
         ]);
 
-        config = {...baseConfig, ...projectConfig};
+        config = {
+            homestead: {
+                ...baseConfig, ...projectConfig
+            }
+        };
 
         // Save the config for future use
-        await writeJsonFile(getVisionConfigPath(), config);
+        writeJsonFile(visionConfigPath, config);
     } else {
         // Read and return the existing config
         config = getVisionConfig();
@@ -65,11 +150,11 @@ export default async function ensureVisionConfigExists() {
         ]);
 
         // Update the config with the potentially new projectSubPath
-        config.projectSubPath = projectSubPathAnswer.projectSubPath;
+        config.homestead.projectSubPath = projectSubPathAnswer.projectSubPath;
 
         // Save the potentially updated config back to the file
-        await writeJsonFile(getVisionConfigPath(), config);
+        writeJsonFile(visionConfigPath, config);
     }
 
-    return config;
+    return config.homestead;
 }

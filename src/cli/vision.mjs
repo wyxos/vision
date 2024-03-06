@@ -22,17 +22,22 @@ async function setupProgram() {
             const Module = module.default;
 
             const instance = new Module();
+            const cmd = program.command(instance.signature).description(instance.description);
 
-            program
-                .command(instance.signature)
-                .description(instance.description)
-                .action((...args) => {
-                    // Extract options as the last argument
-                    const options = args.pop();
-
-                    // Pass all arguments, including options, to the handle method
-                    instance.handle(...args, options);
+            // Check if getOptions is defined and add options accordingly
+            if (typeof instance.getOptions === 'function') {
+                const options = instance.getOptions();
+                options.forEach(({flag, description, defaultValue}) => {
+                    cmd.option(flag, description, defaultValue);
                 });
+            }
+
+            cmd.action((...args) => {
+                // Extract options as the last argument
+                const options = args.pop();
+                // Pass all arguments, including options, to the handle method
+                instance.handle(...args, options);
+            });
         }
     }
 

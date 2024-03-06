@@ -19,7 +19,7 @@ export default async function storeApiCredentials(apiKey, apiSecret) {
     config.apiSecret = apiSecret;
 
     // Write the updated config back to the file at the project root
-    await writeJsonFile(configFilePath, config)
+    writeJsonFile(configFilePath, config)
 
     // Check if .runcloud.json is already in .gitignore
     appendGitIgnore('.runcloud.json')

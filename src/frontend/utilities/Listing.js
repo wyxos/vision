@@ -173,7 +173,7 @@ export default class Listing {
 
         instance.baseUrl = options.baseUrl
 
-        instance.api = axios.create(options.axios || {})
+        // instance.api = axios.create(options.axios || {})
 
         return instance
     }
@@ -206,33 +206,45 @@ export default class Listing {
         Object.assign(this.attributes.params, this.structure, query)
     }
 
+    // Retrieves the list without affecting the load state.
     async fetch(path, cancelToken) {
-        this.loading()
-
         const params = JSON.parse(JSON.stringify(this.attributes.params))
 
         const url = path || this.baseUrl
 
-        try {
-            const {data} = await this.api.get(url, {
-                params,
-                cancelToken
-            })
+        const {data} = await axios.get(url, {
+            params,
+            cancelToken
+        })
 
-            this.loaded()
+        return data
 
-            if (this.options.enableSearchUpdate) {
-                this.refreshUrl()
-            }
-
-            return data
-        } catch (error) {
-            this.failed()
-        }
+        // this.loading()
+        //
+        // const params = JSON.parse(JSON.stringify(this.attributes.params))
+        //
+        // const url = path || this.baseUrl
+        //
+        // try {
+        //     const {data} = await axios.get(url, {
+        //         params,
+        //         cancelToken
+        //     })
+        //
+        //     this.loaded()
+        //
+        //     if (this.options.enableSearchUpdate) {
+        //         this.refreshUrl()
+        //     }
+        //
+        //     return data
+        // } catch (error) {
+        //     this.failed()
+        // }
     }
 
     async reload(path) {
-        const {data} = await this.api.get(path || this.baseUrl, {
+        const {data} = await axios.get(path || this.baseUrl, {
             params: JSON.parse(JSON.stringify(this.attributes.params))
         })
 
@@ -299,7 +311,7 @@ export default class Listing {
 
             const url = path || this.baseUrl
 
-            const response = await this.api
+            const response = await axios
                 .get(url, {
                     params,
                     cancelToken: this.cancelTokenSource.token
@@ -351,7 +363,7 @@ export default class Listing {
             ...payload
         }
 
-        const {data} = await this.api
+        const {data} = await axios
             .patch(path || this.baseUrl, payload)
             .catch((error) => {
                 throw error
@@ -376,6 +388,88 @@ export default class Listing {
         // filter items to add
 
         return data
+    }
+
+    async destroy(path, {
+        props,
+        data,
+        config,
+        method = 'delete'
+    }) {
+        let response
+
+        const {index, row} = props
+
+        row.isProcessing = true
+
+        if (method === 'delete') {
+            response = await axios.delete(path, config)
+        } else if (method === 'post') {
+            response = await axios.post(path, data, config)
+        }
+
+        const refresh = await this.fetch()
+
+        const isStillValid = refresh.query.items.find(item => item.id === row.id);
+
+        if (isStillValid) {
+            row.isProcessing = false
+
+            return response.data
+        }
+
+        // Remove the item using the index if it's not found in the refreshed data
+        this.attributes.query.items.splice(index, 1);
+
+        // Logic to add missing items from the refreshed data to the list
+        const currentIds = this.attributes.query.items.map(item => item.id);
+        const missingItems = refresh.query.items.filter(item => !currentIds.includes(item.id));
+
+        missingItems.forEach(item => this.attributes.query.items.push(item));
+
+        return response.data;
+    }
+
+    async update(path, {
+        props,
+        data,
+        config,
+        method = 'patch'
+    }) {
+        let response
+
+        const {index, row} = props
+
+        row.isProcessing = true
+
+        if (method === 'patch') {
+            response = await axios.patch(path, config)
+        } else if (method === 'post') {
+            response = await axios.post(path, data, config)
+        }
+
+        const refresh = await this.fetch()
+
+        const isStillValid = refresh.query.items.find(item => item.id === row.id);
+
+        if (isStillValid) {
+            row.isProcessing = false
+
+            Object.assign(row, isStillValid)
+
+            return response.data
+        }
+
+        // Remove the item using the index if it's not found in the refreshed data
+        this.attributes.query.items.splice(index, 1);
+
+        // Logic to add missing items from the refreshed data to the list
+        const currentIds = this.attributes.query.items.map(item => item.id);
+        const missingItems = refresh.query.items.filter(item => !currentIds.includes(item.id));
+
+        missingItems.forEach(item => this.attributes.query.items.push(item));
+
+        return response.data;
     }
 
     async delete(options) {
@@ -410,7 +504,7 @@ export default class Listing {
 
         rowState.loading()
 
-        const {data} = await this.api[method](
+        const {data} = await axios[method](
             path || this.baseUrl,
             payload
         ).catch((error) => {
@@ -461,6 +555,8 @@ export default class Listing {
 
         this.attributes.query.items = []
 
+        this.attributes.params.page = 1
+
         this.attributes.query.total = 0
 
         this.attributes.query.showing = 0
@@ -472,7 +568,7 @@ export default class Listing {
 
             const url = this.baseUrl
 
-            const response = await this.api
+            const response = await axios
                 .get(url, {
                     params,
                     cancelToken: this.cancelTokenSource.token
@@ -511,33 +607,31 @@ export default class Listing {
 
         this.loaded()
 
-        this.cancelFilter()
-
-        this.attributes.state.filter = false
+        this.hideFilter()
     }
 
     showFilter() {
         this.attributes.state.filter = true
     }
 
-    cancelFilter() {
+    hideFilter() {
         this.attributes.state.filter = false
     }
 
-    async resetFilter(resetType = 'url', url = null) {
-        if (resetType === 'url') {
-            // Reset based on the URL
-            this.mergeSearch()
-        } else if (resetType === 'initial') {
-            // Reset to initial structure
-            Object.assign(this.attributes.params, this.structure)
+    cancelFilter() {
+        this.mergeSearch()
 
-            this.refreshUrl()
-        }
+        this.attributes.state.filter = false
+    }
+
+    resetFilter(url = null) {
+        Object.assign(this.attributes.params, this.structure)
+
+        this.refreshUrl()
 
         this.attributes.state.filter = false
 
-        await this.load(url)
+        return this.load(url)
     }
 
     getError(key) {
