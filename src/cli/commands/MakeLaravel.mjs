@@ -13,6 +13,7 @@ import {appendToFile} from "../helpers/fileInteractions.mjs";
 import projectDependencies from "../command-helpers/MakeLaravel/ProjectDependencies.mjs";
 import fileUpdater from "../command-helpers/MakeLaravel/FileUpdater.mjs";
 import projectCreator from "../command-helpers/MakeLaravel/ProjectCreator.mjs";
+import {execSync} from "child_process";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -48,7 +49,6 @@ export default class MakeLaravel extends Command {
             }
         } catch (error) {
             console.log(`Setup failed for ${this.projectName}: ${error.message}`);
-            console.error(`Consider checking your Homestead.yaml configuration or ensuring your Homestead VM is running.`);
             throw error
         }
     }
@@ -58,7 +58,9 @@ export default class MakeLaravel extends Command {
 
         this.config = await ensureVisionConfigExists(this.mode)
 
-        projectCreator.create(this)
+        await projectCreator.create(this)
+
+        await fileUpdater.updateWindowsHostsFile(this)
     }
 
     async homesteadSetup() {
@@ -66,7 +68,7 @@ export default class MakeLaravel extends Command {
 
         this.config = await ensureVisionConfigExists(this.mode)
 
-        projectCreator.create(this)
+        await projectCreator.create(this)
 
         fileUpdater.updateHomesteadYaml(this)
 

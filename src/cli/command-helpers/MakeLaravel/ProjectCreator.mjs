@@ -1,70 +1,73 @@
-import {exec, execSync} from "child_process";
+import {execSync} from "child_process";
 import inquirer from "inquirer";
 import {spawn} from "node:child_process";
 import {getHomesteadProjectPath, getProjectPathOnWindows} from "../../helpers/cliInteractions.mjs";
 import fs from "fs";
+import {NodeSSH} from 'node-ssh';
 
 class ProjectCreator {
+    constructor() {
+        this.ssh = new NodeSSH();
+    }
+
     create(command) {
         if (command.isValet()) {
-            this.valetSetup(command)
+            return this.valetSetup(command)
         } else {
-            this.homesteadSetup()
+            return this.homesteadSetup()
         }
     }
 
-    valetSetup(command) {
-        const {name: distributionName, parkedAt: projectsPath} = command.config;
+    async valetSetup(command) {
+        const {username, wslDistroIp, parkedAt, sshPath} = command.config;
         const projectName = command.projectName;
+        const projectPath = `${parkedAt}/${projectName}`;
 
-        // First, fetch the $HOME directory path within the specified WSL distribution
-        exec(`wsl -d ${distributionName} -e bash -c "echo $HOME"`, (error, homePathStdout, stderr) => {
-            if (error) {
-                console.error(`Error fetching $HOME directory: ${error.message}`);
-                return;
+        try {
+            await this.ssh.connect({
+                host: wslDistroIp,
+                username: username,
+                privateKeyPath: sshPath,
+            });
+
+            const projectExistsCommand = `test -d "${projectPath}" && echo "exists" || echo "not exists"`;
+            const result = await this.ssh.execCommand(projectExistsCommand, {cwd: '/'});
+            if (result.stdout.trim() === 'exists') {
+                const answers = await inquirer.prompt([{
+                    name: 'overwrite',
+                    type: 'confirm',
+                    message: `Project ${projectName} already exists. Overwrite?`,
+                    default: false
+                }]);
+
+                if (!answers.overwrite) {
+                    console.log('Project creation cancelled.');
+                    return;
+                }
+                // Use rm -R for recursive deletion
+                await this.ssh.execCommand(`rm -R "${projectPath}"`);
+                console.log(`Existing project ${projectName} deleted.`);
             }
-            if (stderr) {
-                console.error(`Error: ${stderr}`);
-                return;
-            }
 
-            // Trim newline from the output to get the clean path
-            const homePath = homePathStdout.trim();
-            console.log(`$HOME path in ${distributionName}: ${homePath}`);
+            console.log(`Creating new project ${projectName}...`);
+            // Updated part to use exec for real-time output
+            const laravelCommand = `source ~/.bashrc && cd ${parkedAt} && /home/leshrac/.config/composer/vendor/bin/laravel new ${projectName} -n`;
 
-            // Now, construct the full path to the Laravel installer
-            const laravelFullPath = `${homePath}/.config/composer/vendor/bin/laravel`;
-            this.checkAndCreateProject(distributionName, projectsPath, projectName, laravelFullPath);
-        });
-    }
-
-    checkAndCreateProject(distributionName, projectsPath, projectName, laravelFullPath) {
-        const projectFullPath = `${projectsPath}/${projectName}`;
-        console.log(`Attempting to create a new Laravel project named ${projectName} in ${distributionName} at ${projectFullPath}...`);
-
-        // Check if the project already exists...
-        // Similar to the previously provided implementation
-        // After checking, if project does not exist or needs to be overwritten:
-        this.createProject(distributionName, projectsPath, projectName, laravelFullPath);
-    }
-
-    createProject(distributionName, projectsPath, projectName, laravelFullPath) {
-        // Using the laravelFullPath constructed from the dynamic $HOME path
-        const commandToExecute = `cd /home/leshrac/code && ${laravelFullPath} new ${projectName} --force --no-interaction --breeze --stack=blade`;
-        const wslCommand = `wsl -d Ubuntu bash -c "cd /home/leshrac/code && /home/leshrac/.config/composer/vendor/bin/laravel new power-tools --force --no-interaction"`;
-
-        exec(wslCommand, (error, stdout, stderr) => {
-            if (error) {
-                console.error(`Error creating Laravel project: ${error.message}`);
-                return;
-            }
-            if (stderr) {
-                console.error(`Stderr: ${stderr}`);
-                return;
-            }
-            console.log(stdout);
-            console.log(`Laravel project ${projectName} created successfully.`);
-        });
+            await this.ssh.execCommand(laravelCommand, {
+                cwd: '/',
+                onStdout(chunk) {
+                    console.log(chunk.toString('utf8'));
+                },
+                onStderr(chunk) {
+                    console.error(chunk.toString('utf8'));
+                },
+            });
+            console.log(`Project ${projectName} created successfully.`);
+        } catch (error) {
+            console.error(`Error during project creation: ${error}`);
+        } finally {
+            this.ssh.dispose();
+        }
     }
 
     homesteadSetup(command) {

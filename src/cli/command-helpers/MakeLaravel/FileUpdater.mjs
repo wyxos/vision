@@ -2,35 +2,57 @@ import path from "path";
 import fs from "fs";
 import yaml from "js-yaml";
 import {getProjectPathOnWindows} from "../../helpers/cliInteractions.mjs";
+import {execSync} from "child_process";
+import {appendToFile} from "../../helpers/fileInteractions.mjs";
 
 class FileUpdater {
     updateWindowsHostsFile(command) {
-        const {homesteadDir} = command.config
-        console.log('Updating Windows hosts file...');
-        // Define the path to the Homestead.yaml file
-        const homesteadPath = path.join(homesteadDir, 'Homestead.yaml');
+        if (command.isValet()) {
+            const distroIP = command.config.wslDistroIp
+            console.log("RESULT", distroIP);
 
-        // Read the Homestead.yaml content
-        const yamlContent = fs.readFileSync(homesteadPath, 'utf8');
-        const homesteadConfig = yaml.load(yamlContent);
+            const hostEntry = `${distroIP} ${command.projectName}.test`;
+            const hostsFilePath = path.join('C:\\', 'Windows', 'System32', 'drivers', 'etc', 'hosts');
 
-        // Extract the IP address from the Homestead configuration
-        const ipAddress = homesteadConfig.ip;
+            // Read the current hosts file content
+            const currentHostsContent = fs.readFileSync(hostsFilePath, 'utf-8');
 
-        // Define the hosts file path and the entry to append
-        const hostsPath = 'C:/Windows/System32/drivers/etc/hosts';
-        const entry = `${ipAddress} ${command.projectName}.test`;
-
-        // Read the current content of the hosts file
-        const hostsContent = fs.readFileSync(hostsPath, 'utf8');
-
-        // Check if the entry already exists in the hosts file
-        if (!hostsContent.includes(entry)) {
-            // Append the new entry to the hosts file
-            fs.appendFileSync(hostsPath, `\n${entry}`);
-            console.log(`Windows hosts file updated with ${command.projectName}.test`);
+            // Check if the entry already exists
+            if (!currentHostsContent.includes(`${command.projectName}.test`)) {
+                // Append to file on a new line
+                appendToFile(hostsFilePath, `\n${hostEntry}`);
+                console.log(`${command.projectName}.test has been added to your hosts file, pointing to ${distroIP}`);
+            } else {
+                console.log(`${command.projectName}.test is already in your hosts file.`);
+            }
         } else {
-            console.log(`The host entry for ${command.projectName}.test already exists. No update needed.`);
+            const {homesteadDir} = command.config
+            console.log('Updating Windows hosts file...');
+            // Define the path to the Homestead.yaml file
+            const homesteadPath = path.join(homesteadDir, 'Homestead.yaml');
+
+            // Read the Homestead.yaml content
+            const yamlContent = fs.readFileSync(homesteadPath, 'utf8');
+            const homesteadConfig = yaml.load(yamlContent);
+
+            // Extract the IP address from the Homestead configuration
+            const ipAddress = homesteadConfig.ip;
+
+            // Define the hosts file path and the entry to append
+            const hostsPath = 'C:/Windows/System32/drivers/etc/hosts';
+            const entry = `${ipAddress} ${command.projectName}.test`;
+
+            // Read the current content of the hosts file
+            const hostsContent = fs.readFileSync(hostsPath, 'utf8');
+
+            // Check if the entry already exists in the hosts file
+            if (!hostsContent.includes(entry)) {
+                // Append the new entry to the hosts file
+                fs.appendFileSync(hostsPath, `\n${entry}`);
+                console.log(`Windows hosts file updated with ${command.projectName}.test`);
+            } else {
+                console.log(`The host entry for ${command.projectName}.test already exists. No update needed.`);
+            }
         }
     }
 
