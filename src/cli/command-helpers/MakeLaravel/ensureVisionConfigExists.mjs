@@ -4,91 +4,89 @@ import path from "path";
 import yaml from "js-yaml";
 import {getVisionConfig, getVisionConfigPath} from "../../helpers/configPaths.mjs";
 import {readJsonFile, writeJsonFile} from "../../helpers/jsonUtils.mjs";
-import {exec} from "child_process";
+import {execSync} from "child_process";
 
-import iconv from 'iconv-lite';
-
-function listWslDistributions() {
-    return new Promise((resolve, reject) => {
-        exec('wsl -l -q', {encoding: 'buffer'}, (error, stdout, stderr) => {
-            if (error) {
-                console.error(`exec error: ${error}`);
-                return reject(error);
-            }
-            // Convert from a potential UTF-16 buffer to a UTF-8 string
-            const output = iconv.decode(stdout, 'utf-16le').trim();
-            const distributions = output.split('\r\n');
-            resolve(distributions);
+async function listSshKeys() {
+    const sshDir = path.join(process.env.HOME || process.env.USERPROFILE, '.ssh');
+    try {
+        const files = fs.readdirSync(sshDir);
+        return files.filter(file => file.endsWith('.pub')).map(file => {
+            const privateKeyPath = path.join(sshDir, file.replace('.pub', ''));
+            return {name: file, value: privateKeyPath};
         });
-    });
+    } catch (error) {
+        console.error('No SSH keys found. Please ensure SSH keys are generated.');
+        process.exit(1);
+    }
 }
 
-export default async function ensureVisionConfigExists(mode = 'valet') {
+async function ensureValetConfig() {
+    const visionConfigPath = getVisionConfigPath();
     let config = {};
 
-    if (mode === 'valet') {
-        const visionConfigPath = getVisionConfigPath();
+    if (fs.existsSync(visionConfigPath)) {
+        config = readJsonFile(visionConfigPath);
+    } else {
+        config = {valet: {}};
+    }
 
-        let config = readJsonFile(visionConfigPath);
+    if (!config.valet.sshPath || !config.valet.wslDistro || !config.valet.parkedAt || !config.valet.username) {
+        const distrosRaw = execSync('wsl -l -q', {encoding: 'utf16le'});
+        const distros = distrosRaw.split('\r\n').filter(distro => distro.trim() !== '')
+            .filter(value => !value.includes('docker'));
 
-        // Check if Valet config already exists and is valid
-        if (config.valet && config.valet.name && config.valet.path && config.valet.parkedAt) {
-            console.log('Valet configuration already exists.');
+        const sshKeys = await listSshKeys();
 
-            // Optional: Ask the user if they want to overwrite the existing configuration
-            const overwrite = await inquirer.prompt([{
-                name: 'overwrite',
-                type: 'confirm',
-                message: 'Valet configuration already exists. Do you want to overwrite it?',
-                default: false
-            }]);
-
-            if (!overwrite.overwrite) {
-                console.log('Skipping Valet setup.');
-                return config.valet; // Exit the setup if user chooses not to overwrite
-            }
-        }
-
-        const distributions = await listWslDistributions();
         const answers = await inquirer.prompt([
             {
-                name: 'selectedDistribution',
                 type: 'list',
-                message: 'Select your WSL2 distribution:',
-                choices: distributions,
+                name: 'wslDistro',
+                message: 'Select the WSL distribution to use:',
+                choices: distros.map(distro => ({name: distro, value: distro})),
+            },
+            {
+                type: 'list',
+                name: 'sshPath',
+                message: 'Select the SSH public key to use:',
+                choices: sshKeys,
             },
             {
                 type: 'input',
                 name: 'parkedAt',
-                message: 'Enter the full path where your Valet projects are parked:',
-                // You can include a default value or leave it empty for the user to fill
-                default: config.valet && config.valet.parkedAt ? config.valet.parkedAt : '/home/username/code',
-                validate: input => !!input || 'Valet projects path is required.'
+                message: 'Enter the  full path where Valet is parked:',
+                validate: input => !!input.trim() || 'Parked path is required.',
+                default: '/home/username/code',
+            },
+            {
+                type: 'input',
+                name: 'username',
+                message: 'Enter the username to authenticate on your distro:',
+                validate: input => !!input.trim() || 'Username path is required.',
+                default: 'username',
             }
         ]);
 
-        const selectedDistribution = answers.selectedDistribution;
-        console.log(`Selected Distribution: ${selectedDistribution}`);
+        const wslDistroIp = execSync(`wsl -d ${answers.wslDistro} -- hostname -I`).toString().trim();
 
-        // Use the WSL convention to access the root of the distribution from Windows
-        const distributionPath = `\\\\wsl$\\${selectedDistribution}`;
-
-        // Store the distribution name and the path
         config.valet = {
-            name: selectedDistribution,
-            path: distributionPath,
-            parkedAt: answers.parkedAt
+            ...config.valet,
+            wslDistro: answers.wslDistro,
+            wslDistroIp: wslDistroIp,
+            username: answers.username,
+            sshPath: answers.sshPath,
+            parkedAt: answers.parkedAt,
         };
 
         writeJsonFile(visionConfigPath, config);
-
-        console.log(`Configuration updated with selected distribution and path.`);
-
-        return config.valet
     }
 
-    // Check if the config file exists
+    return config.valet;
+}
+
+async function ensureHomesteadConfig() {
     const visionConfigPath = getVisionConfigPath();
+
+    let config = readJsonFile(visionConfigPath);
 
     if (!fs.existsSync(visionConfigPath)) {
         const baseConfig = await inquirer.prompt([
@@ -157,4 +155,12 @@ export default async function ensureVisionConfigExists(mode = 'valet') {
     }
 
     return config.homestead;
+}
+
+export default async function ensureVisionConfigExists(mode = 'valet') {
+    if (mode === 'valet') {
+        return ensureValetConfig()
+    }
+
+    return ensureHomesteadConfig()
 }
