@@ -104,16 +104,16 @@ export default {
 <template>
   <o-field :class="fieldClass" :label="label" v-bind="getError">
     <o-input
-        :class="inputClass"
-        :clearable="clearable"
-        :disabled="disabled"
-        :model-value="modelValue"
-        :name="name"
-        :password-reveal="passwordReveal"
-        :placeholder="placeholder"
-        :readonly="readonly"
-        :root-class="inputRootClass"
-        :type="type"
-        @update:model-value="onInput($event)"></o-input>
+      :class="inputClass"
+      :clearable="clearable"
+      :disabled="disabled"
+      :model-value="modelValue"
+      :name="name"
+      :password-reveal="passwordReveal"
+      :placeholder="placeholder"
+      :readonly="readonly"
+      :root-class="inputRootClass"
+      :type="type"
+      @update:model-value="onInput($event)"></o-input>
   </o-field>
 </template>
