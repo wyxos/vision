@@ -1405,26 +1405,26 @@ const pt = /* @__PURE__ */ y(ft, [["render", gt]]), yt = /* @__PURE__ */ Object.
 function _t(s, e, t, r, i, n) {
   const a = m("o-input"), o = m("o-field");
   return c(), w(o, R({
-    label: t.label,
-    class: t.fieldClass
+    class: t.fieldClass,
+    label: t.label
   }, n.getError), {
     default: g(() => [
       S(a, {
-        readonly: t.readonly,
         class: A(t.inputClass),
-        "root-class": t.inputRootClass,
-        name: t.name,
-        type: t.type,
         clearable: t.clearable,
         disabled: t.disabled,
         "model-value": t.modelValue,
-        placeholder: t.placeholder,
+        name: t.name,
         "password-reveal": t.passwordReveal,
+        placeholder: t.placeholder,
+        readonly: t.readonly,
+        "root-class": t.inputRootClass,
+        type: t.type,
         "onUpdate:modelValue": e[0] || (e[0] = (l) => n.onInput(l))
-      }, null, 8, ["readonly", "class", "root-class", "name", "type", "clearable", "disabled", "model-value", "placeholder", "password-reveal"])
+      }, null, 8, ["class", "clearable", "disabled", "model-value", "name", "password-reveal", "placeholder", "readonly", "root-class", "type"])
     ]),
     _: 1
-  }, 16, ["label", "class"]);
+  }, 16, ["class", "label"]);
 }
 const St = /* @__PURE__ */ y(bt, [["render", _t]]), wt = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
