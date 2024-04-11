@@ -508,8 +508,12 @@ const Me = {
     };
   },
   watch: {
-    modelValue(s) {
-      this.query = s ? L(s, this.submitFormat)._d : null;
+    modelValue: {
+      handler(s) {
+        this.query = s ? L(s, this.submitFormat)._d : null;
+      },
+      immediate: !0,
+      deep: !0
     }
   },
   mounted() {
@@ -535,11 +539,9 @@ function De(s, e, t, r, i, n) {
     default: g(() => [
       S(a, R({
         modelValue: i.query,
-        "onUpdate:modelValue": e[0] || (e[0] = (u) => i.query = u)
-      }, t.options, {
-        "date-formatter": n.dateFormatter,
-        "onUpdate:modelValue": n.updateQuery
-      }), null, 16, ["modelValue", "date-formatter", "onUpdate:modelValue"])
+        "onUpdate:modelValue": e[0] || (e[0] = (u) => i.query = u),
+        "date-formatter": n.dateFormatter
+      }, t.options, { "onUpdate:modelValue": n.updateQuery }), null, 16, ["modelValue", "date-formatter", "onUpdate:modelValue"])
     ]),
     _: 1
   }, 16, ["label"]);
