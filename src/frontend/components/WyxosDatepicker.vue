@@ -43,8 +43,12 @@ export default {
     }
   },
   watch: {
-    modelValue(newVal) {
-      this.query = newVal ? moment(newVal, this.submitFormat)._d : null
+    modelValue: {
+      handler(newVal) {
+        this.query = newVal ? moment(newVal, this.submitFormat)._d : null
+      },
+      immediate: true,
+      deep: true
     }
   },
   mounted() {
@@ -76,8 +80,8 @@ export default {
   <o-field :label="label" v-bind="form?.getError(name)">
     <o-datepicker
       v-model="query"
-      v-bind="options"
       :date-formatter="dateFormatter"
+      v-bind="options"
       @update:model-value="updateQuery"></o-datepicker>
   </o-field>
 </template>
