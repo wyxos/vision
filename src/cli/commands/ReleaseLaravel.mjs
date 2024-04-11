@@ -339,7 +339,10 @@ const deployToServer = async (flags) => {
   if (flags.phpChanges) {
     commands.push('php artisan view:clear', 'php artisan cache:clear', 'php artisan config:clear', 'php artisan horizon:terminate')
   }
-  commands.push('php artisan up')
+
+  if (confirmDown) {
+    commands.push('php artisan up')
+  }
 
   await runSSHCommands(commands)
 
