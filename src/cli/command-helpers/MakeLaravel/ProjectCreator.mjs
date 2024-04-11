@@ -23,51 +23,67 @@ class ProjectCreator {
         const projectName = command.projectName;
         const projectPath = `${parkedAt}/${projectName}`;
 
-        try {
-            await this.ssh.connect({
-                host: wslDistroIp,
-                username: username,
-                privateKeyPath: sshPath,
-            });
+        await this.ssh.connect({
+            host: wslDistroIp,
+            username: username,
+            privateKeyPath: sshPath,
+        });
 
-            const projectExistsCommand = `test -d "${projectPath}" && echo "exists" || echo "not exists"`;
-            const result = await this.ssh.execCommand(projectExistsCommand, {cwd: '/'});
-            if (result.stdout.trim() === 'exists') {
-                const answers = await inquirer.prompt([{
-                    name: 'overwrite',
-                    type: 'confirm',
-                    message: `Project ${projectName} already exists. Overwrite?`,
-                    default: false
-                }]);
+        const projectExistsCommand = `test -d "${projectPath}" && echo "exists" || echo "not exists"`;
+        const result = await this.ssh.execCommand(projectExistsCommand, {cwd: '/'});
+        if (result.stdout.trim() === 'exists') {
+            const answers = await inquirer.prompt([{
+                name: 'overwrite',
+                type: 'confirm',
+                message: `Project ${projectName} already exists. Overwrite?`,
+                default: false
+            }]);
 
-                if (!answers.overwrite) {
-                    console.log('Project creation cancelled.');
-                    return;
-                }
-                // Use rm -R for recursive deletion
-                await this.ssh.execCommand(`rm -R "${projectPath}"`);
-                console.log(`Existing project ${projectName} deleted.`);
+            if (!answers.overwrite) {
+                console.log('Project creation cancelled.');
+                return;
             }
-
-            console.log(`Creating new project ${projectName}...`);
-            // Updated part to use exec for real-time output
-            const laravelCommand = `source ~/.bashrc && cd ${parkedAt} && /home/leshrac/.config/composer/vendor/bin/laravel new ${projectName} -n`;
-
-            await this.ssh.execCommand(laravelCommand, {
-                cwd: '/',
-                onStdout(chunk) {
-                    console.log(chunk.toString('utf8'));
-                },
-                onStderr(chunk) {
-                    console.error(chunk.toString('utf8'));
-                },
-            });
-            console.log(`Project ${projectName} created successfully.`);
-        } catch (error) {
-            console.error(`Error during project creation: ${error}`);
-        } finally {
-            this.ssh.dispose();
+            // Use rm -R for recursive deletion
+            await this.ssh.execCommand(`rm -R "${projectPath}"`);
+            console.log(`Existing project ${projectName} deleted.`);
         }
+
+        console.log(`Creating new project ${projectName}...`);
+        // Updated part to use exec for real-time output
+        const laravelCommand = `source ~/.bashrc && cd ${parkedAt} && /home/leshrac/.config/composer/vendor/bin/laravel new ${projectName} --breeze --stack=blade --verification -n`;
+
+        await this.ssh.execCommand(laravelCommand, {
+            cwd: '/',
+            onStdout(chunk) {
+                console.log(chunk.toString('utf8'));
+            },
+            onStderr(chunk) {
+                console.error(chunk.toString('utf8'));
+            },
+        });
+
+        console.log(`Project ${projectName} created successfully.`);
+
+        // Execute valet secure at the project location
+        console.log(`Securing project ${projectName} with Valet...`);
+        const valetSecureCommand = `cd ${projectPath} && sudo valet secure`;
+        const secureResult = await this.ssh.execCommand(valetSecureCommand, {
+            cwd: '/',
+            onStdout(chunk) {
+                console.log(chunk.toString('utf8'));
+            },
+            onStderr(chunk) {
+                console.error(chunk.toString('utf8'));
+            },
+        });
+
+        if (secureResult.code === 0) {
+            console.log(`Project ${projectName} secured successfully.`);
+        } else {
+            console.error(`Failed to secure project ${projectName}.`);
+        }
+
+        this.ssh.dispose();
     }
 
     homesteadSetup(command) {
