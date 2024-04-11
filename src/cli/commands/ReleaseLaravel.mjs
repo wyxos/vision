@@ -5,6 +5,8 @@ import inquirer from 'inquirer'
 
 const git = simpleGit()
 
+const initialBranch = await git.revparse(['--abbrev-ref', 'HEAD'])
+
 const checkForUncommittedFiles = async () => {
   const status = await git.status()
   const { not_added: untrackedFiles, modified: modifiedFiles } = status
@@ -201,7 +203,7 @@ const hasLintScript = () => {
 
 const runLintAndCommit = async () => {
   if (hasLintScript()) {
-    await exec('npm run lint')
+    await runCommandAndLog('npm run lint')
     const { modified } = await git.status()
     if (modified.length > 0) {
       await git.add('.').commit('chore: lint')
@@ -301,6 +303,12 @@ const runSSHCommands = async (commands) => {
 }
 
 const deployToServer = async (flags) => {
+  const { confirmDown } = await inquirer.prompt({
+    type: 'confirm',
+    name: 'confirmDown',
+    message: 'Do you want to put the application into maintenance mode (php artisan down)?'
+  })
+
   console.log(`Connecting to ${selectedServerConfig.ip}...`)
   await ssh.connect({
     host: selectedServerConfig.ip,
@@ -308,7 +316,13 @@ const deployToServer = async (flags) => {
     privateKeyPath: selectedServerConfig.sshKeyPath
   })
 
-  const commands = ['php artisan down']
+  let commands = []
+
+  if (confirmDown) {
+    commands.push('php artisan down')
+  }
+
+  commands.push('git pull origin ' + selectedServerConfig.branch)
 
   if (flags.composerChanges) commands.push('composer update --no-dev')
   if (flags.databaseChanges) {
@@ -334,6 +348,20 @@ const deployToServer = async (flags) => {
   let message = `Deployment process to ${selectedServerConfig.ip} for branch ${selectedServerConfig.branch} completed successfully.`
   logToFile(message)
   console.log(message)
+
+  await git.checkout(initialBranch)
+  console.log(`Returned to initial branch: ${initialBranch}`)
+}
+
+const runCommandAndLog = async (command) => {
+  try {
+    const { stdout, stderr } = await exec(command)
+    logToFile(`Output: ${stdout}`)
+    if (stderr) logToFile(`Error: ${stderr}`)
+  } catch (error) {
+    logToFile(`Execution error for command "${command}": ${error}`)
+    throw error // Rethrow if you want to handle it or stop the execution
+  }
 }
 
 export default class ReleaseLaravel extends Command {
