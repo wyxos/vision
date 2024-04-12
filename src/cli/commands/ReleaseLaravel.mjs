@@ -216,11 +216,15 @@ const promptBranchAndMerge = async () => {
   await checkForUncommittedFiles()
 
   const branchChoices = await getBranchChoices()
+
+  const preselectedBranchIndex = branchChoices.findIndex(branch => branch.value === initialBranch)
+
   const { branchToMergeFrom } = await inquirer.prompt({
     type: 'list',
     name: 'branchToMergeFrom',
     message: 'Select the branch to merge from:',
-    choices: branchChoices
+    choices: branchChoices,
+    default: preselectedBranchIndex
   })
 
   // Update the branch with changes
@@ -241,27 +245,33 @@ const promptBranchAndMerge = async () => {
     await exec('npm run build')
   }
 
+  console.log(`Pushing changes to ${branchToMergeFrom}`)
   await git.push('origin', branchToMergeFrom)
 
-  // Switch to the target branch set in server configuration, merge changes from the source branch
-  const targetBranch = selectedServerConfig.branch
-  console.log(`Switching to ${targetBranch}`)
-  await git.checkout(targetBranch)
-  console.log(`Updating ${targetBranch}`)
-  await git.pull('origin', targetBranch)
 
-  // Merge changes from the source branch
-  try {
-    console.log(`Merging ${branchToMergeFrom} to ${targetBranch}`)
-    await git.merge([branchToMergeFrom])
-  } catch (mergeError) {
-    console.error('Merge failed:', mergeError)
-    process.exit(1)
+  if (branchToMergeFrom !== selectedServerConfig.branch) {
+// Switch to the target branch set in server configuration, merge changes from the source branch
+    const targetBranch = selectedServerConfig.branch
+    console.log(`Switching to ${targetBranch}`)
+    await git.checkout(targetBranch)
+    console.log(`Updating ${targetBranch}`)
+    await git.pull('origin', targetBranch)
+
+    // Merge changes from the source branch
+    try {
+      console.log(`Merging ${branchToMergeFrom} to ${targetBranch}`)
+      await git.merge([branchToMergeFrom])
+    } catch (mergeError) {
+      console.error('Merge failed:', mergeError)
+      process.exit(1)
+    }
+
+    // Push merged changes to remote
+    console.log(`Pushing merge to ${targetBranch}`)
+    await git.push('origin', targetBranch)
+  } else {
+    console.log('Target and current branch are the same. Proceeding with deployment.')
   }
-
-  // Push merged changes to remote
-  console.log(`Pushing merge to ${targetBranch}`)
-  await git.push('origin', targetBranch)
 
   return changeFlags
 }
