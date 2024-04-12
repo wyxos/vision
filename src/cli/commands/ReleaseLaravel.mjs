@@ -50,7 +50,7 @@ const createRuncloudConfig = async () => {
       const configContent = fs.readFileSync(runcloudConfigPath, 'utf8')
       runcloudConfig = JSON.parse(configContent)
     } catch (error) {
-      console.error('Error reading runcloud.json:', error)
+      logToFile('Error reading runcloud.json:', error)
       process.exit(1)
     }
   }
