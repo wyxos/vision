@@ -237,6 +237,8 @@ const promptBranchAndMerge = async () => {
     await exec('npm run build')
   }
 
+  await git.push('origin', branchToMergeFrom)
+
   // Switch to the target branch set in server configuration, merge changes from the source branch
   const targetBranch = selectedServerConfig.branch
   await git.checkout(targetBranch)
