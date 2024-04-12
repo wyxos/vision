@@ -316,6 +316,7 @@ const deployToServer = async (flags) => {
   commands.push('git pull origin ' + selectedServerConfig.branch)
 
   if (flags.composerChanges) commands.push('composer update --no-dev')
+
   if (flags.databaseChanges) {
     const { shouldMigrate } = await inquirer.prompt({
       type: 'confirm',
