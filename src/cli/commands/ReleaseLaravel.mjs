@@ -335,7 +335,7 @@ const deployToServer = async (flags) => {
       commands.push('php artisan view:clear', 'php artisan cache:clear', 'php artisan config:clear', 'php artisan horizon:terminate')
     }
   }
-  
+
   if (!flags.nodeChanges) {
     const { proceedWithNode } = await inquirer.prompt({
       type: 'confirm',
@@ -388,6 +388,9 @@ export default class ReleaseLaravel extends Command {
     } catch (error) {
       logToFile(`Process error: ${error}`)
       console.error('Process encountered an error:', error)
+
+      await git.checkout(initialBranch)
+      console.log(`Returned to initial branch: ${initialBranch}`)
     }
   }
 }
