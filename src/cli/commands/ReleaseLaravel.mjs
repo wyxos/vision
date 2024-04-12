@@ -212,8 +212,6 @@ const runLintAndCommit = async () => {
 }
 
 const promptBranchAndMerge = async () => {
-  await runLintAndCommit()
-
   const currentBranch = (await git.branchLocal()).current
   const branchChoices = await getBranchChoices()
 
@@ -240,6 +238,8 @@ const promptBranchAndMerge = async () => {
     console.error('Error updating repository. Manual merge required:', error)
     process.exit(1)
   }
+  
+  await runLintAndCommit()
 
   const differences = await git.diff([currentBranch, `origin/${selectedServerConfig.branch}`, '--name-status'])
   const changeFlags = processDifferences(differences)
@@ -333,11 +333,28 @@ const deployToServer = async (flags) => {
     })
     if (shouldMigrate) commands.push('php artisan migrate --force')
   }
-  if (flags.nodeChanges) {
+  if (!flags.nodeChanges) {
+    const { proceedWithNode } = await inquirer.prompt({
+      type: 'confirm',
+      name: 'proceedWithNode',
+      message: 'No node changes detected. Proceed with npm install and build?'
+    })
+    if (proceedWithNode) {
+      commands.push('npm install', 'npm run build')
+    }
+  } else {
     commands.push('npm install', 'npm run build')
   }
-  if (flags.phpChanges) {
-    commands.push('php artisan view:clear', 'php artisan cache:clear', 'php artisan config:clear', 'php artisan horizon:terminate')
+
+  if (!flags.phpChanges) {
+    const { proceedWithPHP } = await inquirer.prompt({
+      type: 'confirm',
+      name: 'proceedWithPHP',
+      message: 'No PHP changes detected. Proceed with PHP scripts?'
+    })
+    if (proceedWithPHP) {
+      commands.push('php artisan view:clear', 'php artisan cache:clear', 'php artisan config:clear', 'php artisan horizon:terminate')
+    }
   }
 
   if (confirmDown) {
