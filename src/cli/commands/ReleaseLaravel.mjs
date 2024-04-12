@@ -228,7 +228,8 @@ const promptBranchAndMerge = async () => {
   await git.pull('origin', branchToMergeFrom)
   await runLintAndCommit()
 
-  const differences = await git.diff([currentBranch, `origin/${selectedServerConfig.branch}`, '--name-status'])
+  // Check if there are asset changes before running build
+  const differences = await git.diff([branchToMergeFrom, `origin/${branchToMergeFrom}`, '--name-status'])
   const changeFlags = processDifferences(differences)
 
   if (changeFlags.assetChanges) {
