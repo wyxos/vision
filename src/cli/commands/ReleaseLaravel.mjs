@@ -324,6 +324,18 @@ const deployToServer = async (flags) => {
     })
     if (shouldMigrate) commands.push('php artisan migrate --force')
   }
+
+  if (!flags.phpChanges) {
+    const { proceedWithPHP } = await inquirer.prompt({
+      type: 'confirm',
+      name: 'proceedWithPHP',
+      message: 'No PHP changes detected. Proceed with PHP scripts?'
+    })
+    if (proceedWithPHP) {
+      commands.push('php artisan view:clear', 'php artisan cache:clear', 'php artisan config:clear', 'php artisan horizon:terminate')
+    }
+  }
+  
   if (!flags.nodeChanges) {
     const { proceedWithNode } = await inquirer.prompt({
       type: 'confirm',
@@ -335,17 +347,6 @@ const deployToServer = async (flags) => {
     }
   } else {
     commands.push('npm install', 'npm run build')
-  }
-
-  if (!flags.phpChanges) {
-    const { proceedWithPHP } = await inquirer.prompt({
-      type: 'confirm',
-      name: 'proceedWithPHP',
-      message: 'No PHP changes detected. Proceed with PHP scripts?'
-    })
-    if (proceedWithPHP) {
-      commands.push('php artisan view:clear', 'php artisan cache:clear', 'php artisan config:clear', 'php artisan horizon:terminate')
-    }
   }
 
   if (confirmDown) {
