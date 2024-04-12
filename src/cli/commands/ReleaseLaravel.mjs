@@ -212,33 +212,20 @@ const runLintAndCommit = async () => {
 }
 
 const promptBranchAndMerge = async () => {
-  const currentBranch = (await git.branchLocal()).current
-  const branchChoices = await getBranchChoices()
+  // Ensure all ongoing changes are committed
+  await checkForUncommittedFiles()
 
+  const branchChoices = await getBranchChoices()
   const { branchToMergeFrom } = await inquirer.prompt({
     type: 'list',
     name: 'branchToMergeFrom',
     message: 'Select the branch to merge from:',
-    choices: branchChoices,
-    default: currentBranch
+    choices: branchChoices
   })
 
-  if (branchToMergeFrom !== currentBranch) {
-    try {
-      await git.checkout(branchToMergeFrom)
-    } catch (error) {
-      console.error('Error checking out branch:', error)
-      process.exit(1)
-    }
-  }
-
-  try {
-    await git.pull('origin', branchToMergeFrom)
-  } catch (error) {
-    console.error('Error updating repository. Manual merge required:', error)
-    process.exit(1)
-  }
-  
+  // Update the branch with changes
+  await git.checkout(branchToMergeFrom)
+  await git.pull('origin', branchToMergeFrom)
   await runLintAndCommit()
 
   const differences = await git.diff([currentBranch, `origin/${selectedServerConfig.branch}`, '--name-status'])
@@ -249,28 +236,12 @@ const promptBranchAndMerge = async () => {
     await exec('npm run build')
   }
 
-  const statusAfterBuild = await git.status()
-  if (statusAfterBuild.not_added.length === 0 && statusAfterBuild.modified.length === 0 && statusAfterBuild.created.length === 0 && statusAfterBuild.deleted.length === 0 && statusAfterBuild.renamed.length === 0) {
-    console.log(`Pushing to ${branchToMergeFrom}`)
-    await git.push('origin', branchToMergeFrom)
-  } else {
-    await git.add('.').commit('chore: post-build adjustments')
-    await git.push('origin', branchToMergeFrom)
-  }
-
-  if (branchToMergeFrom !== selectedServerConfig.branch) {
-    try {
-      await git.checkout(selectedServerConfig.branch)
-      await git.merge([branchToMergeFrom])
-      await git.push('origin', selectedServerConfig.branch)
-      console.log(`Merged changes from ${branchToMergeFrom} into ${selectedServerConfig.branch} and pushed to remote.`)
-    } catch (error) {
-      console.error(`Error merging changes into ${selectedServerConfig.branch}:`, error)
-      process.exit(1)
-    }
-  } else {
-    await git.push('origin', branchToMergeFrom)
-  }
+  // Checkout the target branch from server configuration, update, and merge
+  const targetBranch = selectedServerConfig.branch
+  await git.checkout(targetBranch)
+  await git.pull('origin', targetBranch)
+  await git.merge(branchToMergeFrom)
+  await git.push('origin', targetBranch)
 
   return changeFlags
 }
@@ -390,7 +361,6 @@ export default class ReleaseLaravel extends Command {
 
   async handle() {
     try {
-      await checkForUncommittedFiles()
       await createRuncloudConfig()
       const flags = await promptBranchAndMerge()
       await deployToServer(flags)
