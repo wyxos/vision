@@ -237,11 +237,20 @@ const promptBranchAndMerge = async () => {
     await exec('npm run build')
   }
 
-  // Checkout the target branch from server configuration, update, and merge
+  // Switch to the target branch set in server configuration, merge changes from the source branch
   const targetBranch = selectedServerConfig.branch
   await git.checkout(targetBranch)
   await git.pull('origin', targetBranch)
-  await git.merge(branchToMergeFrom)
+
+  // Merge changes from the source branch
+  try {
+    await git.merge([branchToMergeFrom])
+  } catch (mergeError) {
+    console.error('Merge failed:', mergeError)
+    process.exit(1)
+  }
+
+  // Push merged changes to remote
   await git.push('origin', targetBranch)
 
   return changeFlags
