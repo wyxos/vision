@@ -224,8 +224,12 @@ const promptBranchAndMerge = async () => {
   })
 
   // Update the branch with changes
+  console.log(`Checkout ${branchToMergeFrom}`)
   await git.checkout(branchToMergeFrom)
+
+  console.log(`Updating ${branchToMergeFrom}`)
   await git.pull('origin', branchToMergeFrom)
+
   await runLintAndCommit()
 
   // Check if there are asset changes before running build
@@ -241,11 +245,14 @@ const promptBranchAndMerge = async () => {
 
   // Switch to the target branch set in server configuration, merge changes from the source branch
   const targetBranch = selectedServerConfig.branch
+  console.log(`Switching to ${targetBranch}`)
   await git.checkout(targetBranch)
+  console.log(`Updating ${targetBranch}`)
   await git.pull('origin', targetBranch)
 
   // Merge changes from the source branch
   try {
+    console.log(`Merging ${branchToMergeFrom} to ${targetBranch}`)
     await git.merge([branchToMergeFrom])
   } catch (mergeError) {
     console.error('Merge failed:', mergeError)
@@ -253,6 +260,7 @@ const promptBranchAndMerge = async () => {
   }
 
   // Push merged changes to remote
+  console.log(`Pushing merge to ${targetBranch}`)
   await git.push('origin', targetBranch)
 
   return changeFlags
