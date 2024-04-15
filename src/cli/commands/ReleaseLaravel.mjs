@@ -203,10 +203,14 @@ const hasLintScript = () => {
 
 const runLintAndCommit = async () => {
   if (hasLintScript()) {
+    console.log('Linting repository...')
     await runCommandAndLog('npm run lint')
     const { modified } = await git.status()
     if (modified.length > 0) {
-      await git.add('.').commit('chore: lint')
+      console.log('Adding lint changes to repo...')
+      await git.add('.')
+      console.log('Committing lint changes to repo...')
+      await git.commit('chore: lint')
     }
   }
 }
