@@ -349,6 +349,8 @@ const deployToServer = async (flags) => {
     if (proceedWithPHP) {
       commands.push('php artisan view:clear', 'php artisan cache:clear', 'php artisan config:clear', 'php artisan horizon:terminate')
     }
+  } else {
+    commands.push('php artisan view:clear', 'php artisan cache:clear', 'php artisan config:clear', 'php artisan horizon:terminate')
   }
 
   if (!flags.nodeChanges) {
