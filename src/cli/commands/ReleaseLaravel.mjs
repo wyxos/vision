@@ -236,7 +236,7 @@ const promptBranchAndMerge = async () => {
   await git.checkout(branchToMergeFrom)
 
   console.log(`Updating ${branchToMergeFrom}`)
-  await git.pull('origin', branchToMergeFrom)
+  await git.pull('origin', branchToMergeFrom, { '--rebase': 'true' })
 
   await runLintAndCommit()
 
@@ -259,7 +259,7 @@ const promptBranchAndMerge = async () => {
     console.log(`Switching to ${targetBranch}`)
     await git.checkout(targetBranch)
     console.log(`Updating ${targetBranch}`)
-    await git.pull('origin', targetBranch)
+    await git.pull('origin', targetBranch, { '--rebase': 'true' })
 
     // Merge changes from the source branch
     try {
