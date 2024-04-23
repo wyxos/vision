@@ -329,15 +329,26 @@ const deployToServer = async (flags) => {
 
   commands.push('git pull origin ' + selectedServerConfig.branch)
 
-  if (flags.composerChanges) commands.push('composer update --no-dev')
-
-  if (flags.databaseChanges) {
-    const { shouldMigrate } = await inquirer.prompt({
+  if (!flags.composerChanges) {
+    const { proceedWithComposer } = await inquirer.prompt({
       type: 'confirm',
-      name: 'shouldMigrate',
-      message: 'Do you want to run php artisan migrate --force?'
+      name: 'proceedWithComposer',
+      message: 'No composer changes detected. Proceed with composer install?'
     })
-    if (shouldMigrate) commands.push('php artisan migrate --force')
+    if (proceedWithComposer) {
+      commands.push('composer install --no-interaction --no-dev --prefer-dist')
+    }
+  }
+
+  if (!flags.databaseChanges) {
+    const { proceedWithMigrations } = await inquirer.prompt({
+      type: 'confirm',
+      name: 'proceedWithMigrations',
+      message: 'No database changes detected. Proceed with migrations?'
+    })
+    if (proceedWithMigrations) {
+      commands.push('php artisan migrate --force')
+    }
   }
 
   if (!flags.phpChanges) {
@@ -357,13 +368,24 @@ const deployToServer = async (flags) => {
     const { proceedWithNode } = await inquirer.prompt({
       type: 'confirm',
       name: 'proceedWithNode',
-      message: 'No node changes detected. Proceed with npm install and build?'
+      message: 'No node changes detected. Proceed with npm install?'
     })
     if (proceedWithNode) {
-      commands.push('npm install', 'npm run build')
+      commands.push('npm install')
     }
   } else {
-    commands.push('npm install', 'npm run build')
+    commands.push('npm install')
+  }
+
+  if (!flags.assetChanges) {
+    const { proceedWithBuild } = await inquirer.prompt({
+      type: 'confirm',
+      name: 'proceedWithBuild',
+      message: 'No asset changes detected. Proceed with npm run build?'
+    })
+    if (proceedWithBuild) {
+      commands.push('npm run build')
+    }
   }
 
   if (confirmDown) {
