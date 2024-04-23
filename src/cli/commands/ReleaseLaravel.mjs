@@ -314,13 +314,6 @@ const deployToServer = async (flags) => {
     message: 'Do you want to put the application into maintenance mode (php artisan down)?'
   })
 
-  console.log(`Connecting to ${selectedServerConfig.ip}...`)
-  await ssh.connect({
-    host: selectedServerConfig.ip,
-    username: selectedServerConfig.username,
-    privateKeyPath: selectedServerConfig.sshKeyPath
-  })
-
   let commands = []
 
   if (confirmDown) {
@@ -391,6 +384,13 @@ const deployToServer = async (flags) => {
   if (confirmDown) {
     commands.push('php artisan up')
   }
+
+  console.log(`Connecting to ${selectedServerConfig.ip} with key ${selectedServerConfig.sshKeyPath}...`)
+  await ssh.connect({
+    host: selectedServerConfig.ip,
+    username: selectedServerConfig.username,
+    privateKeyPath: selectedServerConfig.sshKeyPath
+  })
 
   await runSSHCommands(commands)
 
