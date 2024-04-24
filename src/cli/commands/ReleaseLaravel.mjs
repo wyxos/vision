@@ -331,6 +331,8 @@ const deployToServer = async (flags) => {
     if (proceedWithComposer) {
       commands.push('composer install --no-interaction --no-dev --prefer-dist')
     }
+  } else {
+    commands.push('composer install --no-interaction --no-dev --prefer-dist')
   }
 
   if (!flags.databaseChanges) {
@@ -342,6 +344,8 @@ const deployToServer = async (flags) => {
     if (proceedWithMigrations) {
       commands.push('php artisan migrate --force')
     }
+  } else {
+    commands.push('php artisan migrate --force')
   }
 
   if (!flags.phpChanges) {
@@ -387,6 +391,8 @@ const deployToServer = async (flags) => {
     if (proceedWithBuild) {
       commands.push('npm run build')
     }
+  } else {
+    commands.push('npm run build')
   }
 
   if (confirmDown) {
