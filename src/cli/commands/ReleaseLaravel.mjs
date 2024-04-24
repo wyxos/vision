@@ -332,6 +332,7 @@ const deployToServer = async (flags) => {
       commands.push('composer install --no-interaction --no-dev --prefer-dist')
     }
   } else {
+    console.log('Composer changes detected. Proceeding with composer install.')
     commands.push('composer install --no-interaction --no-dev --prefer-dist')
   }
 
@@ -345,6 +346,7 @@ const deployToServer = async (flags) => {
       commands.push('php artisan migrate --force')
     }
   } else {
+    console.log('Database changes detected. Proceeding with migrations.')
     commands.push('php artisan migrate --force')
   }
 
@@ -362,6 +364,7 @@ const deployToServer = async (flags) => {
       }
     }
   } else {
+    console.log('PHP changes detected. Proceeding with PHP scripts.')
     commands.push('php artisan view:clear', 'php artisan cache:clear', 'php artisan config:clear')
 
     if (fs.existsSync('artisan') && fs.existsSync('composer.json')) {
@@ -379,6 +382,7 @@ const deployToServer = async (flags) => {
       commands.push('npm install')
     }
   } else {
+    console.log('Node changes detected. Proceeding with npm install.')
     commands.push('npm install')
   }
 
@@ -392,6 +396,7 @@ const deployToServer = async (flags) => {
       commands.push('npm run build')
     }
   } else {
+    console.log('Asset changes detected. Proceeding with npm run build.')
     commands.push('npm run build')
   }
 
