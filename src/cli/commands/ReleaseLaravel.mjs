@@ -359,7 +359,8 @@ const deployToServer = async (flags) => {
     if (proceedWithPHP) {
       commands.push('php artisan view:clear', 'php artisan cache:clear', 'php artisan config:clear')
 
-      if (fs.existsSync('artisan') && fs.existsSync('composer.json')) {
+      const composerJson = JSON.parse(fs.readFileSync('composer.json', 'utf8'))
+      if (composerJson.require['laravel/horizon'] || composerJson['require-dev']['laravel/horizon']) {
         commands.push('php artisan horizon:terminate')
       }
     }
@@ -367,7 +368,8 @@ const deployToServer = async (flags) => {
     console.log('PHP changes detected. Proceeding with PHP scripts.')
     commands.push('php artisan view:clear', 'php artisan cache:clear', 'php artisan config:clear')
 
-    if (fs.existsSync('artisan') && fs.existsSync('composer.json')) {
+    const composerJson = JSON.parse(fs.readFileSync('composer.json', 'utf8'))
+    if (composerJson.require['laravel/horizon'] || composerJson['require-dev']['laravel/horizon']) {
       commands.push('php artisan horizon:terminate')
     }
   }
@@ -449,6 +451,7 @@ export default class ReleaseLaravel extends Command {
 
       await git.checkout(initialBranch)
       console.log(`Returned to initial branch: ${initialBranch}`)
+      process.exit(1)
     }
   }
 }
