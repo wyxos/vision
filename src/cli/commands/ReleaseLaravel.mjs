@@ -302,8 +302,8 @@ const runSSHCommands = async (commands) => {
       logToFile(result.stdout)
     }
   } catch (error) {
-    console.error('SSH command execution error:', error)
-    process.exit(1)
+    logToFile(`SSH command error: ${error}`)
+    throw error
   }
 }
 
