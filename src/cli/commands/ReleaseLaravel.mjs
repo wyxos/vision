@@ -430,6 +430,7 @@ const runCommandAndLog = async (command) => {
     if (stderr) logToFile(`Error: ${stderr}`)
   } catch (error) {
     logToFile(`Execution error for command "${command}": ${error}`)
+    throw error // Rethrow if you want to handle it or stop the execution
   }
 }
 
