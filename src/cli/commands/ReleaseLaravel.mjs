@@ -351,10 +351,18 @@ const deployToServer = async (flags) => {
       message: 'No PHP changes detected. Proceed with PHP scripts?'
     })
     if (proceedWithPHP) {
-      commands.push('php artisan view:clear', 'php artisan cache:clear', 'php artisan config:clear', 'php artisan horizon:terminate')
+      commands.push('php artisan view:clear', 'php artisan cache:clear', 'php artisan config:clear')
+
+      if (fs.existsSync('artisan') && fs.existsSync('composer.json')) {
+        commands.push('php artisan horizon:terminate')
+      }
     }
   } else {
-    commands.push('php artisan view:clear', 'php artisan cache:clear', 'php artisan config:clear', 'php artisan horizon:terminate')
+    commands.push('php artisan view:clear', 'php artisan cache:clear', 'php artisan config:clear')
+
+    if (fs.existsSync('artisan') && fs.existsSync('composer.json')) {
+      commands.push('php artisan horizon:terminate')
+    }
   }
 
   if (!flags.nodeChanges) {
