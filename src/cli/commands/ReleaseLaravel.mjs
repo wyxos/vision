@@ -215,6 +215,36 @@ const runLintAndCommit = async () => {
   }
 }
 
+const safeMerge = async (targetBranch, branchToMergeFrom) => {
+  // Attempt to merge changes from the source branch
+  try {
+    console.log(`Merging ${branchToMergeFrom} into ${targetBranch}`)
+    const mergeSummary = await git.merge([branchToMergeFrom])
+    if (mergeSummary.failed) {
+      // If the merge failed for any reason, including conflicts
+      console.error('Merge failed. Attempting to abort the merge...')
+      await git.merge(['--abort']) // Revert the merge attempt
+      console.error('Merge aborted due to failure. Please check the issues and resolve them manually.')
+      process.exit(1)
+    }
+    if (mergeSummary.conflicts && mergeSummary.conflicts.length > 0) {
+      console.error('Merge conflicts detected.')
+      await git.merge(['--abort']) // This is a safeguard, should already be covered by the above if block
+      console.error('Merge aborted. Please resolve conflicts manually.')
+      process.exit(1)
+    }
+  } catch (mergeError) {
+    console.error('Exception during merge:', mergeError)
+    try {
+      await git.merge(['--abort'])
+      console.log('Merge aborted after encountering an exception.')
+    } catch (abortError) {
+      console.error('Failed to abort the merge:', abortError)
+    }
+    process.exit(1)
+  }
+}
+
 const promptBranchAndMerge = async () => {
   // Ensure all ongoing changes are committed
   await checkForUncommittedFiles()
@@ -252,26 +282,17 @@ const promptBranchAndMerge = async () => {
   console.log(`Pushing changes to ${branchToMergeFrom}`)
   await git.push('origin', branchToMergeFrom)
 
-
   if (branchToMergeFrom !== selectedServerConfig.branch) {
-// Switch to the target branch set in server configuration, merge changes from the source branch
     const targetBranch = selectedServerConfig.branch
     console.log(`Switching to ${targetBranch}`)
     await git.checkout(targetBranch)
     console.log(`Updating ${targetBranch}`)
     await git.pull('origin', targetBranch, { '--rebase': 'true' })
 
-    // Merge changes from the source branch
-    try {
-      console.log(`Merging ${branchToMergeFrom} to ${targetBranch}`)
-      await git.merge([branchToMergeFrom])
-    } catch (mergeError) {
-      console.error('Merge failed:', mergeError)
-      process.exit(1)
-    }
+    await safeMerge(targetBranch, branchToMergeFrom)
 
     // Push merged changes to remote
-    console.log(`Pushing merge to ${targetBranch}`)
+    console.log(`Pushing merged changes to ${targetBranch}`)
     await git.push('origin', targetBranch)
   } else {
     console.log('Target and current branch are the same. Proceeding with deployment.')
@@ -406,23 +427,32 @@ const deployToServer = async (flags) => {
     commands.push('php artisan up')
   }
 
-  console.log(`Connecting to ${selectedServerConfig.ip} with key ${selectedServerConfig.sshKeyPath}...`)
-  await ssh.connect({
-    host: selectedServerConfig.ip,
-    username: selectedServerConfig.username,
-    privateKeyPath: selectedServerConfig.sshKeyPath
-  })
+  try {
+    console.log(`Connecting to ${selectedServerConfig.ip} with key ${selectedServerConfig.sshKeyPath}...`)
+    await ssh.connect({
+      host: selectedServerConfig.ip,
+      username: selectedServerConfig.username,
+      privateKeyPath: selectedServerConfig.sshKeyPath
+    })
 
-  await runSSHCommands(commands)
+    await runSSHCommands(commands)
 
-  ssh.dispose()
+    ssh.dispose()
 
-  let message = `Deployment process to ${selectedServerConfig.ip} for branch ${selectedServerConfig.branch} completed successfully.`
-  logToFile(message)
-  console.log(message)
+    let message = `Deployment process to ${selectedServerConfig.ip} for branch ${selectedServerConfig.branch} completed successfully.`
+    logToFile(message)
+    console.log(message)
 
-  await git.checkout(initialBranch)
-  console.log(`Returned to initial branch: ${initialBranch}`)
+    await git.checkout(initialBranch)
+    console.log(`Returned to initial branch: ${initialBranch}`)
+  } catch (error) {
+    console.error('Deployment failed:', error)
+    logToFile(`Deployment error: ${error}`)
+    ssh.dispose()
+    process.exit(1)
+  } finally {
+    ssh.dispose()
+  }
 }
 
 const runCommandAndLog = async (command) => {
