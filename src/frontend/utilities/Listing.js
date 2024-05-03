@@ -386,14 +386,20 @@ export default class Listing {
   onPageChange(value) {
     this.attributes.params.page = value
 
-    return this.load().then(() => {
-      this.refreshUrl()
-    })
+    if (this.options.router) {
+      return Promise.resolve().then(() => {
+        this.refreshUrl()
+      })
+    } else {
+      return this.load().then(() => {
+        this.refreshUrl()
+      })
+    }
   }
 
   onQueryUpdate(to, from, next) {
     if (to.path === from.path && to.fullPath !== from.fullPath) {
-      this.mergeSearch()
+      // this.mergeSearch()
       this.load()
     }
     next()

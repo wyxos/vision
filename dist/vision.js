@@ -1,10 +1,10 @@
 var _e = Object.defineProperty;
 var Se = (s, e, t) => e in s ? _e(s, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : s[e] = t;
 var d = (s, e, t) => (Se(s, typeof e != "symbol" ? e + "" : e, t), t);
-import { resolveComponent as m, openBlock as c, createBlock as w, withCtx as g, renderSlot as $, createTextVNode as x, createCommentVNode as F, toDisplayString as b, createElementBlock as _, normalizeProps as B, guardReactiveProps as N, createElementVNode as f, reactive as q, createVNode as S, normalizeClass as A, mergeProps as R, defineComponent as Z, nextTick as we, withModifiers as ee, createSlots as Oe, renderList as te, Fragment as se, Teleport as Fe, ref as k } from "vue";
+import { resolveComponent as m, openBlock as c, createBlock as w, withCtx as g, renderSlot as $, createTextVNode as x, createCommentVNode as v, toDisplayString as b, createElementBlock as _, normalizeProps as B, guardReactiveProps as N, createElementVNode as f, reactive as q, createVNode as S, normalizeClass as A, mergeProps as R, defineComponent as Z, nextTick as we, withModifiers as ee, createSlots as Oe, renderList as te, Fragment as se, Teleport as ve, ref as k } from "vue";
 import L from "moment";
 import h from "axios";
-import ve, { useProgrammatic as D } from "@oruga-ui/oruga-next";
+import Fe, { useProgrammatic as D } from "@oruga-ui/oruga-next";
 const y = (s, e) => {
   const t = s.__vccOpts || s;
   for (const [r, i] of e)
@@ -30,13 +30,13 @@ function $e(s, e, t, r, i, n) {
   const a = m("o-button");
   return c(), w(a, { disabled: t.loading }, {
     default: g(() => [
-      t.loading ? F("", !0) : $(s.$slots, "default", { key: 0 }, () => [
+      t.loading ? v("", !0) : $(s.$slots, "default", { key: 0 }, () => [
         x("Submit")
       ]),
       t.loading && t.text ? $(s.$slots, "loading", { key: 1 }, () => [
         x(b(t.text), 1)
-      ]) : F("", !0),
-      t.loading ? (c(), _("i", qe)) : F("", !0)
+      ]) : v("", !0),
+      t.loading ? (c(), _("i", qe)) : v("", !0)
     ]),
     _: 3
   }, 8, ["disabled"]);
@@ -569,7 +569,7 @@ const ze = /* @__PURE__ */ y(Me, [["render", De]]), Ye = /* @__PURE__ */ Object.
 }), He = { key: 0 }, Ke = { key: 1 };
 function Qe(s, e, t, r, i, n) {
   var a, o;
-  return (a = s.form) != null && a.getError(s.name).message ? (c(), _("p", He, b(s.form.getError(s.name).message), 1)) : (o = s.errors.get(s.name)) != null && o.message ? (c(), _("p", Ke, b(s.errors.get(s.name).message), 1)) : F("", !0);
+  return (a = s.form) != null && a.getError(s.name).message ? (c(), _("p", He, b(s.form.getError(s.name).message), 1)) : (o = s.errors.get(s.name)) != null && o.message ? (c(), _("p", Ke, b(s.errors.get(s.name).message), 1)) : v("", !0);
 }
 const Xe = /* @__PURE__ */ y(Je, [["render", Qe]]), Ge = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
@@ -1097,12 +1097,14 @@ class I {
     }
   }
   onPageChange(e) {
-    return this.attributes.params.page = e, this.load().then(() => {
+    return this.attributes.params.page = e, this.options.router ? Promise.resolve().then(() => {
+      this.refreshUrl();
+    }) : this.load().then(() => {
       this.refreshUrl();
     });
   }
   onQueryUpdate(e, t, r) {
-    e.path === t.path && e.fullPath !== t.fullPath && (this.mergeSearch(), this.load()), r();
+    e.path === t.path && e.fullPath !== t.fullPath && this.load(), r();
   }
   async patch({ path: e, props: t, payload: r } = {}) {
     const { row: i } = t;
@@ -1132,9 +1134,9 @@ class I {
     let a;
     const { index: o, row: l } = t;
     l.isProcessing = !0, n === "patch" ? a = await h.patch(e, i) : n === "post" && (a = await h.post(e, r, i));
-    const u = await this.fetch(), v = u.query.items.find((O) => O.id === l.id);
-    if (v)
-      return l.isProcessing = !1, Object.assign(l, v), a.data;
+    const u = await this.fetch(), F = u.query.items.find((O) => O.id === l.id);
+    if (F)
+      return l.isProcessing = !1, Object.assign(l, F), a.data;
     this.attributes.query.items.splice(o, 1);
     const C = this.attributes.query.items.map((O) => O.id);
     return u.query.items.filter(
@@ -1169,11 +1171,11 @@ class I {
       }
     );
     l.loaded(), u.row && Object.assign(a, u.row);
-    const v = await this.fetch();
-    if (this.attributes.query.items.splice(o, 1), !v.query.items.length)
+    const F = await this.fetch();
+    if (this.attributes.query.items.splice(o, 1), !F.query.items.length)
       return this.attributes.params.page--, await this.load(), u;
-    if (this.attributes.query.items.length < v.query.items.length) {
-      const C = v.query.items[v.query.items.length - 1];
+    if (this.attributes.query.items.length < F.query.items.length) {
+      const C = F.query.items[F.query.items.length - 1];
       this.push(C);
     }
     return u;
@@ -1281,7 +1283,7 @@ function dt(s, e, t, r, i, n) {
       x(" Error. Retry or refresh. ")
     ]),
     _: 1
-  })) : F("", !0);
+  })) : v("", !0);
 }
 const ct = /* @__PURE__ */ y(ut, [["render", dt]]), ht = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
@@ -1462,14 +1464,14 @@ const St = /* @__PURE__ */ y(bt, [["render", _t]]), wt = /* @__PURE__ */ Object.
       };
     }
   }
-}, Ft = { key: 0 }, vt = { key: 1 }, xt = { key: 2 };
+}, vt = { key: 0 }, Ft = { key: 1 }, xt = { key: 2 };
 function qt(s, e, t, r, i, n) {
   const a = m("o-table");
   return c(), w(a, B(N(n.allPropsAndEvents)), Oe({
     empty: g(() => [
-      t.listing.isEmpty ? (c(), _("p", Ft, "No records found.")) : F("", !0),
-      t.listing.isSearchEmpty ? (c(), _("p", vt, " No results for your query. Please adjust your search and try again. ")) : F("", !0),
-      t.listing.isFailure ? (c(), _("p", xt, " Failure to load the list. Try again or reload the page. ")) : F("", !0)
+      t.listing.isEmpty ? (c(), _("p", vt, "No records found.")) : v("", !0),
+      t.listing.isSearchEmpty ? (c(), _("p", Ft, " No results for your query. Please adjust your search and try again. ")) : v("", !0),
+      t.listing.isFailure ? (c(), _("p", xt, " Failure to load the list. Try again or reload the page. ")) : v("", !0)
     ]),
     _: 2
   }, [
@@ -1645,7 +1647,7 @@ function Bt(s, e, t, r, i, n) {
       value: s.value,
       max: s.max
     }, null, 8, Wt),
-    s.showValue ? (c(), _("span", At, b(s.value) + " / " + b(s.max), 1)) : F("", !0)
+    s.showValue ? (c(), _("span", At, b(s.value) + " / " + b(s.max), 1)) : v("", !0)
   ], 64);
 }
 const Nt = /* @__PURE__ */ y(It, [["render", Bt]]), Ut = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
@@ -1779,7 +1781,7 @@ function Zt(s, e, t, r, i, n) {
       $(s.$slots, "button", {}, () => [
         Ht
       ]),
-      i.isVisible ? (c(), w(Fe, {
+      i.isVisible ? (c(), w(ve, {
         key: 0,
         to: "body"
       }, [
@@ -1822,7 +1824,7 @@ function Zt(s, e, t, r, i, n) {
           ]),
           _: 3
         }, 8, ["active"])
-      ])) : F("", !0)
+      ])) : v("", !0)
     ]),
     _: 3
   });
@@ -1889,7 +1891,7 @@ function is(s, e, t, r, i, n) {
             t.items ? (c(!0), _(se, { key: 0 }, te(t.items, (u) => (c(), _("option", {
               key: u.value,
               value: u.value
-            }, b(u.label), 9, rs))), 128)) : F("", !0)
+            }, b(u.label), 9, rs))), 128)) : v("", !0)
           ])
         ]),
         _: 3
@@ -2030,13 +2032,13 @@ function Ss(s, e, t, r, i, n) {
     "native-type": "submit"
   }, {
     default: g(() => [
-      !t.form.isSubmitted && !t.form.isSubmitting && !t.form.isSubmitFailed ? (c(), _("span", gs, b(i.mergedLabels.submit), 1)) : F("", !0),
+      !t.form.isSubmitted && !t.form.isSubmitting && !t.form.isSubmitFailed ? (c(), _("span", gs, b(i.mergedLabels.submit), 1)) : v("", !0),
       t.form.isSubmitting ? (c(), _("span", ps, [
         x(b(i.mergedLabels.submitting) + " ", 1),
         ys
-      ])) : F("", !0),
-      t.form.isSubmitted ? (c(), _("span", bs, b(i.mergedLabels.submitted), 1)) : F("", !0),
-      t.form.isSubmitFailed ? (c(), _("span", _s, b(i.mergedLabels.failed), 1)) : F("", !0)
+      ])) : v("", !0),
+      t.form.isSubmitted ? (c(), _("span", bs, b(i.mergedLabels.submitted), 1)) : v("", !0),
+      t.form.isSubmitFailed ? (c(), _("span", _s, b(i.mergedLabels.failed), 1)) : v("", !0)
     ]),
     _: 1
   }, 8, ["disabled"]);
@@ -2099,7 +2101,7 @@ class J {
     this.result.value = [];
   }
 }
-const Fs = {
+const vs = {
   name: "WyxosTags",
   props: {
     path: {
@@ -2201,7 +2203,7 @@ const Fs = {
     }
   }
 };
-function vs(s, e, t, r, i, n) {
+function Fs(s, e, t, r, i, n) {
   const a = m("o-inputitems");
   return c(), w(a, R({
     ref: "tagInput",
@@ -2217,7 +2219,7 @@ function vs(s, e, t, r, i, n) {
     onFocus: e[4] || (e[4] = (o) => n.searchTags(""))
   }), null, 16, ["modelValue", "data", "open-on-focus"]);
 }
-const xs = /* @__PURE__ */ y(Fs, [["render", vs]]), qs = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const xs = /* @__PURE__ */ y(vs, [["render", Fs]]), qs = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: xs
 }, Symbol.toStringTag, { value: "Module" })), $s = {
@@ -2572,9 +2574,9 @@ async function Is(s, e) {
     component: ((l = e.components) == null ? void 0 : l.SessionExpired) || fe,
     trapFocus: !0,
     closable: !1
-  }), ((u = s.response) == null ? void 0 : u.status) === 422 && new Promise((v) => setTimeout(v, 500)).then(() => {
-    const v = document.querySelector(".o-field__label-danger");
-    v && v.scrollIntoView({ behavior: "smooth" });
+  }), ((u = s.response) == null ? void 0 : u.status) === 422 && new Promise((F) => setTimeout(F, 500)).then(() => {
+    const F = document.querySelector(".o-field__label-danger");
+    F && F.scrollIntoView({ behavior: "smooth" });
   }), Promise.reject(s);
 }
 function Gs(s) {
@@ -2591,7 +2593,7 @@ function Ws(s) {
   h.interceptors.response.use(null, (e) => Is(e, s));
 }
 const G = /* @__PURE__ */ Object.assign({ "./components/WyxosButton.vue": Ce, "./components/WyxosCollection.vue": Ve, "./components/WyxosConfirm.vue": Ue, "./components/WyxosDatepicker.vue": Ye, "./components/WyxosError.vue": Ge, "./components/WyxosForm.vue": ht, "./components/WyxosImage.vue": yt, "./components/WyxosInput.vue": wt, "./components/WyxosListing.vue": jt, "./components/WyxosLiveInput.vue": Pt, "./components/WyxosLogout.vue": kt, "./components/WyxosProgress.vue": Ut, "./components/WyxosPrompt.vue": Yt, "./components/WyxosRemove.vue": ts, "./components/WyxosSelect.vue": as, "./components/WyxosSessionExpired.vue": fs, "./components/WyxosSubmit.vue": Os, "./components/WyxosTags.vue": qs, "./components/WyxosTokenExpired.vue": Rs }), ye = {}, As = (s, e = { vision: {}, oruga: {} }) => {
-  s.use(ve, e.oruga), Object.keys(G).forEach((t) => {
+  s.use(Fe, e.oruga), Object.keys(G).forEach((t) => {
     const r = G[t];
     if (r && r.default) {
       const i = r.default, n = i.name;
