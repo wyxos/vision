@@ -1014,10 +1014,13 @@ class I {
         transformItem: (i) => i
       },
       t
-    ), r.setParameters(e), r.options.enableSearchUpdate && r.mergeSearch(), r.baseUrl = t.baseUrl, r;
+    ), r.setParameters(e), r.options.enableSearchUpdate && (console.log("Merging search"), r.mergeSearch()), r.baseUrl = t.baseUrl, r;
   }
   setUrl(e) {
     return this.baseUrl = e, this;
+  }
+  setRouterInstance(e) {
+    return this.options.router = e, this;
   }
   setParameters(e) {
     const t = JSON.parse(JSON.stringify(e));
@@ -1028,7 +1031,7 @@ class I {
       arrayFormat: "bracket",
       parseNumbers: !0
     });
-    e.page && (e.page = Number(e.page)), Object.assign(this.attributes.params, this.structure, e);
+    console.log("Query", e), e.page && (e.page = Number(e.page)), Object.assign(this.attributes.params, this.structure, e);
   }
   // Retrieves the list without affecting the load state.
   async fetch(e, t) {
@@ -1050,7 +1053,14 @@ class I {
     const e = window.location.href.replace(/\?.*/, ""), t = JSON.parse(JSON.stringify(this.attributes.params)), r = Object.fromEntries(
       Object.entries(t).filter(([n, a]) => a != null)
     ), i = e + "?" + X.stringify(r, { arrayFormat: "bracket" });
-    window.history.pushState({}, "", i);
+    if (console.log("Pushing state", i), console.log(this.options.router), this.options.router) {
+      const n = this.options.router.currentRoute.path;
+      this.options.router.push({
+        path: n,
+        query: { ...this.options.router.currentRoute.query, ...t }
+      });
+    } else
+      window.history.pushState({}, "", i);
   }
   push(e) {
     this.attributes.query.items.push(this.transformItem(e));
@@ -1087,7 +1097,12 @@ class I {
     }
   }
   onPageChange(e) {
-    return this.attributes.params.page = e, this.load();
+    return this.attributes.params.page = e, this.load().then(() => {
+      this.refreshUrl();
+    });
+  }
+  onQueryUpdate(e, t, r) {
+    e.path === t.path && e.fullPath !== t.fullPath && (this.mergeSearch(), this.load()), r();
   }
   async patch({ path: e, props: t, payload: r } = {}) {
     const { row: i } = t;

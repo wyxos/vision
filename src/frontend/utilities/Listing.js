@@ -194,6 +194,12 @@ export default class Listing {
     return this
   }
 
+  setRouterInstance(router) {
+    this.options.router = router
+
+    return this
+  }
+
   setParameters(params) {
     const structure = JSON.parse(JSON.stringify(params))
 
@@ -278,7 +284,15 @@ export default class Listing {
     const url =
       base + '?' + qs.stringify(filteredParams, { arrayFormat: 'bracket' })
 
-    window.history.pushState({}, '', url)
+    if (this.options.router) {
+      const path = this.options.router.currentRoute.path
+      this.options.router.push({
+        path,
+        query: { ...this.options.router.currentRoute.query, ...params }
+      })
+    } else {
+      window.history.pushState({}, '', url)
+    }
   }
 
   push(item) {
@@ -372,7 +386,17 @@ export default class Listing {
   onPageChange(value) {
     this.attributes.params.page = value
 
-    return this.load()
+    return this.load().then(() => {
+      this.refreshUrl()
+    })
+  }
+
+  onQueryUpdate(to, from, next) {
+    if (to.path === from.path && to.fullPath !== from.fullPath) {
+      this.mergeSearch()
+      this.load()
+    }
+    next()
   }
 
   async patch({ path, props, payload } = {}) {
