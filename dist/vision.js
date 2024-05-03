@@ -1014,7 +1014,7 @@ class I {
         transformItem: (i) => i
       },
       t
-    ), r.setParameters(e), r.options.enableSearchUpdate && (console.log("Merging search"), r.mergeSearch()), r.baseUrl = t.baseUrl, r;
+    ), r.setParameters(e), r.options.enableSearchUpdate && r.mergeSearch(), r.baseUrl = t.baseUrl, r;
   }
   setUrl(e) {
     return this.baseUrl = e, this;
@@ -1031,7 +1031,7 @@ class I {
       arrayFormat: "bracket",
       parseNumbers: !0
     });
-    console.log("Query", e), e.page && (e.page = Number(e.page)), Object.assign(this.attributes.params, this.structure, e);
+    e.page && (e.page = Number(e.page)), Object.assign(this.attributes.params, this.structure, e);
   }
   // Retrieves the list without affecting the load state.
   async fetch(e, t) {
@@ -1053,7 +1053,7 @@ class I {
     const e = window.location.href.replace(/\?.*/, ""), t = JSON.parse(JSON.stringify(this.attributes.params)), r = Object.fromEntries(
       Object.entries(t).filter(([n, a]) => a != null)
     ), i = e + "?" + X.stringify(r, { arrayFormat: "bracket" });
-    if (console.log("Pushing state", i), console.log(this.options.router), this.options.router) {
+    if (this.options.router) {
       const n = this.options.router.currentRoute.path;
       this.options.router.push({
         path: n,
