@@ -203,8 +203,8 @@ const runLintAndCommit = async () => {
   if (hasLintScript()) {
     console.log('Linting repository...')
     await runCommandAndLog('npm run lint')
-    const { modified } = await git.status()
-    if (modified.length > 0) {
+    const status = await git.status()
+    if (status.files.length > 0) {
       console.log('Adding lint changes to repo...')
       await git.add('.')
       console.log('Committing lint changes to repo...')
@@ -345,14 +345,14 @@ const deployToServer = async (flags) => {
     const { proceedWithComposer } = await inquirer.prompt({
       type: 'confirm',
       name: 'proceedWithComposer',
-      message: 'No composer changes detected. Proceed with composer install?'
+      message: 'No composer changes detected. Proceed with composer update?'
     })
     if (proceedWithComposer) {
-      commands.push('composer install --no-interaction --no-dev --prefer-dist')
+      commands.push('composer update --no-interaction --no-dev --prefer-dist')
     }
   } else {
-    console.log('Composer changes detected. Proceeding with composer install.')
-    commands.push('composer install --no-interaction --no-dev --prefer-dist')
+    console.log('Composer changes detected. Proceeding with composer update.')
+    commands.push('composer update --no-interaction --no-dev --prefer-dist')
   }
 
   if (!flags.databaseChanges) {
