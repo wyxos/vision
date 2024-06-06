@@ -2173,7 +2173,7 @@ const vs = {
         ), this.$emit("update:query", this.query);
       }
     },
-    searchTags(s) {
+    onTagSearch(s) {
       return this.search.customSearch({
         url: this.path,
         payload: this.payloadFormatter({
@@ -2182,12 +2182,12 @@ const vs = {
         })
       });
     },
-    addedTag() {
+    onTagAdded() {
       this.isInternalChange = !0;
       const s = this.query.map((e) => this.formatter(e));
       this.$emit("update:modelValue", s), this.$emit("update:query", this.query), this.$emit("change");
     },
-    removedTag() {
+    onTagRemoved() {
       this.isInternalChange = !0;
       const s = this.query.map((e) => this.formatter(e));
       this.$emit("update:modelValue", s), this.$emit("update:query", this.query), this.$emit("change");
@@ -2199,7 +2199,7 @@ const vs = {
       this.$refs.tagInput.addItem();
     },
     focus() {
-      console.log(this.openOnFocus), this.openOnFocus && this.searchTags("");
+      console.log(this.openOnFocus), this.openOnFocus && this.onTagSearch("");
     }
   }
 };
@@ -2213,10 +2213,10 @@ function Fs(s, e, t, r, i, n) {
     "open-on-focus": t.openOnFocus,
     "allow-autocomplete": ""
   }, s.$attrs, {
-    onAdd: e[1] || (e[1] = (o) => n.addedTag(o)),
-    onRemove: e[2] || (e[2] = (o) => n.removedTag(o)),
-    onTyping: e[3] || (e[3] = (o) => n.searchTags(o)),
-    onFocus: e[4] || (e[4] = (o) => n.searchTags(""))
+    onAdd: e[1] || (e[1] = (o) => n.onTagAdded(o)),
+    onFocus: e[2] || (e[2] = (o) => n.onTagSearch("")),
+    onRemove: e[3] || (e[3] = (o) => n.onTagRemoved(o)),
+    onTyping: e[4] || (e[4] = (o) => n.onTagSearch(o))
   }), null, 16, ["modelValue", "data", "open-on-focus"]);
 }
 const xs = /* @__PURE__ */ y(vs, [["render", Fs]]), qs = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({

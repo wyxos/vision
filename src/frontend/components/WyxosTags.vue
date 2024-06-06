@@ -84,7 +84,7 @@ export default {
         this.$emit('update:query', this.query)
       }
     },
-    searchTags(value) {
+    onTagSearch(value) {
       return this.search.customSearch({
         url: this.path,
         payload: this.payloadFormatter({
@@ -95,7 +95,7 @@ export default {
         })
       })
     },
-    addedTag() {
+    onTagAdded() {
       this.isInternalChange = true
 
       const reformat = this.query.map((value) => this.formatter(value))
@@ -106,7 +106,7 @@ export default {
 
       this.$emit('change')
     },
-    removedTag() {
+    onTagRemoved() {
       this.isInternalChange = true
 
       const reformat = this.query.map((value) => this.formatter(value))
@@ -132,7 +132,7 @@ export default {
     focus() {
       console.log(this.openOnFocus)
       if (this.openOnFocus) {
-        this.searchTags('')
+        this.onTagSearch('')
       }
     }
   }
@@ -146,9 +146,9 @@ export default {
     :open-on-focus="openOnFocus"
     allow-autocomplete
     v-bind="$attrs"
-    @add="addedTag($event)"
-    @remove="removedTag($event)"
-    @typing="searchTags($event)"
-    @focus="searchTags('')">
+    @add="onTagAdded($event)"
+    @focus="onTagSearch('')"
+    @remove="onTagRemoved($event)"
+    @typing="onTagSearch($event)">
   </o-inputitems>
 </template>
