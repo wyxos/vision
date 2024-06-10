@@ -4,7 +4,7 @@ import {
   WyxosButton,
   WyxosForm,
   WyxosInput
-} from '../../src/frontend/main.js'
+} from '../../src/main.js'
 
 export default {
   components: {
@@ -31,23 +31,23 @@ export default {
       }
 
       this.errors.advancedSubmit(
-        () =>
-          new Promise((resolve, reject) => {
-            setTimeout(() => {
-              reject(
-                new ValidationError('Validation error', {
-                  response: {
-                    status: 422,
-                    data: {
-                      errors: {
-                        email: ['The email field is required.']
-                      }
-                    }
-                  }
-                })
-              )
-            }, 1000)
-          })
+          () =>
+              new Promise((resolve, reject) => {
+                setTimeout(() => {
+                  reject(
+                      new ValidationError('Validation error', {
+                        response: {
+                          status: 422,
+                          data: {
+                            errors: {
+                              email: ['The email field is required.']
+                            }
+                          }
+                        }
+                      })
+                  )
+                }, 1000)
+              })
       )
     }
   }
@@ -59,9 +59,9 @@ export default {
     <h1 class="title is-3">Demo App</h1>
     <wyxos-form :form="errors" @submit="submit()">
       <wyxos-input
-        :bag="errors.errorBag"
-        label="Email"
-        name="email"></wyxos-input>
+          :bag="errors.errorBag"
+          label="Email"
+          name="email"></wyxos-input>
 
       <wyxos-button native-type="submit">Submit</wyxos-button>
     </wyxos-form>

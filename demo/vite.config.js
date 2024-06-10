@@ -20,11 +20,8 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.join(__dirname, '../src'),
-      '@frontend': path.join(__dirname, '../src/frontend'),
-      '@components': path.join(__dirname, '../src/frontend/components'),
-      '@utilities': path.join(__dirname, '../src/frontend/utilities'),
-      '@cli': path.join(__dirname, '../src/cli'),
-      '@commands': path.join(__dirname, '../src/cli/commands')
+      '@components': path.join(__dirname, '../src/components'),
+      '@utilities': path.join(__dirname, '../src/utilities')
     },
     dedupe: ['vue', 'moment']
   },
@@ -32,7 +29,7 @@ export default defineConfig({
     sourcemap: true,
     outDir: '../dist',
     lib: {
-      entry: path.resolve(__dirname, '../src/frontend/main.js'),
+      entry: path.resolve(__dirname, '../src/main.js'),
       name: 'Vision',
       // the proper extensions will be added
       fileName: 'vision'
