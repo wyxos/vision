@@ -1,7 +1,7 @@
-import { createApp } from 'vue'
+import {createApp} from 'vue'
 import './style.scss'
 import App from './App.vue'
-import Vision from '../../src/frontend/main'
+import Vision from '../../src/main'
 
 const app = createApp(App)
 
