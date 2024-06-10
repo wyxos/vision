@@ -45,6 +45,7 @@
     "node-pty": "^1.0.0",
     "node-ssh": "^13.1.0",
     "query-string": "^8.1.0",
+    "rimraf": "^5.0.7",
     "simple-git": "^3.24.0"
   },
   "devDependencies": {
