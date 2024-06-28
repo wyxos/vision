@@ -34,7 +34,7 @@ export default async function errorHandler(error, options) {
 
   if (error.response?.status === 419) {
     oruga.modal.open({
-      component: TokenExpired,
+      component: options.components?.TokenExpired || TokenExpired,
       trapFocus: true,
       closable: false
     })
