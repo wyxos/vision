@@ -386,4 +386,8 @@ export default class FormBuilder {
 
     this.timeout = setTimeout(callback, timeout)
   }
+
+  toJson(){
+    return JSON.parse(JSON.stringify(this.form)
+  }
 }
