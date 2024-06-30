@@ -1,7 +1,7 @@
 var _e = Object.defineProperty;
 var Se = (s, e, t) => e in s ? _e(s, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : s[e] = t;
 var d = (s, e, t) => (Se(s, typeof e != "symbol" ? e + "" : e, t), t);
-import { resolveComponent as m, openBlock as c, createBlock as w, withCtx as g, renderSlot as j, createTextVNode as x, createCommentVNode as v, toDisplayString as b, createElementBlock as _, normalizeProps as N, guardReactiveProps as U, createElementVNode as f, reactive as q, createVNode as S, normalizeClass as A, mergeProps as R, defineComponent as ee, nextTick as we, withModifiers as te, createSlots as Oe, renderList as se, Fragment as re, Teleport as ve, ref as k } from "vue";
+import { resolveComponent as m, openBlock as c, createBlock as w, withCtx as g, renderSlot as j, createTextVNode as x, createCommentVNode as v, toDisplayString as b, createElementBlock as _, normalizeProps as B, guardReactiveProps as U, createElementVNode as f, reactive as q, createVNode as S, normalizeClass as A, mergeProps as R, defineComponent as ee, nextTick as we, withModifiers as te, createSlots as Oe, renderList as se, Fragment as re, Teleport as ve, ref as k } from "vue";
 import L from "moment";
 import h from "axios";
 import Fe, { useProgrammatic as z } from "@oruga-ui/oruga-next";
@@ -73,7 +73,7 @@ const je = /* @__PURE__ */ y(xe, [["render", $e]]), Ce = /* @__PURE__ */ Object.
   /* @__PURE__ */ f("li")
 ], -1);
 function Pe(s, e, t, r, i, n) {
-  return j(s.$slots, "default", N(U({ add: n.add, remove: n.remove, items: i.items })), () => [
+  return j(s.$slots, "default", B(U({ add: n.add, remove: n.remove, items: i.items })), () => [
     Te
   ]);
 }
@@ -181,7 +181,7 @@ const Le = {
   class: "buttons",
   role: "group"
 };
-function Be(s, e, t, r, i, n) {
+function Ne(s, e, t, r, i, n) {
   const a = m("wyxos-button"), o = m("o-modal");
   return c(), w(o, {
     active: !0,
@@ -224,9 +224,9 @@ function Be(s, e, t, r, i, n) {
     _: 1
   });
 }
-const Ne = /* @__PURE__ */ y(Le, [["render", Be]]), Ue = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const Be = /* @__PURE__ */ y(Le, [["render", Ne]]), Ue = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
-  default: Ne
+  default: Be
 }, Symbol.toStringTag, { value: "Module" })), P = q({
   default: []
 });
@@ -465,6 +465,9 @@ class T {
   }
   delay(e = 0, t) {
     clearTimeout(this.timeout), this.timeout = setTimeout(t, e);
+  }
+  toJson() {
+    return JSON.parse(JSON.stringify(this.form));
   }
 }
 const Me = {
@@ -1467,7 +1470,7 @@ const St = /* @__PURE__ */ y(bt, [["render", _t]]), wt = /* @__PURE__ */ Object.
 }, vt = { key: 0 }, Ft = { key: 1 }, xt = { key: 2 };
 function qt(s, e, t, r, i, n) {
   const a = m("o-table");
-  return c(), w(a, N(U(n.allPropsAndEvents)), Oe({
+  return c(), w(a, B(U(n.allPropsAndEvents)), Oe({
     empty: g(() => [
       t.listing.isEmpty ? (c(), _("p", vt, "No records found.")) : v("", !0),
       t.listing.isSearchEmpty ? (c(), _("p", Ft, " No results for your query. Please adjust your search and try again. ")) : v("", !0),
@@ -1478,7 +1481,7 @@ function qt(s, e, t, r, i, n) {
     se(s.$slots, (o, l) => ({
       name: l,
       fn: g((u) => [
-        j(s.$slots, l, N(U(u)))
+        j(s.$slots, l, B(U(u)))
       ])
     }))
   ]), 1040);
@@ -1641,7 +1644,7 @@ const Lt = /* @__PURE__ */ y(Rt, [["render", Vt]]), kt = /* @__PURE__ */ Object.
     }
   }
 }), Wt = ["value", "max"], At = { key: 0 };
-function Bt(s, e, t, r, i, n) {
+function Nt(s, e, t, r, i, n) {
   return c(), _(re, null, [
     f("progress", {
       value: s.value,
@@ -1650,9 +1653,9 @@ function Bt(s, e, t, r, i, n) {
     s.showValue ? (c(), _("span", At, b(s.value) + " / " + b(s.max), 1)) : v("", !0)
   ], 64);
 }
-const Nt = /* @__PURE__ */ y(It, [["render", Bt]]), Ut = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const Bt = /* @__PURE__ */ y(It, [["render", Nt]]), Ut = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
-  default: Nt
+  default: Bt
 }, Symbol.toStringTag, { value: "Module" })), Mt = {
   name: "WyxosPrompt",
   props: {
@@ -2258,7 +2261,131 @@ const ge = /* @__PURE__ */ y($s, [["render", Ps]]), Rs = /* @__PURE__ */ Object.
   __proto__: null,
   default: ge
 }, Symbol.toStringTag, { value: "Module" }));
-class zs {
+class Vs {
+  constructor() {
+    d(this, "attributes", q({
+      user: null
+    }));
+    d(this, "state", new C());
+    return new Proxy(this, {
+      get(e, t, r) {
+        return Reflect.has(e, t) ? Reflect.get(e, t, r) : t in e.attributes ? e.attributes[t] : null;
+      },
+      set(e, t, r, i) {
+        return !Reflect.has(e, t) && !(t in e.attributes) ? (Reflect.set(e, t, r, i), !0) : t in e.attributes ? (e.attributes[t] = r, !0) : Reflect.set(e, t, r, i);
+      }
+    });
+  }
+  get isLoading() {
+    return this.state.isLoading;
+  }
+  get isLoaded() {
+    return this.state.isLoaded;
+  }
+  get isFailure() {
+    return this.state.isFailure;
+  }
+  get isAuthenticated() {
+    return !!this.attributes.user;
+  }
+  async load() {
+    this.loading(), await h.get("/sanctum/csrf-cookie").catch((t) => {
+      throw this.failed(), t;
+    });
+    const { data: e } = await h.get("/api/user");
+    if (!("user" in e))
+      throw Error("Instance of user is not defined.");
+    Object.keys(e).forEach((t) => {
+      this.attributes[t] = e[t];
+    }), this.loaded();
+  }
+  loading() {
+    return this.state.loading();
+  }
+  loaded() {
+    return this.state.loaded();
+  }
+  failed() {
+    return this.state.failed();
+  }
+  reset() {
+    this.attributes = q({
+      user: null
+    }), this.state.reset();
+  }
+}
+const zs = new Vs();
+async function Ys(s = {}) {
+  const { oruga: e } = z();
+  return (await e.modal.open({
+    component: fe,
+    props: Object.assign(
+      {
+        title: "Confirm",
+        message: "Are you sure you want proceed?",
+        confirmText: "Yes",
+        cancelText: "Cancel"
+      },
+      s
+    ),
+    trapFocus: !0
+  }).promise).action;
+}
+const Ls = {
+  UK_TIME: "DD/MM/YYYY HH:mm:ss",
+  UK: "DD/MM/YYYY",
+  DB_TIME: "YYYY-MM-DD HH:mm:ss",
+  DB: "YYYY-MM-DD"
+};
+class ks {
+  constructor() {
+    d(this, "FORMATS", Ls);
+  }
+  format(e, t, r = "") {
+    return e ? L(e).format(t) : r;
+  }
+}
+const Js = new ks();
+async function Is(s, e) {
+  var n, a, o, l, u, $;
+  if ((s == null ? void 0 : s.code) === "ERR_CANCELED")
+    return Promise.reject(s);
+  const t = {
+    401: "Authentication required. Please reload the page and sign in.",
+    403: "You do not have permission to perform this action.",
+    404: "The page or action you are looking for could not be found.",
+    419: "Your session has likely expired. Try again or reload the page.",
+    422: "The action attempted was invalid. Please review your input and try again.",
+    500: "An unexpected error has occurred. This issue has been reported.",
+    503: "The site is currently under maintenance. Please try again later."
+  };
+  Object.assign(t, (e == null ? void 0 : e.messages) || {});
+  const r = t[(n = s.response) == null ? void 0 : n.status] || t[500], { oruga: i } = z();
+  if (i.notification.open({
+    message: r,
+    duration: 1e3 * 5,
+    variant: "danger",
+    position: "bottom-right",
+    closable: !0
+  }), ((a = s.response) == null ? void 0 : a.status) === 419) {
+    i.modal.open({
+      component: ((o = e.components) == null ? void 0 : o.TokenExpired) || ge,
+      trapFocus: !0,
+      closable: !1
+    });
+    const N = (await h.get("/heartbeat")).data.csrfToken;
+    h.defaults.headers.common["X-CSRF-TOKEN"] = N;
+  }
+  return ((l = s.response) == null ? void 0 : l.status) === 401 && i.modal.open({
+    component: ((u = e.components) == null ? void 0 : u.SessionExpired) || me,
+    trapFocus: !0,
+    closable: !1
+  }), (($ = s.response) == null ? void 0 : $.status) === 422 && new Promise((F) => setTimeout(F, 500)).then(() => {
+    const F = document.querySelector(".o-field__label-danger");
+    F && F.scrollIntoView({ behavior: "smooth" });
+  }), Promise.reject(s);
+}
+class Hs {
   constructor(e) {
     this.data = new FormData(), this.form = e, this.copy = Object.assign({}, JSON.parse(JSON.stringify(e)));
   }
@@ -2297,7 +2424,7 @@ class pe {
     this.state = !1;
   }
 }
-class Ys {
+class Ks {
   static create(e, t = null, r = null) {
     return t = t || e, {
       value: e,
@@ -2305,7 +2432,7 @@ class Ys {
     };
   }
 }
-class Js {
+class Qs {
   constructor() {
     d(this, "structure", {});
     d(this, "query", q({
@@ -2389,7 +2516,7 @@ class Js {
     Object.assign(this.params, this.structure), this.query.isFilterActive = !1, await this.load(e);
   }
 }
-class Hs {
+class Xs {
   constructor(e) {
     d(this, "current", k(null));
     d(this, "history", k([]));
@@ -2426,6 +2553,16 @@ class Hs {
     Object.assign(this, e);
   }
 }
+function Gs(s) {
+  const { oruga: e } = z();
+  e.notification.open({
+    message: s || "Action successful.",
+    duration: 2500,
+    variant: "success",
+    position: "bottom-right",
+    closable: !0
+  });
+}
 class ye {
   constructor(e) {
     d(this, "attributes", q({
@@ -2455,140 +2592,6 @@ class ye {
     return new ye(e);
   }
 }
-class Vs {
-  constructor() {
-    d(this, "attributes", q({
-      user: null
-    }));
-    d(this, "state", new C());
-    return new Proxy(this, {
-      get(e, t, r) {
-        return Reflect.has(e, t) ? Reflect.get(e, t, r) : t in e.attributes ? e.attributes[t] : null;
-      },
-      set(e, t, r, i) {
-        return !Reflect.has(e, t) && !(t in e.attributes) ? (Reflect.set(e, t, r, i), !0) : t in e.attributes ? (e.attributes[t] = r, !0) : Reflect.set(e, t, r, i);
-      }
-    });
-  }
-  get isLoading() {
-    return this.state.isLoading;
-  }
-  get isLoaded() {
-    return this.state.isLoaded;
-  }
-  get isFailure() {
-    return this.state.isFailure;
-  }
-  get isAuthenticated() {
-    return !!this.attributes.user;
-  }
-  async load() {
-    this.loading(), await h.get("/sanctum/csrf-cookie").catch((t) => {
-      throw this.failed(), t;
-    });
-    const { data: e } = await h.get("/api/user");
-    if (!("user" in e))
-      throw Error("Instance of user is not defined.");
-    Object.keys(e).forEach((t) => {
-      this.attributes[t] = e[t];
-    }), this.loaded();
-  }
-  loading() {
-    return this.state.loading();
-  }
-  loaded() {
-    return this.state.loaded();
-  }
-  failed() {
-    return this.state.failed();
-  }
-  reset() {
-    this.attributes = q({
-      user: null
-    }), this.state.reset();
-  }
-}
-const Ks = new Vs();
-async function Qs(s = {}) {
-  const { oruga: e } = z();
-  return (await e.modal.open({
-    component: fe,
-    props: Object.assign(
-      {
-        title: "Confirm",
-        message: "Are you sure you want proceed?",
-        confirmText: "Yes",
-        cancelText: "Cancel"
-      },
-      s
-    ),
-    trapFocus: !0
-  }).promise).action;
-}
-const Ls = {
-  UK_TIME: "DD/MM/YYYY HH:mm:ss",
-  UK: "DD/MM/YYYY",
-  DB_TIME: "YYYY-MM-DD HH:mm:ss",
-  DB: "YYYY-MM-DD"
-};
-class ks {
-  constructor() {
-    d(this, "FORMATS", Ls);
-  }
-  format(e, t, r = "") {
-    return e ? L(e).format(t) : r;
-  }
-}
-const Xs = new ks();
-async function Is(s, e) {
-  var n, a, o, l, u, $;
-  if ((s == null ? void 0 : s.code) === "ERR_CANCELED")
-    return Promise.reject(s);
-  const t = {
-    401: "Authentication required. Please reload the page and sign in.",
-    403: "You do not have permission to perform this action.",
-    404: "The page or action you are looking for could not be found.",
-    419: "Your session has likely expired. Try again or reload the page.",
-    422: "The action attempted was invalid. Please review your input and try again.",
-    500: "An unexpected error has occurred. This issue has been reported.",
-    503: "The site is currently under maintenance. Please try again later."
-  };
-  Object.assign(t, (e == null ? void 0 : e.messages) || {});
-  const r = t[(n = s.response) == null ? void 0 : n.status] || t[500], { oruga: i } = z();
-  if (i.notification.open({
-    message: r,
-    duration: 1e3 * 5,
-    variant: "danger",
-    position: "bottom-right",
-    closable: !0
-  }), ((a = s.response) == null ? void 0 : a.status) === 419) {
-    i.modal.open({
-      component: ((o = e.components) == null ? void 0 : o.TokenExpired) || ge,
-      trapFocus: !0,
-      closable: !1
-    });
-    const B = (await h.get("/heartbeat")).data.csrfToken;
-    h.defaults.headers.common["X-CSRF-TOKEN"] = B;
-  }
-  return ((l = s.response) == null ? void 0 : l.status) === 401 && i.modal.open({
-    component: ((u = e.components) == null ? void 0 : u.SessionExpired) || me,
-    trapFocus: !0,
-    closable: !1
-  }), (($ = s.response) == null ? void 0 : $.status) === 422 && new Promise((F) => setTimeout(F, 500)).then(() => {
-    const F = document.querySelector(".o-field__label-danger");
-    F && F.scrollIntoView({ behavior: "smooth" });
-  }), Promise.reject(s);
-}
-function Gs(s) {
-  const { oruga: e } = z();
-  e.notification.open({
-    message: s || "Action successful.",
-    duration: 2500,
-    variant: "success",
-    position: "bottom-right",
-    closable: !0
-  });
-}
 function Ws(s) {
   h.interceptors.response.use(null, (e) => Is(e, s));
 }
@@ -2611,19 +2614,19 @@ const Z = /* @__PURE__ */ Object.assign({ "./components/WyxosButton.vue": Ce, ".
   ...be
 };
 export {
-  zs as FileRequest,
+  Hs as FileRequest,
   T as FormBuilder,
   I as Listing,
   C as LoadState,
   pe as Modal,
-  Ys as Option,
-  Js as ResourceList,
+  Ks as Option,
+  Qs as ResourceList,
   H as Search,
-  Hs as Steps,
+  Xs as Steps,
   ye as Tab,
   je as WyxosButton,
   Re as WyxosCollection,
-  Ne as WyxosConfirm,
+  Be as WyxosConfirm,
   ze as WyxosDatepicker,
   Xe as WyxosError,
   ct as WyxosForm,
@@ -2632,7 +2635,7 @@ export {
   $t as WyxosListing,
   Tt as WyxosLiveInput,
   Lt as WyxosLogout,
-  Nt as WyxosProgress,
+  Bt as WyxosProgress,
   fe as WyxosPrompt,
   es as WyxosRemove,
   ns as WyxosSelect,
@@ -2640,9 +2643,9 @@ export {
   ws as WyxosSubmit,
   xs as WyxosTags,
   ge as WyxosTokenExpired,
-  Ks as auth,
-  Qs as confirm,
-  Xs as dateRender,
+  zs as auth,
+  Ys as confirm,
+  Js as dateRender,
   Zs as default,
   Is as errorHandler,
   Gs as success,
