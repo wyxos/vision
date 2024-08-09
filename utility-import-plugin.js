@@ -14,8 +14,12 @@ export default function utilityImportPlugin() {
       const componentsDir = path.resolve(__dirname, 'src/components')
 
       // Get all utility and component file names
-      const utilityFiles = await fs.readdir(utilitiesDir)
-      const componentFiles = await fs.readdir(componentsDir)
+      const utilityFiles = (await fs.readdir(utilitiesDir)).filter(
+        (file) => !file.endsWith('.test.js')
+      )
+      const componentFiles = (await fs.readdir(componentsDir)).filter(
+        (file) => !file.endsWith('.test.js')
+      )
 
       // Generate import and export statements for each utility and component file
       const importStatements = []

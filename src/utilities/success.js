@@ -1,7 +1,7 @@
-import { useProgrammatic } from '@oruga-ui/oruga-next'
+import { useOruga } from '@oruga-ui/oruga-next'
 
 export default function success(message) {
-  const { oruga } = useProgrammatic()
+  const { oruga } = useOruga()
 
   oruga.notification.open({
     message: message || 'Action successful.',
