@@ -1,10 +1,10 @@
 var _e = Object.defineProperty;
 var Se = (s, e, t) => e in s ? _e(s, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : s[e] = t;
 var d = (s, e, t) => (Se(s, typeof e != "symbol" ? e + "" : e, t), t);
-import { resolveComponent as m, openBlock as c, createBlock as w, withCtx as g, renderSlot as j, createTextVNode as x, createCommentVNode as v, toDisplayString as b, createElementBlock as _, normalizeProps as B, guardReactiveProps as U, createElementVNode as f, reactive as q, createVNode as S, normalizeClass as A, mergeProps as R, defineComponent as ee, nextTick as we, withModifiers as te, createSlots as Oe, renderList as se, Fragment as re, Teleport as ve, ref as k } from "vue";
+import { resolveComponent as m, openBlock as c, createBlock as w, withCtx as g, renderSlot as j, createTextVNode as x, createCommentVNode as v, toDisplayString as b, createElementBlock as _, normalizeProps as B, guardReactiveProps as U, createElementVNode as f, reactive as q, createVNode as S, normalizeClass as A, mergeProps as P, defineComponent as ee, nextTick as we, withModifiers as te, createSlots as Oe, renderList as se, Fragment as re, Teleport as ve, ref as k } from "vue";
 import L from "moment";
 import h from "axios";
-import Fe, { useProgrammatic as z } from "@oruga-ui/oruga-next";
+import Fe, { useOruga as z } from "@oruga-ui/oruga-next";
 const y = (s, e) => {
   const t = s.__vccOpts || s;
   for (const [r, i] of e)
@@ -72,14 +72,14 @@ const je = /* @__PURE__ */ y(xe, [["render", $e]]), Ce = /* @__PURE__ */ Object.
 }, Te = /* @__PURE__ */ f("ul", null, [
   /* @__PURE__ */ f("li")
 ], -1);
-function Pe(s, e, t, r, i, n) {
+function Re(s, e, t, r, i, n) {
   return j(s.$slots, "default", B(U({ add: n.add, remove: n.remove, items: i.items })), () => [
     Te
   ]);
 }
-const Re = /* @__PURE__ */ y(Ee, [["render", Pe]]), Ve = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const Pe = /* @__PURE__ */ y(Ee, [["render", Re]]), Ve = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
-  default: Re
+  default: Pe
 }, Symbol.toStringTag, { value: "Module" }));
 class C {
   constructor() {
@@ -227,24 +227,24 @@ function Ne(s, e, t, r, i, n) {
 const Be = /* @__PURE__ */ y(Le, [["render", Ne]]), Ue = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: Be
-}, Symbol.toStringTag, { value: "Module" })), P = q({
+}, Symbol.toStringTag, { value: "Module" })), R = q({
   default: []
 });
 function V() {
   return {
     createBag(s) {
-      P[s] || (P[s] = []);
+      R[s] || (R[s] = []);
     },
     set(s, e = "default") {
       if (!(s.response && s.response.data && s.response.data.errors))
         throw s;
-      P[e] = Object.keys(s.response.data.errors).map((r) => ({
+      R[e] = Object.keys(s.response.data.errors).map((r) => ({
         key: r,
         message: s.response.data.errors[r][0]
       }));
     },
     get(s, e = "default") {
-      const t = P[e];
+      const t = R[e];
       if (!t)
         return {
           message: "",
@@ -263,7 +263,7 @@ function V() {
     },
     clear(s = null, e = "default") {
       if (s) {
-        const t = P[e];
+        const t = R[e];
         if (!t) {
           console.warn(`Bag ${e} is not defined.`);
           return;
@@ -272,10 +272,10 @@ function V() {
         t.splice(r, 1);
         return;
       }
-      P[e] = [];
+      R[e] = [];
     },
     all(s = "default") {
-      return P[s];
+      return R[s];
     }
   };
 }
@@ -538,9 +538,9 @@ const Me = {
 function De(s, e, t, r, i, n) {
   var l;
   const a = m("o-datepicker"), o = m("o-field");
-  return c(), w(o, R({ label: t.label }, (l = t.form) == null ? void 0 : l.getError(t.name)), {
+  return c(), w(o, P({ label: t.label }, (l = t.form) == null ? void 0 : l.getError(t.name)), {
     default: g(() => [
-      S(a, R({
+      S(a, P({
         modelValue: i.query,
         "onUpdate:modelValue": e[0] || (e[0] = (u) => i.query = u),
         "date-formatter": n.dateFormatter
@@ -1426,7 +1426,7 @@ const pt = /* @__PURE__ */ y(ft, [["render", gt]]), yt = /* @__PURE__ */ Object.
 };
 function _t(s, e, t, r, i, n) {
   const a = m("o-input"), o = m("o-field");
-  return c(), w(o, R({
+  return c(), w(o, P({
     class: t.fieldClass,
     label: t.label
   }, n.getError), {
@@ -1571,7 +1571,7 @@ const $t = /* @__PURE__ */ y(Ot, [["render", qt]]), jt = /* @__PURE__ */ Object.
 };
 function Et(s, e, t, r, i, n) {
   const a = m("o-input"), o = m("o-field");
-  return c(), w(o, R({
+  return c(), w(o, P({
     label: t.label,
     class: t.fieldClass
   }, { ...n.getError() }), {
@@ -1592,10 +1592,10 @@ function Et(s, e, t, r, i, n) {
     _: 1
   }, 16, ["label", "class"]);
 }
-const Tt = /* @__PURE__ */ y(Ct, [["render", Et]]), Pt = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const Tt = /* @__PURE__ */ y(Ct, [["render", Et]]), Rt = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: Tt
-}, Symbol.toStringTag, { value: "Module" })), Rt = {
+}, Symbol.toStringTag, { value: "Module" })), Pt = {
   name: "WyxosLogout",
   props: {
     path: {
@@ -1620,7 +1620,7 @@ function Vt(s, e, t, r, i, n) {
     }, "Sign out")
   ]);
 }
-const Lt = /* @__PURE__ */ y(Rt, [["render", Vt]]), kt = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const Lt = /* @__PURE__ */ y(Pt, [["render", Vt]]), kt = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: Lt
 }, Symbol.toStringTag, { value: "Module" })), It = ee({
@@ -1878,7 +1878,7 @@ const es = /* @__PURE__ */ y(Jt, [["render", Zt]]), ts = /* @__PURE__ */ Object.
 function is(s, e, t, r, i, n) {
   var l;
   const a = m("o-select"), o = m("o-field");
-  return c(), w(o, R({ label: t.label }, (l = t.form) == null ? void 0 : l.getError(t.name)), {
+  return c(), w(o, P({ label: t.label }, (l = t.form) == null ? void 0 : l.getError(t.name)), {
     default: g(() => [
       S(a, {
         disabled: t.disabled,
@@ -2208,7 +2208,7 @@ const vs = {
 };
 function Fs(s, e, t, r, i, n) {
   const a = m("o-inputitems");
-  return c(), w(a, R({
+  return c(), w(a, P({
     ref: "tagInput",
     modelValue: i.query,
     "onUpdate:modelValue": e[0] || (e[0] = (o) => i.query = o),
@@ -2234,7 +2234,7 @@ const xs = /* @__PURE__ */ y(vs, [["render", Fs]]), qs = /* @__PURE__ */ Object.
     }
   }
 }, js = { class: "bg-white p-6" }, Cs = /* @__PURE__ */ f("h2", { class: "title" }, "Session expired", -1), Es = /* @__PURE__ */ f("p", { class: "mb-6" }, " Your tab has been idle for a while. We've refreshed your session for you. If you encountered an error after performing an action, please close this prompt and try again. ", -1), Ts = { class: "buttons" };
-function Ps(s, e, t, r, i, n) {
+function Rs(s, e, t, r, i, n) {
   const a = m("w-button"), o = m("o-modal");
   return c(), w(o, { active: !0 }, {
     default: g(() => [
@@ -2257,7 +2257,7 @@ function Ps(s, e, t, r, i, n) {
     _: 1
   });
 }
-const ge = /* @__PURE__ */ y($s, [["render", Ps]]), Rs = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const ge = /* @__PURE__ */ y($s, [["render", Rs]]), Ps = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: ge
 }, Symbol.toStringTag, { value: "Module" }));
@@ -2595,7 +2595,7 @@ class ye {
 function Ws(s) {
   h.interceptors.response.use(null, (e) => Is(e, s));
 }
-const Z = /* @__PURE__ */ Object.assign({ "./components/WyxosButton.vue": Ce, "./components/WyxosCollection.vue": Ve, "./components/WyxosConfirm.vue": Ue, "./components/WyxosDatepicker.vue": Ye, "./components/WyxosError.vue": Ge, "./components/WyxosForm.vue": ht, "./components/WyxosImage.vue": yt, "./components/WyxosInput.vue": wt, "./components/WyxosListing.vue": jt, "./components/WyxosLiveInput.vue": Pt, "./components/WyxosLogout.vue": kt, "./components/WyxosProgress.vue": Ut, "./components/WyxosPrompt.vue": Yt, "./components/WyxosRemove.vue": ts, "./components/WyxosSelect.vue": as, "./components/WyxosSessionExpired.vue": fs, "./components/WyxosSubmit.vue": Os, "./components/WyxosTags.vue": qs, "./components/WyxosTokenExpired.vue": Rs }), be = {}, As = (s, e = { vision: {}, oruga: {} }) => {
+const Z = /* @__PURE__ */ Object.assign({ "./components/WyxosButton.vue": Ce, "./components/WyxosCollection.vue": Ve, "./components/WyxosConfirm.vue": Ue, "./components/WyxosDatepicker.vue": Ye, "./components/WyxosError.vue": Ge, "./components/WyxosForm.vue": ht, "./components/WyxosImage.vue": yt, "./components/WyxosInput.vue": wt, "./components/WyxosListing.vue": jt, "./components/WyxosLiveInput.vue": Rt, "./components/WyxosLogout.vue": kt, "./components/WyxosProgress.vue": Ut, "./components/WyxosPrompt.vue": Yt, "./components/WyxosRemove.vue": ts, "./components/WyxosSelect.vue": as, "./components/WyxosSessionExpired.vue": fs, "./components/WyxosSubmit.vue": Os, "./components/WyxosTags.vue": qs, "./components/WyxosTokenExpired.vue": Ps }), be = {}, As = (s, e = { vision: {}, oruga: {} }) => {
   s.use(Fe, e.oruga), Object.keys(Z).forEach((t) => {
     const r = Z[t];
     if (r && r.default) {
@@ -2625,7 +2625,7 @@ export {
   Xs as Steps,
   ye as Tab,
   je as WyxosButton,
-  Re as WyxosCollection,
+  Pe as WyxosCollection,
   Be as WyxosConfirm,
   ze as WyxosDatepicker,
   Xe as WyxosError,
