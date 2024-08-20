@@ -1,7 +1,7 @@
 import { useOruga } from '@oruga-ui/oruga-next'
 
 export default function success(message) {
-  const { oruga } = useOruga()
+  const oruga = useOruga()
 
   oruga.notification.open({
     message: message || 'Action successful.',

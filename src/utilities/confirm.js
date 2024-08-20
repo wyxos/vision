@@ -2,7 +2,7 @@ import { useOruga } from '@oruga-ui/oruga-next'
 import WyxosPrompt from '../components/WyxosPrompt.vue'
 
 export default async function confirm(props = {}) {
-  const { oruga } = useOruga()
+  const oruga = useOruga()
 
   const instance = oruga.modal.open({
     component: WyxosPrompt,

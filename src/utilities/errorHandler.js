@@ -22,7 +22,7 @@ export default async function errorHandler(error, options) {
 
   const message = errors[error.response?.status] || errors[500]
 
-  const { oruga } = useOruga()
+  const oruga = useOruga()
 
   oruga.notification.open({
     message,
