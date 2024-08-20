@@ -5,8 +5,12 @@ const components = import.meta.glob('./components/*.vue', { eager: true })
 
 const MappedComponents = {}
 
-const install = (app, options = { vision: {}, oruga: {} }) => {
-  app.use(Oruga, options.oruga)
+const install = (app, options = {}) => {
+  options = { ...{ vision: {}, oruga: {}, use: { oruga: true } }, ...options }
+
+  if (options.use.oruga) {
+    app.use(Oruga, options.oruga)
+  }
 
   Object.keys(components).forEach((key) => {
     const componentModule = components[key]

@@ -10594,8 +10594,8 @@ function vm(e) {
 function am(e) {
   Ae.interceptors.response.use(null, (a) => tm(a, e));
 }
-const gr = /* @__PURE__ */ Object.assign({ "./components/WyxosButton.vue": Nl, "./components/WyxosCollection.vue": Vl, "./components/WyxosConfirm.vue": Gl, "./components/WyxosDatepicker.vue": dd, "./components/WyxosError.vue": vd, "./components/WyxosForm.vue": Ad, "./components/WyxosImage.vue": Yd, "./components/WyxosInput.vue": qd, "./components/WyxosListing.vue": zd, "./components/WyxosLiveInput.vue": Kd, "./components/WyxosLogout.vue": ec, "./components/WyxosProgress.vue": oc, "./components/WyxosPrompt.vue": dc, "./components/WyxosRemove.vue": bc, "./components/WyxosSelect.vue": Tc, "./components/WyxosSessionExpired.vue": $c, "./components/WyxosSubmit.vue": Lc, "./components/WyxosTags.vue": Wc, "./components/WyxosTokenExpired.vue": Xc }), _l = {}, nm = (e, a = { vision: {}, oruga: {} }) => {
-  e.use($l, a.oruga), Object.keys(gr).forEach((t) => {
+const gr = /* @__PURE__ */ Object.assign({ "./components/WyxosButton.vue": Nl, "./components/WyxosCollection.vue": Vl, "./components/WyxosConfirm.vue": Gl, "./components/WyxosDatepicker.vue": dd, "./components/WyxosError.vue": vd, "./components/WyxosForm.vue": Ad, "./components/WyxosImage.vue": Yd, "./components/WyxosInput.vue": qd, "./components/WyxosListing.vue": zd, "./components/WyxosLiveInput.vue": Kd, "./components/WyxosLogout.vue": ec, "./components/WyxosProgress.vue": oc, "./components/WyxosPrompt.vue": dc, "./components/WyxosRemove.vue": bc, "./components/WyxosSelect.vue": Tc, "./components/WyxosSessionExpired.vue": $c, "./components/WyxosSubmit.vue": Lc, "./components/WyxosTags.vue": Wc, "./components/WyxosTokenExpired.vue": Xc }), _l = {}, nm = (e, a = {}) => {
+  a = { vision: {}, oruga: {}, use: { oruga: !0 }, ...a }, a.use.oruga && e.use($l, a.oruga), Object.keys(gr).forEach((t) => {
     const n = gr[t];
     if (n && n.default) {
       const r = n.default, l = r.name;
