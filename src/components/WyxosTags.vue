@@ -139,7 +139,7 @@ export default {
 }
 </script>
 <template>
-  <o-inputitems
+  <o-taginput
     ref="tagInput"
     v-model="query"
     :data="search.result.value"
@@ -150,5 +150,5 @@ export default {
     @focus="onTagSearch('')"
     @remove="onTagRemoved($event)"
     @typing="onTagSearch($event)">
-  </o-inputitems>
+  </o-taginput>
 </template>
