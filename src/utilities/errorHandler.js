@@ -57,10 +57,35 @@ export default async function errorHandler(error, options) {
 
   if (error.response?.status === 422) {
     new Promise((resolve) => setTimeout(resolve, 500)).then(() => {
-      const element = document.querySelector('.o-field__message-danger')
+      // Select all elements with the class .o-field__message-danger
+      const elements = document.querySelectorAll('.o-field__message-danger')
 
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' })
+      // Function to check if an element is visible
+      const isVisible = (el) => {
+        const rect = el.getBoundingClientRect()
+        const style = window.getComputedStyle(el)
+        return (
+          rect.width > 0 &&
+          rect.height > 0 &&
+          style.display !== 'none' &&
+          style.visibility !== 'hidden' &&
+          style.opacity !== '0'
+        )
+      }
+
+      // Find the first visible element
+      const visibleElement = Array.from(elements).find(isVisible)
+
+      if (visibleElement) {
+        console.log(
+          'Scrolling to visible error message element:',
+          visibleElement
+        )
+        visibleElement
+          .closest('.o-field')
+          .scrollIntoView({ behavior: 'smooth' })
+      } else {
+        console.error('Could not find a visible error message element.')
       }
     })
   }
