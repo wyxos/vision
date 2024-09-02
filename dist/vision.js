@@ -2590,7 +2590,7 @@ async function Is(s, e) {
     trapFocus: !0,
     closable: !1
   }), (($ = s.response) == null ? void 0 : $.status) === 422 && new Promise((F) => setTimeout(F, 500)).then(() => {
-    const F = document.querySelector(".o-field__label-danger");
+    const F = document.querySelector(".o-field__message-danger");
     F && F.scrollIntoView({ behavior: "smooth" });
   }), Promise.reject(s);
 }
