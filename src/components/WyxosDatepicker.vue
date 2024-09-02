@@ -1,13 +1,13 @@
 <script>
 import moment from 'moment'
 import FormBuilder from '../utilities/FormBuilder'
-import VueDatePicker from '@vuepic/vue-datepicker'
+// import VueDatePicker from '@vuepic/vue-datepicker'
 
 export default {
   name: 'WyxosDatepicker',
-  components: {
-    VueDatePicker
-  },
+  // components: {
+  //   VueDatePicker
+  // },
   props: {
     modelValue: {
       required: true,
@@ -91,15 +91,15 @@ export default {
 
 <template>
   <o-field :label="label" v-bind="form?.getError(name)">
-    <VueDatePicker
-      v-model="query"
-      v-bind="mergedOptions"
-      @update:model-value="updateQuery"></VueDatePicker>
-    <!--    <o-datepicker-->
+    <!--    <VueDatePicker-->
     <!--      v-model="query"-->
-    <!--      :date-formatter="dateFormatter"-->
-    <!--      trap-focus-->
-    <!--      v-bind="options"-->
-    <!--      @update:model-value="updateQuery"></o-datepicker>-->
+    <!--      v-bind="mergedOptions"-->
+    <!--      @update:model-value="updateQuery"></VueDatePicker>-->
+    <o-datepicker
+      v-model="query"
+      :date-formatter="dateFormatter"
+      trap-focus
+      v-bind="options"
+      @update:model-value="updateQuery"></o-datepicker>
   </o-field>
 </template>

@@ -57,7 +57,7 @@ export default async function errorHandler(error, options) {
 
   if (error.response?.status === 422) {
     new Promise((resolve) => setTimeout(resolve, 500)).then(() => {
-      const element = document.querySelector('.o-field__label-danger')
+      const element = document.querySelector('.o-field__message-danger')
 
       if (element) {
         element.scrollIntoView({ behavior: 'smooth' })
