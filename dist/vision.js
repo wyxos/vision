@@ -262,14 +262,14 @@ function V() {
       };
     },
     clear(s = null, e = "default") {
-      if (s) {
+      if (console.log("Clearing error", s, "in bag", e, R), s) {
         const t = R[e];
         if (!t) {
           console.warn(`Bag ${e} is not defined.`);
           return;
         }
         const r = t.findIndex((i) => i.key === s);
-        t.splice(r, 1);
+        r !== -1 && t.splice(r, 1);
         return;
       }
       R[e] = [];
