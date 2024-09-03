@@ -53,6 +53,8 @@ export default function useFormErrors() {
       }
     },
     clear(key = null, bag = 'default') {
+      console.log('Clearing error', key, 'in bag', bag, formErrors)
+
       if (key) {
         const target = formErrors[bag]
 
@@ -63,7 +65,9 @@ export default function useFormErrors() {
 
         const index = target.findIndex((error) => error.key === key)
 
-        target.splice(index, 1)
+        if (index !== -1) {
+          target.splice(index, 1)
+        }
 
         return
       }
