@@ -26,6 +26,31 @@ export default function useFormErrors() {
         }
       })
     },
+    setOne(key, message, bag = 'default') {
+      const target = formErrors[bag]
+
+      if (!target) {
+        formErrors[bag] = [
+          {
+            key,
+            message
+          }
+        ]
+        return
+      }
+
+      const index = target.findIndex((error) => error.key === key)
+
+      if (index !== -1) {
+        target[index].message = message
+        return
+      }
+
+      target.push({
+        key,
+        message
+      })
+    },
     get(key, bag = 'default') {
       const target = formErrors[bag]
 
