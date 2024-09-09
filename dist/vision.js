@@ -227,24 +227,45 @@ function Me(s, e, t, r, i, n) {
 const De = /* @__PURE__ */ b(Ae, [["render", Me]]), ze = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: De
-}, Symbol.toStringTag, { value: "Module" })), R = q({
+}, Symbol.toStringTag, { value: "Module" })), E = q({
   default: []
 });
 function V() {
   return {
     createBag(s) {
-      R[s] || (R[s] = []);
+      E[s] || (E[s] = []);
     },
     set(s, e = "default") {
       if (!(s.response && s.response.data && s.response.data.errors))
         throw s;
-      R[e] = Object.keys(s.response.data.errors).map((r) => ({
+      E[e] = Object.keys(s.response.data.errors).map((r) => ({
         key: r,
         message: s.response.data.errors[r][0]
       }));
     },
+    setOne(s, e, t = "default") {
+      const r = E[t];
+      if (!r) {
+        E[t] = [
+          {
+            key: s,
+            message: e
+          }
+        ];
+        return;
+      }
+      const i = r.findIndex((n) => n.key === s);
+      if (i !== -1) {
+        r[i].message = e;
+        return;
+      }
+      r.push({
+        key: s,
+        message: e
+      });
+    },
     get(s, e = "default") {
-      const t = R[e];
+      const t = E[e];
       if (!t)
         return {
           message: "",
@@ -262,8 +283,8 @@ function V() {
       };
     },
     clear(s = null, e = "default") {
-      if (console.log("Clearing error", s, "in bag", e, R), s) {
-        const t = R[e];
+      if (console.log("Clearing error", s, "in bag", e, E), s) {
+        const t = E[e];
         if (!t) {
           console.warn(`Bag ${e} is not defined.`);
           return;
@@ -272,14 +293,14 @@ function V() {
         r !== -1 && t.splice(r, 1);
         return;
       }
-      R[e] = [];
+      E[e] = [];
     },
     all(s = "default") {
-      return R[s];
+      return E[s];
     }
   };
 }
-class T {
+class R {
   constructor(e = {}) {
     d(this, "errors", null);
     d(this, "errorBag", "default");
@@ -497,7 +518,7 @@ const Ye = {
       default: null
     },
     form: {
-      type: T,
+      type: R,
       default: null
     },
     options: {
@@ -569,7 +590,7 @@ const He = /* @__PURE__ */ b(Ye, [["render", Je]]), Ke = /* @__PURE__ */ Object.
   name: "WyxosError",
   props: {
     form: {
-      type: T,
+      type: R,
       default: null
     },
     name: {
@@ -754,19 +775,19 @@ function ut(s) {
     case "comma":
     case "separator":
       return (t, r, i) => {
-        const n = typeof r == "string" && r.includes(s.arrayFormatSeparator), a = typeof r == "string" && !n && E(r, s).includes(s.arrayFormatSeparator);
-        r = a ? E(r, s) : r;
-        const o = n || a ? r.split(s.arrayFormatSeparator).map((l) => E(l, s)) : r === null ? r : E(r, s);
+        const n = typeof r == "string" && r.includes(s.arrayFormatSeparator), a = typeof r == "string" && !n && T(r, s).includes(s.arrayFormatSeparator);
+        r = a ? T(r, s) : r;
+        const o = n || a ? r.split(s.arrayFormatSeparator).map((l) => T(l, s)) : r === null ? r : T(r, s);
         i[t] = o;
       };
     case "bracket-separator":
       return (t, r, i) => {
         const n = /(\[])$/.test(t);
         if (t = t.replace(/\[]$/, ""), !n) {
-          i[t] = r && E(r, s);
+          i[t] = r && T(r, s);
           return;
         }
-        const a = r === null ? [] : r.split(s.arrayFormatSeparator).map((o) => E(o, s));
+        const a = r === null ? [] : r.split(s.arrayFormatSeparator).map((o) => T(o, s));
         if (i[t] === void 0) {
           i[t] = a;
           return;
@@ -790,7 +811,7 @@ function ue(s) {
 function p(s, e) {
   return e.encode ? e.strict ? ot(s) : encodeURIComponent(s) : s;
 }
-function E(s, e) {
+function T(s, e) {
   return e.decode ? it(s) : s;
 }
 function de(s) {
@@ -831,7 +852,7 @@ function H(s, e) {
       continue;
     const n = e.decode ? i.replace(/\+/g, " ") : i;
     let [a, o] = le(n, "=");
-    a === void 0 && (a = n), o = o === void 0 ? null : ["comma", "separator", "bracket-separator"].includes(e.arrayFormat) ? o : E(o, e), t(E(a, e), o, r);
+    a === void 0 && (a = n), o = o === void 0 ? null : ["comma", "separator", "bracket-separator"].includes(e.arrayFormat) ? o : T(o, e), t(T(a, e), o, r);
   }
   for (const [i, n] of Object.entries(r))
     if (typeof n == "object" && n !== null)
@@ -873,7 +894,7 @@ function fe(s, e) {
   return t === void 0 && (t = s), {
     url: ((i = t == null ? void 0 : t.split("?")) == null ? void 0 : i[0]) ?? "",
     query: H(J(s), e),
-    ...e && e.parseFragmentIdentifier && r ? { fragmentIdentifier: E(r, e) } : {}
+    ...e && e.parseFragmentIdentifier && r ? { fragmentIdentifier: T(r, e) } : {}
   };
 }
 function me(s, e) {
@@ -1252,7 +1273,7 @@ const ht = {
   name: "WyxosForm",
   props: {
     form: {
-      type: T,
+      type: R,
       required: !0
     },
     submit: {
@@ -1403,7 +1424,7 @@ const _t = /* @__PURE__ */ b(pt, [["render", bt]]), St = /* @__PURE__ */ Object.
       default: null
     },
     form: {
-      type: T,
+      type: R,
       default: null
     },
     disabled: {
@@ -1546,7 +1567,7 @@ const Et = /* @__PURE__ */ b(xt, [["render", Ct]]), Tt = /* @__PURE__ */ Object.
       default: null
     },
     form: {
-      type: T,
+      type: R,
       default: null
     },
     disabled: {
@@ -1766,7 +1787,7 @@ const pe = /* @__PURE__ */ b(Yt, [["render", Ht]]), Kt = /* @__PURE__ */ Object.
   emits: ["removed", "failed"],
   setup() {
     return {
-      destroy: T.create()
+      destroy: R.create()
     };
   },
   data() {
@@ -1872,7 +1893,7 @@ const rs = /* @__PURE__ */ b(Qt, [["render", ss]]), is = /* @__PURE__ */ Object.
       required: !0
     },
     form: {
-      type: T,
+      type: R,
       default: null
     },
     items: {
@@ -1924,7 +1945,7 @@ const ls = /* @__PURE__ */ b(ns, [["render", os]]), us = /* @__PURE__ */ Object.
   emits: ["close"],
   setup() {
     return {
-      login: T.create({
+      login: R.create({
         email: null,
         password: null
       })
@@ -2004,7 +2025,7 @@ const ye = /* @__PURE__ */ b(ds, [["render", gs]]), ps = /* @__PURE__ */ Object.
   name: "WyxosSubmit",
   props: {
     form: {
-      type: T,
+      type: R,
       required: !0
     },
     labels: {
@@ -2632,7 +2653,7 @@ const se = /* @__PURE__ */ Object.assign({ "./components/WyxosButton.vue": Re, "
 };
 export {
   Hs as FileRequest,
-  T as FormBuilder,
+  R as FormBuilder,
   A as Listing,
   C as LoadState,
   _e as Modal,
