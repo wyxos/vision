@@ -1664,7 +1664,7 @@ const At = /* @__PURE__ */ b(kt, [["render", It]]), Wt = /* @__PURE__ */ Object.
       type: Boolean,
       default: !0
     },
-    value: {
+    modelValue: {
       type: Number,
       required: !0
     },
@@ -1677,14 +1677,14 @@ const At = /* @__PURE__ */ b(kt, [["render", It]]), Wt = /* @__PURE__ */ Object.
       default: "percent"
     }
   }
-}), Bt = ["value", "max"], Ut = { key: 0 };
+}), Bt = ["max", "value"], Ut = { key: 0 };
 function Mt(s, e, t, r, i, n) {
   return c(), S(ae, null, [
     f("progress", {
-      value: s.value,
-      max: s.max
+      max: s.max,
+      value: s.modelValue
     }, null, 8, Bt),
-    s.showValue ? (c(), S("span", Ut, _(s.value) + " / " + _(s.max), 1)) : v("", !0)
+    s.showValue ? (c(), S("span", Ut, _(s.modelValue) + " / " + _(s.max), 1)) : v("", !0)
   ], 64);
 }
 const Dt = /* @__PURE__ */ b(Nt, [["render", Mt]]), zt = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({

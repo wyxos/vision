@@ -1,5 +1,6 @@
 <script>
 import { defineComponent } from 'vue'
+
 export default defineComponent({
   name: 'WyxosProgress',
   props: {
@@ -7,7 +8,7 @@ export default defineComponent({
       type: Boolean,
       default: true
     },
-    value: {
+    modelValue: {
       type: Number,
       required: true
     },
@@ -24,6 +25,6 @@ export default defineComponent({
 </script>
 
 <template>
-  <progress :value="value" :max="max"></progress
-  ><span v-if="showValue">{{ value }} / {{ max }}</span>
+  <progress :max="max" :value="modelValue"></progress>
+  <span v-if="showValue">{{ modelValue }} / {{ max }}</span>
 </template>
