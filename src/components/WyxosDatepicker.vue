@@ -1,7 +1,6 @@
 <script>
 import moment from 'moment'
 import FormBuilder from '../utilities/FormBuilder'
-// import VueDatePicker from '@vuepic/vue-datepicker'
 
 export default {
   name: 'WyxosDatepicker',
