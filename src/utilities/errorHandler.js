@@ -56,9 +56,12 @@ export default async function errorHandler(error, options) {
   }
 
   if (error.response?.status === 422) {
-    new Promise((resolve) => setTimeout(resolve, 500)).then(() => {
-      // Select all elements with the class .o-field__message-danger
-      const elements = document.querySelectorAll('.o-field__message-danger')
+    // Create an interval to repeatedly check for visible elements
+    const interval = setInterval(() => {
+      // Select all elements with the class .o-field__message-danger or .wyxos-error
+      const elements = document.querySelectorAll(
+        '.o-field__message-danger, .wyxos-error'
+      )
 
       // Function to check if an element is visible
       const isVisible = (el) => {
@@ -77,17 +80,33 @@ export default async function errorHandler(error, options) {
       const visibleElement = Array.from(elements).find(isVisible)
 
       if (visibleElement) {
-        console.log(
-          'Scrolling to visible error message element:',
-          visibleElement
-        )
-        visibleElement
-          .closest('.o-field')
-          .scrollIntoView({ behavior: 'smooth' })
-      } else {
-        console.error('Could not find a visible error message element.')
+        // Stop the interval once a visible element is found
+        clearInterval(interval)
+
+        let scrollTarget
+
+        if (visibleElement.classList.contains('o-field__message-danger')) {
+          // Select the closest .o-field parent for o-field__message-danger
+          scrollTarget = visibleElement.closest('.o-field')
+        } else if (visibleElement.classList.contains('wyxos-error')) {
+          // Select the closest label parent for wyxos-error
+          scrollTarget = visibleElement.closest('label')
+        }
+
+        if (scrollTarget) {
+          console.log('Scrolling to element:', scrollTarget)
+
+          // Scroll to the selected element, adjusting by 10px above it
+          const offset = 10 // Adjust scrolling to 10px above the element
+          const targetPosition =
+            scrollTarget.getBoundingClientRect().top + window.scrollY - offset
+
+          window.scrollTo({ top: targetPosition, behavior: 'smooth' })
+        } else {
+          console.error('Could not determine the scroll target.')
+        }
       }
-    })
+    }, 100) // Check every 100ms
   }
 
   return Promise.reject(error)

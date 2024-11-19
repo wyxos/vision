@@ -24,6 +24,10 @@ export default defineComponent({
 </script>
 
 <template>
-  <p v-if="form?.getError(name).message">{{ form.getError(name).message }}</p>
-  <p v-else-if="errors.get(name)?.message">{{ errors.get(name).message }}</p>
+  <span v-if="form?.getError(name).message" class="wyxos-error">{{
+    form.getError(name).message
+  }}</span>
+  <span v-else-if="errors.get(name)?.message" class="wyxos-error">{{
+    errors.get(name).message
+  }}</span>
 </template>
