@@ -23,7 +23,11 @@ const install = (app, options = {}) => {
         app.component(name.replace('Wyxos', 'W'), component)
         MappedComponents[name] = component
       } else {
-        console.error(`Component in '${key}' does not have a name property`)
+        // use the file name as name
+        const fileName = key.split('/').pop().split('.')[0]
+        app.component(fileName, component)
+        app.component(fileName.replace('Wyxos', 'W'), component)
+        MappedComponents[fileName] = component
       }
     } else {
       console.error(`Could not load component from '${key}'`)
