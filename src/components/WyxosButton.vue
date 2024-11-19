@@ -1,23 +1,29 @@
 <script>
+import FormBuilder from '../utilities/FormBuilder.js'
+
 export default {
   name: 'WyxosButton',
   props: {
-    loading: {
-      default: false,
-      type: Boolean
+    form: {
+      type: FormBuilder,
+      default: null
     },
-    text: {
+    button: {
       type: String,
-      default: 'Processing...'
+      default: 'submit'
     }
   }
 }
 </script>
 
 <template>
-  <o-button :disabled="loading">
-    <slot v-if="!loading">Submit</slot>
-    <slot v-if="loading && text" name="loading">{{ text }}</slot>
-    <i v-if="loading" class="fas fa-spinner fa-spin"></i>
-  </o-button>
+  <button :disabled="form.isSubmitting" :type="button">
+    <slot>
+      <span v-if="!form.isSubmitting">Submit</span>
+      <span v-if="form.isSubmitting">Processing</span>
+    </slot>
+    <slot v-if="form.isSubmitting" name="icon">
+      <i class="fas fa-spinner fa-spin ml-4"></i>
+    </slot>
+  </button>
 </template>

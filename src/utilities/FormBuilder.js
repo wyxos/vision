@@ -195,7 +195,7 @@ export default class FormBuilder {
     return this.submitRequest('patch', path, { formatter, ...axiosConfig })
   }
 
-  submitRequest(
+  async submitRequest(
     method,
     path = null,
     { formatter = null, ...axiosConfig } = {}
@@ -219,6 +219,9 @@ export default class FormBuilder {
 
     this.clearErrors()
     this.submitting()
+
+    // wait 1 second
+    await new Promise((resolve) => setTimeout(resolve, 1000))
 
     const payload = formatter ? formatter(this.form) : { ...this.form }
 
