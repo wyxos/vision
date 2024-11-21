@@ -6,9 +6,13 @@ const props = defineProps({
     type: String,
     required: true
   },
-  tabKey: {
+  hashKey: {
     type: String,
-    required: true
+    default: () => `tab-${Math.random().toString(36).slice(2, 11)}` // Unique default value
+  },
+  responsiveResolution: {
+    type: Number,
+    default: 768 // Default resolution threshold for mobile or tablet
   }
 })
 
@@ -29,10 +33,19 @@ const setHashParams = (key, value) => {
   window.location.hash = params.toString()
 }
 
-const activeKey = ref(getHashParams()[props.tabKey] || props.active)
+const activeKey = ref(getHashParams()[props.hashKey] || props.active)
+const isMobileView = ref(false)
 
 const isActive = (key) => {
+  if (isMobileView.value) {
+    return true // Always active on small screen sizes
+  }
   return key === activeKey.value
+}
+
+// Handle window resize events
+const handleResize = () => {
+  isMobileView.value = window.innerWidth <= props.responsiveResolution
 }
 
 const setActive = (key) => {
@@ -40,22 +53,29 @@ const setActive = (key) => {
   emit('update:active', key)
 
   // Update the hash with the new active state
-  setHashParams(props.tabKey, key)
+  setHashParams(props.hashKey, key)
 }
 
 onMounted(() => {
   // Watch for hash changes and update activeKey if needed
   window.addEventListener('hashchange', () => {
     const params = getHashParams()
-    if (params[props.tabKey]) {
-      activeKey.value = params[props.tabKey]
+    if (params[props.hashKey]) {
+      activeKey.value = params[props.hashKey]
     }
   })
+
+  // Initial check for mobile view
+  handleResize()
+
+  // Watch for window resize changes
+  window.addEventListener('resize', handleResize)
 })
 
 // Cleanup the event listener when the component is unmounted
 onUnmounted(() => {
   window.removeEventListener('hashchange', () => {})
+  window.removeEventListener('resize', handleResize)
 })
 </script>
 
