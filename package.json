@@ -33,7 +33,7 @@
   "license": "ISC",
   "dependencies": {
     "@vuepic/vue-datepicker": "^9.0.2",
-    "axios": "1.7.4",
+    "axios": "^1.7.8",
     "iconv-lite": "^0.6.3",
     "query-string": "^8.1.0"
   },
