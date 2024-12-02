@@ -1,7 +1,7 @@
 import {ref} from "vue";
 import axios from "axios";
 
-export default class WyxosAction {
+export default class Action {
     type = 'switch'
     field = ''
     url = ''
