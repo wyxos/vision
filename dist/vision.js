@@ -280,7 +280,12 @@ class E {
       set(t, r, n, i) {
         if (console.log("check", r, Reflect.has(t, r)), Reflect.has(t, r))
           return Reflect.set(t, r, n, i);
-        if (console.log("proceeding here", r, t.form, Reflect.has(t.form, r)), Reflect.has(t.form, r)) {
+        if (console.log(
+          "proceeding here",
+          r,
+          t.form,
+          Reflect.has(t.form, r)
+        ), Reflect.has(t.form, r)) {
           const o = r.split(".");
           if (console.log("path", o), o.length > 1) {
             let a = t.form;
