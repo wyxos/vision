@@ -507,4 +507,10 @@ export default class Listing {
   failed() {
     this.attributes.state.list = 'failed'
   }
+
+  loadFrom(path) {
+    this.baseUrl = path
+
+    return this
+  }
 }
