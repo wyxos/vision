@@ -7,6 +7,8 @@ export default class Action {
   url = ''
   processing = ref(null)
   target = ref(null)
+  beforeCallback = null
+  afterCallback = null
   error = null
 
   constructor(url) {
@@ -22,6 +24,13 @@ export default class Action {
 
     this.processing.value = target.id
 
+    // Run before action callback and check if we should proceed
+    if (this.beforeCallback && this.beforeCallback(target, payload) === false) {
+      this.processing.value = null
+      this.target.value = null
+      return
+    }
+
     await new Promise((resolve) => setTimeout(resolve, 1000))
 
     try {
@@ -31,7 +40,17 @@ export default class Action {
 
       this.target.value = null
 
-      return await axios.patch(url, payload)
+      return await axios.patch(url, payload).then((response) => {
+        this.processing.value = null
+
+        this.target.value = null
+
+        if (this.afterCallback) {
+          this.afterCallback(response)
+        }
+
+        return response
+      })
     } catch (error) {
       this.processing.value = null
 
@@ -46,12 +65,29 @@ export default class Action {
 
     this.processing.value = target.id
 
+    // Run before action callback and check if we should proceed
+    if (this.beforeCallback && this.beforeCallback(target) === false) {
+      this.processing.value = null
+      this.target.value = null
+      return
+    }
+
     await new Promise((resolve) => setTimeout(resolve, 1000))
 
     try {
       const url = typeof this.url === 'function' ? this.url(target) : this.url
 
-      return await axios.delete(url)
+      return axios.delete(url).then((response) => {
+        this.processing.value = null
+
+        this.target.value = null
+
+        if (this.afterCallback) {
+          this.afterCallback(response)
+        }
+
+        return response
+      })
     } catch (error) {
       this.error = error.response?.data?.message || error.message
 
@@ -63,32 +99,16 @@ export default class Action {
     }
   }
 
-  async handle(target, value) {
-    this.target.value = target
+  before(callback) {
+    this.beforeCallback = callback
 
-    try {
-      this.processing.value = target.id
+    return this
+  }
 
-      const url = typeof this.url === 'function' ? this.url(target) : this.url
+  after(callback) {
+    this.afterCallback = callback
 
-      const payload = {
-        [this.field]: value
-      }
-
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-
-      const response = await axios[this._method](url, payload)
-
-      this.afterSuccess(target, value, response)
-    } catch (error) {
-      this.error = error.response?.data?.message || error.message
-
-      this.afterFailure(target, value, error)
-    }
-
-    this.processing.value = null
-
-    this.target.value = null
+    return this
   }
 
   isProcessing(row) {
