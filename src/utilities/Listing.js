@@ -5,34 +5,57 @@ import axios from 'axios'
 // import qs from 'query-string'
 // import useFormErrors from './useFormErrors'
 
+class Filter {
+  labels = {}
+
+  applied = {}
+
+  constructor(query) {
+    this.original = query
+
+    this.query = reactive({
+      page: 1,
+      perPage: 10,
+      ...query
+    })
+  }
+
+  displayAs(attributes) {
+    this.labels = attributes
+
+    return this
+  }
+
+  apply() {
+    this.applied = Object.assign({}, this.query)
+  }
+
+  render() {}
+
+  reset() {
+    this.query = reactive({
+      page: 1,
+      perPage: 10,
+      ...this.original
+    })
+  }
+}
+
 export default class Listing {
   loadUrl = ''
   loadingState = ref(null)
 
-  originalQuery = {}
-  appliedQuery = {}
-  appliedQueryLabel = {}
-
   attributes = reactive({
-    response: {
-      listing: {
-        items: [],
-        showing: 0,
-        perPage: 0,
-        total: 0
-      }
-    },
-    query: {
-      page: 1,
-      perPage: 10
+    listing: {
+      items: [],
+      showing: 0,
+      perPage: 0,
+      total: 0
     }
   })
 
   constructor(query) {
-    this.originalQuery = query
-    this.appliedQuery = query
-
-    Object.assign(this.attributes.query, query)
+    this.filter = new Filter(query)
 
     return new Proxy(this, {
       get(target, name, receiver) {
@@ -41,11 +64,11 @@ export default class Listing {
           return Reflect.get(target, name, receiver)
         }
         // If not, attempt to access it from the 'form' object
-        if (Reflect.has(target.attributes.query, name)) {
+        if (Reflect.has(target.filter.query, name)) {
           const path = name.split('.')
           if (path.length > 1) {
             // handle nested properties
-            let value = target.attributes.query
+            let value = target.filter.query
 
             for (let i = 0; i < path.length; i++) {
               value = value[path[i]]
@@ -58,7 +81,7 @@ export default class Listing {
             return value
           }
 
-          return Reflect.get(target.attributes.query, name)
+          return Reflect.get(target.filter.query, name)
         }
         return undefined
       },
@@ -68,7 +91,7 @@ export default class Listing {
           return Reflect.set(target, name, value, receiver)
         }
         // If not, attempt to set it in the 'form' object
-        if (Reflect.has(target.attributes.query, name)) {
+        if (Reflect.has(target.filter.query, name)) {
           const path = name.split('.')
 
           if (path.length > 1) {
@@ -90,7 +113,7 @@ export default class Listing {
             return true
           }
 
-          return Reflect.set(target.attributes.query, name, value)
+          return Reflect.set(target.filter.query, name, value)
         }
 
         return false
@@ -100,14 +123,13 @@ export default class Listing {
 
   get config() {
     return {
-      data: this.attributes.response.listing.items,
-      total: this.attributes.response.listing.total,
-      currentPage: this.attributes.query.page,
-      perPage: this.attributes.query.perPage,
+      data: this.attributes.listing.items,
+      total: this.attributes.listing.total,
+      currentPage: this.filter.query.page,
+      perPage: this.filter.query.perPage,
       loading: this.isLoading,
       paginated:
-        this.attributes.response.listing.total >
-        this.attributes.response.listing.perPage,
+        this.attributes.listing.total > this.attributes.listing.perPage,
       backendPagination: true,
       striped: true
     }
@@ -123,38 +145,15 @@ export default class Listing {
     return this.loadingState.value === 'loading'
   }
 
-  get activeAttributes() {
-    return Object.keys(this.attributes.query)
-      .filter((key) => this.appliedQueryLabel[key])
-      .filter(
-        (key) =>
-          this.appliedQuery[key] !== null &&
-          this.appliedQuery[key] !== undefined &&
-          this.appliedQuery[key] !== '' &&
-          this.appliedQuery[key] !== 'all'
-      )
-      .map((key) => {
-        return {
-          key,
-          label: this.renderLabel(key),
-          value: this.appliedQuery[key]
-        }
-      })
-  }
-
   static create(query) {
     return new Listing(query)
   }
 
   search(query = {}) {
     if (typeof query === 'function') {
-      query = Object.assign(
-        {},
-        this.attributes.query,
-        query(this.attributes.query)
-      )
+      query = Object.assign({}, this.filter.query, query(this.filter.query))
     } else {
-      query = Object.assign({}, this.attributes.query, query)
+      query = Object.assign({}, this.filter.query, query)
     }
 
     this.loading()
@@ -164,9 +163,9 @@ export default class Listing {
         params: query
       })
       .then((response) => {
-        Object.assign(this.attributes.response, response.data)
+        Object.assign(this.attributes, response.data)
 
-        this.appliedQuery = JSON.parse(JSON.stringify(query))
+        this.filter.apply()
 
         return response
       })
@@ -176,16 +175,12 @@ export default class Listing {
   }
 
   load(query = {}) {
-    this.attributes.query.page = 1
+    this.filter.query.page = 1
 
     if (typeof query === 'function') {
-      query = Object.assign(
-        {},
-        this.attributes.query,
-        query(this.attributes.query)
-      )
+      query = Object.assign({}, this.filter.query, query(this.filter.query))
     } else {
-      query = Object.assign({}, this.attributes.query, query)
+      query = Object.assign({}, this.filter.query, query)
     }
 
     this.loading()
@@ -195,9 +190,7 @@ export default class Listing {
         params: query
       })
       .then((response) => {
-        Object.assign(this.attributes.response, response.data)
-
-        this.appliedQuery = this.originalQuery
+        Object.assign(this.attributes, response.data)
 
         return response
       })
@@ -210,32 +203,10 @@ export default class Listing {
     this.loadingState.value = 'loading'
   }
 
-  displayAs(attributes) {
-    this.appliedQueryLabel = attributes
-
-    return this
-  }
-
-  renderLabel(key) {
-    return this.appliedQueryLabel[key]
-  }
-
   onPageChange(value) {
-    this.attributes.query.page = value
+    this.filter.query.page = value
 
     return this.search()
-  }
-
-  clearAttribute(key) {
-    this.attributes.query[key] = this.originalQuery[key]
-
-    return this.search()
-  }
-
-  reset() {
-    Object.assign(this.attributes.query, this.originalQuery)
-
-    return this.load()
   }
 
   loadFrom(path) {
