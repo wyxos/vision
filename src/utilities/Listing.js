@@ -1,45 +1,39 @@
-import { nextTick, reactive } from 'vue'
+import { reactive, ref } from 'vue'
 import axios from 'axios'
-import LoadState from './LoadState'
-import qs from 'query-string'
-import useFormErrors from './useFormErrors'
-
-let cancelTokenSource = null
+// import axios from 'axios'
+// import LoadState from './LoadState'
+// import qs from 'query-string'
+// import useFormErrors from './useFormErrors'
 
 export default class Listing {
-  cancelTokenSource = null
+  loadUrl = ''
+  loadingState = ref(null)
 
-  api = null
-
-  baseUrl = null
-
-  structure = null
-
-  options = null
-
-  errors = null
-
-  errorBag = 'listing'
-
-  globalCancel = true
+  originalQuery = {}
+  appliedQuery = {}
+  appliedQueryLabel = {}
 
   attributes = reactive({
+    response: {
+      listing: {
+        items: [],
+        showing: 0,
+        perPage: 0,
+        total: 0
+      }
+    },
     query: {
-      items: [],
-      showing: 0,
-      perPage: 0,
-      total: 0
-    },
-    params: {
-      page: 1
-    },
-    state: {
-      list: null,
-      filter: null
+      page: 1,
+      perPage: 10
     }
   })
 
-  constructor() {
+  constructor(query) {
+    this.originalQuery = query
+    this.appliedQuery = query
+
+    Object.assign(this.attributes.query, query)
+
     return new Proxy(this, {
       get(target, name, receiver) {
         // Check if the property exists in the instance
@@ -47,11 +41,11 @@ export default class Listing {
           return Reflect.get(target, name, receiver)
         }
         // If not, attempt to access it from the 'form' object
-        if (Reflect.has(target.attributes, name)) {
+        if (Reflect.has(target.attributes.query, name)) {
           const path = name.split('.')
           if (path.length > 1) {
             // handle nested properties
-            let value = target.attributes
+            let value = target.attributes.query
 
             for (let i = 0; i < path.length; i++) {
               value = value[path[i]]
@@ -64,7 +58,7 @@ export default class Listing {
             return value
           }
 
-          return Reflect.get(target.attributes, name)
+          return Reflect.get(target.attributes.query, name)
         }
         return undefined
       },
@@ -74,7 +68,7 @@ export default class Listing {
           return Reflect.set(target, name, value, receiver)
         }
         // If not, attempt to set it in the 'form' object
-        if (Reflect.has(target.attributes, name)) {
+        if (Reflect.has(target.attributes.query, name)) {
           const path = name.split('.')
 
           if (path.length > 1) {
@@ -96,7 +90,7 @@ export default class Listing {
             return true
           }
 
-          return Reflect.set(target.attributes, name, value)
+          return Reflect.set(target.attributes.query, name, value)
         }
 
         return false
@@ -106,12 +100,14 @@ export default class Listing {
 
   get config() {
     return {
-      data: this.attributes.query.items,
-      total: this.attributes.query.total,
-      currentPage: this.attributes.params.page,
+      data: this.attributes.response.listing.items,
+      total: this.attributes.response.listing.total,
+      currentPage: this.attributes.query.page,
       perPage: this.attributes.query.perPage,
       loading: this.isLoading,
-      paginated: this.attributes.query.total > this.attributes.query.perPage,
+      paginated:
+        this.attributes.response.listing.total >
+        this.attributes.response.listing.perPage,
       backendPagination: true,
       striped: true
     }
@@ -123,393 +119,127 @@ export default class Listing {
     }
   }
 
-  get isFilterActive() {
-    return this.attributes.state.filter
-  }
-
-  get isEmpty() {
-    return this.isLoaded && this.attributes.query.items.length === 0
-  }
-
-  get isDirty() {
-    return (
-      JSON.stringify(this.structure) !== JSON.stringify(this.attributes.params)
-    )
-  }
-
-  get isSearchEmpty() {
-    return (
-      this.isLoaded && this.isDirty && this.attributes.query.items.length === 0
-    )
-  }
-
-  get isResettable() {
-    return (
-      JSON.stringify(this.attributes.params) !== JSON.stringify(this.structure)
-    )
-  }
-
-  get isLoaded() {
-    return this.attributes.state.list === 'loaded'
-  }
-
   get isLoading() {
-    return this.attributes.state.list === 'loading'
+    return this.loadingState.value === 'loading'
   }
 
-  get isFailure() {
-    return this.attributes.state.list === 'failed'
-  }
-
-  static create(params = {}, options = {}) {
-    const instance = new Listing()
-
-    instance.errors = useFormErrors()
-    instance.errors.createBag(instance.errorBag)
-
-    instance.options = Object.assign(
-      {
-        enableSearchUpdate: true,
-        transformItem: (item) => item
-      },
-      options
-    )
-
-    instance.setParameters(params)
-
-    if (instance.options.enableSearchUpdate) {
-      instance.mergeSearch()
-    }
-
-    instance.baseUrl = options.baseUrl
-
-    // instance.api = axios.create(options.axios || {})
-
-    return instance
-  }
-
-  setUrl(url) {
-    this.baseUrl = url
-
-    return this
-  }
-
-  setRouterInstance(router) {
-    this.options.router = router
-
-    return this
-  }
-
-  setParameters(params) {
-    const structure = JSON.parse(JSON.stringify(params))
-
-    this.structure = Object.assign({}, structure)
-
-    this.attributes.params = reactive(params)
-  }
-
-  mergeSearch() {
-    const query = qs.parse(window.location.search, {
-      arrayFormat: 'bracket',
-      parseNumbers: true
-    })
-
-    // convert page to number if it's defined
-    if (query.page) {
-      query.page = Number(query.page)
-    }
-
-    Object.assign(this.attributes.params, this.structure, query)
-  }
-
-  // Retrieves the list without affecting the load state.
-  async fetch(path, cancelToken) {
-    const params = JSON.parse(JSON.stringify(this.attributes.params))
-
-    const url = path || this.baseUrl
-
-    const { data } = await axios.get(url, {
-      params,
-      cancelToken
-    })
-
-    return data
-  }
-
-  async reload(path) {
-    const { data } = await axios.get(path || this.baseUrl, {
-      params: JSON.parse(JSON.stringify(this.attributes.params))
-    })
-
-    Object.assign(this.attributes.query, data.query, {
-      items: data.query.items.map((item) => this.transformItem(item))
-    })
-
-    return data
-  }
-
-  refreshUrl() {
-    const base = window.location.href.replace(/\?.*/, '')
-
-    const params = JSON.parse(JSON.stringify(this.attributes.params))
-
-    // Filter out null and undefined parameters
-    const filteredParams = Object.fromEntries(
-      Object.entries(params).filter(([_, v]) => v != null)
-    )
-
-    const url =
-      base + '?' + qs.stringify(filteredParams, { arrayFormat: 'bracket' })
-
-    if (this.options.router) {
-      const path = this.options.router.currentRoute.path
-      this.options.router.push({
-        path,
-        query: { ...this.options.router.currentRoute.query, ...params }
+  get activeAttributes() {
+    return Object.keys(this.attributes.query)
+      .filter((key) => this.appliedQueryLabel[key])
+      .filter(
+        (key) =>
+          this.appliedQuery[key] !== null &&
+          this.appliedQuery[key] !== undefined &&
+          this.appliedQuery[key] !== '' &&
+          this.appliedQuery[key] !== 'all'
+      )
+      .map((key) => {
+        return {
+          key,
+          label: this.renderLabel(key),
+          value: this.appliedQuery[key]
+        }
       })
+  }
+
+  static create(query) {
+    return new Listing(query)
+  }
+
+  search(query = {}) {
+    if (typeof query === 'function') {
+      query = Object.assign(
+        {},
+        this.attributes.query,
+        query(this.attributes.query)
+      )
     } else {
-      window.history.pushState({}, '', url)
-    }
-  }
-
-  push(item) {
-    this.attributes.query.items.push(this.transformItem(item))
-  }
-
-  transformItem(item) {
-    return this.options.transformItem({
-      ...item,
-      states: {
-        delete: new LoadState(),
-        patch: new LoadState()
-      }
-    })
-  }
-
-  async load(path) {
-    this.errors.clear(null, this.errorBag)
-
-    if (this.globalCancel) {
-      if (cancelTokenSource) {
-        cancelTokenSource.cancel()
-      }
-
-      cancelTokenSource = axios.CancelToken.source()
-    } else {
-      // if a request is ongoing, cancel it
-      if (this.cancelTokenSource) {
-        this.cancelTokenSource.cancel()
-      }
-
-      // create a new CancelToken
-      this.cancelTokenSource = axios.CancelToken.source()
+      query = Object.assign({}, this.attributes.query, query)
     }
 
     this.loading()
 
-    this.attributes.query.items = []
-
-    this.attributes.query.total = 0
-
-    this.attributes.query.showing = 0
-
-    let data = null
-
-    try {
-      const params = JSON.parse(JSON.stringify(this.attributes.params))
-
-      const url = path || this.baseUrl
-
-      const response = await axios
-        .get(url, {
-          params,
-          cancelToken: this.globalCancel
-            ? cancelTokenSource.token
-            : this.cancelTokenSource.token
-        })
-        .catch((error) => {
-          this.failed()
-
-          throw error
-        })
-
-      data = response.data
-
-      if (!data || !data.query || !data.query.items) {
-        this.failed()
-
-        throw Error('Response format is invalid.')
-      }
-
-      this.loaded()
-
-      Object.assign(this.attributes.query, data.query, {
-        items: data.query.items.map((item) => this.transformItem(item))
+    return axios
+      .get(this.loadUrl, {
+        params: query
       })
+      .then((response) => {
+        Object.assign(this.attributes.response, response.data)
 
-      return data
-    } catch (error) {
-      if (axios.isCancel(error)) {
-        this.loaded()
-        console.error('Request cancelled')
-      } else {
-        this.failed()
-        this.errors.set(error, this.errorBag)
-        throw error
-      }
-    }
+        this.appliedQuery = JSON.parse(JSON.stringify(query))
+
+        return response
+      })
+      .finally(() => {
+        this.loadingState.value = 'loaded'
+      })
   }
 
-  onPageChange(value) {
-    this.attributes.params.page = value
+  load(query = {}) {
+    this.attributes.query.page = 1
 
-    if (this.options.router) {
-      return Promise.resolve().then(() => {
-        this.refreshUrl()
-      })
+    if (typeof query === 'function') {
+      query = Object.assign(
+        {},
+        this.attributes.query,
+        query(this.attributes.query)
+      )
     } else {
-      return this.load().then(() => {
-        this.refreshUrl()
-      })
-    }
-  }
-
-  onQueryUpdate(to, from, next) {
-    if (to.path === from.path && to.fullPath !== from.fullPath) {
-      // this.mergeSearch()
-      this.load()
-    }
-    next()
-  }
-
-  async applyFilter() {
-    this.errors.clear(null, this.errorBag)
-
-    // if a request is ongoing, cancel it
-    if (this.cancelTokenSource) {
-      this.cancelTokenSource.cancel()
+      query = Object.assign({}, this.attributes.query, query)
     }
 
     this.loading()
 
-    // create a new CancelToken
-    this.cancelTokenSource = axios.CancelToken.source()
+    return axios
+      .get(this.loadUrl, {
+        params: query
+      })
+      .then((response) => {
+        Object.assign(this.attributes.response, response.data)
 
-    this.attributes.query.items = []
+        this.appliedQuery = this.originalQuery
 
-    this.attributes.params.page = 1
-
-    this.attributes.query.total = 0
-
-    this.attributes.query.showing = 0
-
-    let data = null
-
-    try {
-      const params = JSON.parse(JSON.stringify(this.attributes.params))
-
-      const url = this.baseUrl
-
-      const response = await axios
-        .get(url, {
-          params,
-          cancelToken: this.cancelTokenSource.token
-        })
-        .catch((error) => {
-          this.failed()
-
-          throw error
-        })
-
-      data = response.data
-    } catch (error) {
-      if (axios.isCancel(error)) {
-        console.error('Request cancelled')
-        return // early return if request is cancelled
-      } else {
-        this.failed()
-        this.errors.set(error, this.errorBag)
-        throw error
-      }
-    }
-
-    this.refreshUrl()
-
-    if (!data || !data.query || !data.query.items) {
-      this.failed()
-
-      throw Error('Response format is invalid.')
-    }
-
-    Object.assign(this.attributes.query, data.query, {
-      items: data.query.items.map((item) => this.transformItem(item))
-    })
-
-    await nextTick()
-
-    this.loaded()
-
-    this.hideFilter()
-  }
-
-  showFilter() {
-    this.attributes.state.filter = true
-  }
-
-  hideFilter() {
-    this.attributes.state.filter = false
-  }
-
-  cancelFilter() {
-    this.mergeSearch()
-
-    this.attributes.state.filter = false
-  }
-
-  resetFilter(url = null) {
-    Object.assign(this.attributes.params, this.structure)
-
-    this.refreshUrl()
-
-    this.attributes.state.filter = false
-
-    return this.load(url)
-  }
-
-  getError(key) {
-    return this.errors.get(key, this.errorBag)
-  }
-
-  clearError(key) {
-    this.errors.clear(key, this.errorBag)
-  }
-
-  loaded() {
-    this.attributes.state.list = 'loaded'
+        return response
+      })
+      .finally(() => {
+        this.loadingState.value = 'loaded'
+      })
   }
 
   loading() {
-    this.attributes.state.list = 'loading'
+    this.loadingState.value = 'loading'
   }
 
-  remove(callback) {
-    const index = this.attributes.query.items.findIndex(callback)
+  displayAs(attributes) {
+    this.appliedQueryLabel = attributes
 
-    if (index === -1) {
-      return
-    }
-
-    this.attributes.query.items.splice(index, 1)
-
-    return this.reload()
+    return this
   }
 
-  failed() {
-    this.attributes.state.list = 'failed'
+  renderLabel(key) {
+    return this.appliedQueryLabel[key]
+  }
+
+  onPageChange(value) {
+    this.attributes.query.page = value
+
+    return this.search()
+  }
+
+  clearAttribute(key) {
+    this.attributes.query[key] = this.originalQuery[key]
+
+    return this.search()
+  }
+
+  reset() {
+    Object.assign(this.attributes.query, this.originalQuery)
+
+    return this.load()
   }
 
   loadFrom(path) {
-    this.baseUrl = path
+    this.loadUrl = path
 
     return this
   }
