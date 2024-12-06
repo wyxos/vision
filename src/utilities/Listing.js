@@ -1,41 +1,13 @@
-import { reactive, ref } from 'vue'
+import { reactive, ref, watch } from 'vue'
 import axios from 'axios'
-// import axios from 'axios'
-// import LoadState from './LoadState'
-// import qs from 'query-string'
-// import useFormErrors from './useFormErrors'
-
-class Filter {
-  applied = {}
-
-  constructor(query) {
-    this.original = query
-
-    this.query = reactive({
-      page: 1,
-      perPage: 10,
-      ...query
-    })
-  }
-
-  render() {
-    return this.applied
-  }
-
-  reset() {
-    this.query = reactive({
-      page: 1,
-      perPage: 10,
-      ...this.original
-    })
-  }
-
-  clear() {}
-}
+import Filter from './Filter.js'
+import queryString from 'query-string'
 
 export default class Listing {
   loadUrl = ''
   loadingState = ref(null)
+
+  router = null
 
   attributes = reactive({
     items: [],
@@ -160,16 +132,25 @@ export default class Listing {
           this.filter.applied = response.data.filters
         }
 
-        this.filter.apply()
+        if (this.router) {
+          this.router.push({ query: this.filter.query })
+        }
 
         return response
       })
       .finally(() => {
-        this.loadingState.value = 'loaded'
+        this.loaded()
       })
   }
 
   load(query = {}) {
+    const urlQuery = queryString.parse(window.location.search, {
+      parseNumbers: true,
+      parseBooleans: true
+    })
+
+    Object.assign(this.filter.query, urlQuery)
+
     this.filter.query.page = 1
 
     if (typeof query === 'function') {
@@ -196,12 +177,52 @@ export default class Listing {
         return response
       })
       .finally(() => {
-        this.loadingState.value = 'loaded'
+        this.loaded()
+      })
+  }
+
+  refresh(query) {
+    const urlQuery = queryString.parse(window.location.search, {
+      parseNumbers: true,
+      parseBooleans: true
+    })
+
+    Object.assign(this.filter.query, urlQuery)
+
+    if (typeof query === 'function') {
+      query = Object.assign({}, this.filter.query, query(this.filter.query))
+    } else {
+      query = Object.assign({}, this.filter.query, query)
+    }
+
+    this.loading()
+
+    return axios
+      .get(this.loadUrl, {
+        params: query
+      })
+      .then((response) => {
+        if (response.data.listing) {
+          Object.assign(this.attributes, response.data.listing)
+        }
+
+        if (response.data.filters) {
+          this.filter.applied = response.data.filters
+        }
+
+        return response
+      })
+      .finally(() => {
+        this.loaded()
       })
   }
 
   loading() {
     this.loadingState.value = 'loading'
+  }
+
+  loaded() {
+    this.loadingState.value = 'loaded'
   }
 
   onPageChange(value) {
@@ -212,6 +233,35 @@ export default class Listing {
 
   loadFrom(path) {
     this.loadUrl = path
+
+    return this
+  }
+
+  reset() {
+    this.filter.reset()
+
+    return this.search()
+  }
+
+  clear(key) {
+    this.filter.clear(key)
+
+    return this.search()
+  }
+
+  enableRouterSync(router) {
+    this.router = router
+
+    return this
+  }
+
+  syncOnRouteChange(route) {
+    watch(
+      () => route.query,
+      () => {
+        this.refresh()
+      }
+    )
 
     return this
   }
