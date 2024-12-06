@@ -6,8 +6,6 @@ import axios from 'axios'
 // import useFormErrors from './useFormErrors'
 
 class Filter {
-  labels = {}
-
   applied = {}
 
   constructor(query) {
@@ -20,17 +18,9 @@ class Filter {
     })
   }
 
-  displayAs(attributes) {
-    this.labels = attributes
-
-    return this
+  render() {
+    return this.applied
   }
-
-  apply() {
-    this.applied = Object.assign({}, this.query)
-  }
-
-  render() {}
 
   reset() {
     this.query = reactive({
@@ -39,6 +29,8 @@ class Filter {
       ...this.original
     })
   }
+
+  clear() {}
 }
 
 export default class Listing {
@@ -46,12 +38,10 @@ export default class Listing {
   loadingState = ref(null)
 
   attributes = reactive({
-    listing: {
-      items: [],
-      showing: 0,
-      perPage: 0,
-      total: 0
-    }
+    items: [],
+    showing: 0,
+    perPage: 0,
+    total: 0
   })
 
   constructor(query) {
@@ -123,13 +113,12 @@ export default class Listing {
 
   get config() {
     return {
-      data: this.attributes.listing.items,
-      total: this.attributes.listing.total,
+      data: this.attributes.items,
+      total: this.attributes.total,
       currentPage: this.filter.query.page,
       perPage: this.filter.query.perPage,
       loading: this.isLoading,
-      paginated:
-        this.attributes.listing.total > this.attributes.listing.perPage,
+      paginated: this.attributes.total > this.attributes.perPage,
       backendPagination: true,
       striped: true
     }
@@ -163,7 +152,13 @@ export default class Listing {
         params: query
       })
       .then((response) => {
-        Object.assign(this.attributes, response.data)
+        if (response.data.listing) {
+          Object.assign(this.attributes, response.data.listing)
+        }
+
+        if (response.data.filters) {
+          this.filter.applied = response.data.filters
+        }
 
         this.filter.apply()
 
@@ -190,7 +185,13 @@ export default class Listing {
         params: query
       })
       .then((response) => {
-        Object.assign(this.attributes, response.data)
+        if (response.data.listing) {
+          Object.assign(this.attributes, response.data.listing)
+        }
+
+        if (response.data.filters) {
+          this.filter.applied = response.data.filters
+        }
 
         return response
       })
