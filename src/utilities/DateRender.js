@@ -13,8 +13,9 @@ export default class DateRender {
   date = null
   empty = ''
 
-  constructor(date) {
+  constructor(date, empty) {
     this.date = date
+    this.empty = empty
   }
 
   static load(date, empty = '') {
