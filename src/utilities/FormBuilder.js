@@ -1,46 +1,28 @@
-// import axios from 'axios'
 import { reactive, ref } from 'vue'
 import axios from 'axios'
 import useFormErrors from './useFormErrors.js'
-// import useFormErrors from './useFormErrors'
-// import State from './LoadState'
 
 export default class FormBuilder {
   submitUrl = null
   loadUrl = null
   original = {}
   form = reactive({})
-  formatCallback = null
   abortSubmitController = null
   abortLoadController = null
-  submitState = ref(null)
-  loadState = ref(null)
+  submitState = ref('')
+  loadState = ref('')
   errors = useFormErrors()
   resetAfterSubmitFlag = false
-  // errorBag = 'default'
-  // model = reactive({})
-  // form = reactive({})
-  // original = {}
-  // states = {
-  //   load: State.create(),
-  //   submit: State.create()
-  // }
-  //
-  // paths = {
-  //   load: null,
-  //   submit: null
-  // }
-  //
-  // // Add an abort controller property
-  // abortSubmitController = null
-  //
-  // timeout = null
-  //
+
+  callbacks = {
+    submit: null,
+    load: null,
+    success: null,
+    failure: null,
+    formatter: null
+  }
+
   constructor(form = {}) {
-    // this.errors = useFormErrors()
-    // this.errors.createBag(this.errorBag)
-    // this.setAttributes(form)
-    // this.loaded()
     this.setAttributes(form)
 
     return new Proxy(this, {
@@ -108,7 +90,24 @@ export default class FormBuilder {
   }
 
   get isDirty() {
-    return JSON.stringify(this.original) !== JSON.stringify(this.form)
+    const deepSort = (obj) => {
+      if (Array.isArray(obj)) {
+        return obj.map(deepSort) // Sort each item in the array
+      } else if (obj && typeof obj === 'object') {
+        return Object.keys(obj)
+          .sort() // Sort keys
+          .reduce((sorted, key) => {
+            sorted[key] = deepSort(obj[key]) // Recursively sort values
+            return sorted
+          }, {})
+      }
+      return obj // Return non-object values as is
+    }
+
+    return (
+      JSON.stringify(deepSort(this.original)) !==
+      JSON.stringify(deepSort(this.form))
+    )
   }
 
   get isSubmitting() {
@@ -141,31 +140,6 @@ export default class FormBuilder {
     return this
   }
 
-  //
-  // get isSubmitting() {
-  //   return this.states.submit.isLoading
-  // }
-  //
-  // get isSubmitted() {
-  //   return this.states.submit.isLoaded
-  // }
-  //
-  // get isSubmitFailed() {
-  //   return this.states.submit.isFailure
-  // }
-  //
-  // get isLoading() {
-  //   return this.states.load.isLoading
-  // }
-  //
-  // get isLoaded() {
-  //   return this.states.load.isLoaded
-  // }
-  //
-  // get isFailure() {
-  //   return this.states.load.isFailure
-  // }
-
   submitAt(path) {
     this.submitUrl = path
 
@@ -193,8 +167,8 @@ export default class FormBuilder {
     // delay by 1 second
     await new Promise((resolve) => setTimeout(resolve, 1000))
 
-    const data = this.formatCallback
-      ? this.formatCallback(this.form)
+    const data = this.callbacks.formatter
+      ? this.callbacks.formatter(this.form)
       : this.form
 
     return axios
@@ -206,7 +180,9 @@ export default class FormBuilder {
           this.setAttributes(this.original)
         }
 
-        return response.data
+        return this.callbacks.success
+          ? this.callbacks.success(response.data)
+          : response.data
       })
       .catch((error) => {
         this.submitFailed()
@@ -218,6 +194,8 @@ export default class FormBuilder {
   }
 
   load() {
+    this.loading()
+
     const axiosConfig = {}
 
     // If there's an ongoing request, abort it
@@ -231,13 +209,22 @@ export default class FormBuilder {
     // Add the signal to the axios config
     axiosConfig.signal = this.abortLoadController.signal
 
-    return axios.get(this.loadUrl, axiosConfig).then((response) => {
-      if (response.data.form) {
-        this.setAttributes(response.data.form)
-      }
+    return axios
+      .get(this.loadUrl, axiosConfig)
+      .then((response) => {
+        this.loaded()
 
-      return response.data
-    })
+        if (response.data.form) {
+          this.setAttributes(response.data.form)
+        }
+
+        return response.data
+      })
+      .catch((error) => {
+        this.loadFailed()
+
+        return Promise.reject(error)
+      })
   }
 
   submitting() {
@@ -252,8 +239,20 @@ export default class FormBuilder {
     this.submitState.value = 'failed'
   }
 
+  loading() {
+    this.loadState.value = 'loading'
+  }
+
+  loaded() {
+    this.loadState.value = 'loaded'
+  }
+
+  loadFailed() {
+    this.loadState.value = 'failed'
+  }
+
   formatter(callback) {
-    this.formatCallback = callback
+    this.callbacks.formatter = callback
 
     return this
   }
@@ -264,38 +263,6 @@ export default class FormBuilder {
     return this
   }
 
-  //
-  // setPaths(paths = {}) {
-  //   Object.assign(this.paths, paths)
-  //
-  //   return this
-  // }
-  //
-  // setLoad(url) {
-  //   this.paths.load = url
-  //
-  //   return this
-  // }
-  //
-  // setSubmit(url) {
-  //   this.paths.submit = url
-  //
-  //   return this
-  // }
-  //
-  // setErrors(bag) {
-  //   this.errorBag = bag || 'default'
-  //
-  //   this.errors = useFormErrors()
-  //
-  //   this.errors.createBag(this.errorBag)
-  // }
-  //
-  // setAttributes(attributes) {
-  //   this.original = attributes
-  //   this.form = reactive({ ...attributes })
-  // }
-  //
   getError(key) {
     return this.errors.get(key)
   }
@@ -316,191 +283,21 @@ export default class FormBuilder {
     return this.errors.all()
   }
 
-  //
-  // get(path = null, { formatter = null, ...axiosConfig } = {}) {
-  //   return this.submitRequest('get', path, { formatter, ...axiosConfig })
-  // }
-  //
-  // post(path = null, { formatter = null, ...axiosConfig } = {}) {
-  //   return this.submitRequest('post', path, { formatter, ...axiosConfig })
-  // }
-  //
-  // submit(path = null, { formatter = null, ...axiosConfig } = {}) {
-  //   path = path || this.paths.submit
-  //
-  //   if (!path) {
-  //     throw Error('No valid URL defined for submit method.')
-  //   }
-  //
-  //   return this.submitRequest('post', path, { formatter, ...axiosConfig })
-  // }
-  //
-  // delete(path = null, { formatter = null, ...axiosConfig } = {}) {
-  //   return this.submitRequest('delete', path, { formatter, ...axiosConfig })
-  // }
-  //
-  // put(path = null, { formatter = null, ...axiosConfig } = {}) {
-  //   return this.submitRequest('put', path, { formatter, ...axiosConfig })
-  // }
-  //
-  // patch(path, { formatter = null, ...axiosConfig } = {}) {
-  //   return this.submitRequest('patch', path, { formatter, ...axiosConfig })
-  // }
-  //
-  // async submitRequest(
-  //   method,
-  //   path = null,
-  //   { formatter = null, ...axiosConfig } = {}
-  // ) {
-  //   // Validate inputs
-  //   if (path && typeof path !== 'string')
-  //     throw new Error('Path must be a string')
-  //   if (formatter !== null && typeof formatter !== 'function')
-  //     throw new Error('Formatter must be a function')
-  //
-  //   // If there's an ongoing request, abort it
-  //   if (this.abortSubmitController) {
-  //     this.abortSubmitController.abort()
-  //   }
-  //
-  //   // Create a new AbortController
-  //   this.abortSubmitController = new AbortController()
-  //
-  //   // Add the signal to the axios config
-  //   axiosConfig.signal = this.abortSubmitController.signal
-  //
-  //   this.clearErrors()
-  //   this.submitting()
-  //
-  //   // wait 1 second
-  //   await new Promise((resolve) => setTimeout(resolve, 1000))
-  //
-  //   const payload = formatter ? formatter(this.form) : { ...this.form }
-  //
-  //   let request
-  //
-  //   if (['get', 'delete'].includes(method)) {
-  //     axiosConfig.params = payload
-  //     request = axios[method](path, axiosConfig)
-  //   } else {
-  //     request = axios[method](path, payload, axiosConfig)
-  //   }
-  //
-  //   return request
-  //     .then((response) => {
-  //       // After a successful request, nullify the abortSubmitController
-  //       this.abortSubmitController = null
-  //
-  //       this.clearErrors()
-  //       this.submitted()
-  //       // this.states.submit.reset()
-  //
-  //       return response.data
-  //     })
-  //     .catch((error) => {
-  //       if (error.name === 'AbortError') {
-  //         console.log('Request aborted:', error.message)
-  //       } else {
-  //         this.submitFailed()
-  //         this.errors.set(error, this.errorBag)
-  //       }
-  //       return Promise.reject(error)
-  //     })
-  // }
+  onSuccess(callback) {
+    this.callbacks.success = callback
+
+    return this
+  }
+
+  onFailure(callback) {
+    this.callbacks.failure = callback
+
+    return this
+  }
+
   //
   // clearErrors() {
   //   this.errors.clear(null, this.errorBag)
-  // }
-  //
-  // handleSubmissionFailure(error) {
-  //   this.submitFailed()
-  //   this.errors.set(error, this.errorBag)
-  // }
-  //
-  // async advancedSubmit(callback) {
-  //   this.states.submit.loading()
-  //
-  //   const { data } = await Promise.resolve(callback(axios, this.form)).catch(
-  //     (error) => {
-  //       this.states.submit.failed()
-  //
-  //       this.errors.set(error, this.errorBag)
-  //
-  //       throw error
-  //     }
-  //   )
-  //
-  //   this.states.submit.loaded()
-  //
-  //   return data
-  // }
-  //
-  // async load(
-  //   path = '',
-  //   { updateLoading = true, updateOriginal = true, ...axiosConfig } = {}
-  // ) {
-  //   this.clearErrors()
-  //
-  //   this.states.load.loading()
-  //
-  //   try {
-  //     const { data } = await axios.get(path || this.paths.load, axiosConfig)
-  //
-  //     if (updateOriginal) {
-  //       Object.assign(this.original, data.form)
-  //     }
-  //
-  //     Object.assign(this.form, data.form)
-  //
-  //     if (data.model) {
-  //       Object.assign(this.model, data.model)
-  //     }
-  //
-  //     if (updateLoading) {
-  //       this.loaded()
-  //     }
-  //
-  //     return data
-  //   } catch (error) {
-  //     this.states.load.failed()
-  //     throw error
-  //   }
-  // }
-  //
-  // loading() {
-  //   this.states.load.loading()
-  //
-  //   return this
-  // }
-  //
-  // loaded() {
-  //   this.states.load.loaded()
-  //
-  //   return this
-  // }
-  //
-  // loadFailed() {
-  //   this.states.load.failed()
-  //
-  //   return this
-  // }
-  //
-  // submitting() {
-  //   this.states.submit.loading()
-  //
-  //   return this
-  // }
-  //
-  // submitFailed() {
-  //   this.states.submit.failed()
-  //
-  //   return this
-  // }
-  //
-  // submitted() {
-  //   this.states.submit.loaded()
-  //
-  //   return this
   // }
   //
   // reset() {
