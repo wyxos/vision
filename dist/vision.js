@@ -2360,7 +2360,7 @@ class jr {
     }
     try {
       const i = typeof this.url == "function" ? this.url(e) : this.url;
-      return this.processing.value = !1, await _.patch(i, e).then((a) => (this.processing.value = !1, this.afterCallback && this.afterCallback(a), a));
+      return this.processing.value = !1, _.patch(i, e).then((a) => (this.processing.value = !1, this.afterCallback && this.afterCallback(a), a));
     } catch (i) {
       this.processing.value = !1, this.error = ((n = (r = i.response) == null ? void 0 : r.data) == null ? void 0 : n.message) || i.message;
     }
