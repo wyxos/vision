@@ -1,114 +1,109 @@
-import {ref} from 'vue'
+import { ref } from 'vue'
 import axios from 'axios'
 
 export default class Action {
-    url = ''
-    processing = ref(null)
-    beforeCallback = null
-    afterCallback = null
-    error = null
+  url = ''
+  processing = ref(null)
+  beforeCallback = null
+  afterCallback = null
+  error = null
 
-    constructor(url) {
-        this.url = url
+  constructor(url) {
+    this.url = url
+  }
+
+  static create(url) {
+    return new this(url)
+  }
+
+  async patch(payload) {
+    const key = this.keyResolver ? this.keyResolver(payload) : null
+
+    this.processing.value = key || true
+
+    // Run before action callback and check if we should proceed
+    if (this.beforeCallback && this.beforeCallback(payload) === false) {
+      this.processing.value = null
+
+      return
     }
 
-    static create(url) {
-        return new this(url)
-    }
+    // await new Promise((resolve) => setTimeout(resolve, 1000))
 
-    async patch(payload) {
-        const key = this.keyResolver ? this.keyResolver(payload) : null;
+    try {
+      const url = typeof this.url === 'function' ? this.url(payload) : this.url
 
-        this.processing.value = key || true
+      this.processing.value = false
 
-        // Run before action callback and check if we should proceed
-        if (this.beforeCallback && this.beforeCallback(payload) === false) {
-            this.processing.value = null
+      return axios.patch(url, payload).then((response) => {
+        this.processing.value = false
 
-            return
+        if (this.afterCallback) {
+          this.afterCallback(response)
         }
 
-        // await new Promise((resolve) => setTimeout(resolve, 1000))
+        return response
+      })
+    } catch (error) {
+      this.processing.value = false
 
-        try {
-            const url = typeof this.url === 'function' ? this.url(payload) : this.url
+      this.error = error.response?.data?.message || error.message
+    }
+  }
 
-            this.processing.value = false
+  async delete(payload) {
+    const key = this.keyResolver ? this.keyResolver(payload) : null
 
+    this.processing.value = key || true
 
-            return axios.patch(url, payload).then((response) => {
-                this.processing.value = false
+    // Run before action callback and check if we should proceed
+    if (this.beforeCallback && this.beforeCallback(payload) === false) {
+      this.processing.value = false
 
-
-                if (this.afterCallback) {
-                    this.afterCallback(response)
-                }
-
-                return response
-            })
-        } catch (error) {
-            this.processing.value = false
-
-
-            this.error = error.response?.data?.message || error.message
-        }
+      return
     }
 
-    async delete(payload) {
-        const key = this.keyResolver ? this.keyResolver(payload) : null;
+    // await new Promise((resolve) => setTimeout(resolve, 1000))
 
-        this.processing.value = key || true
+    try {
+      const url = typeof this.url === 'function' ? this.url(payload) : this.url
 
-        // Run before action callback and check if we should proceed
-        if (this.beforeCallback && this.beforeCallback(payload) === false) {
-            this.processing.value = false
+      return axios.delete(url).then((response) => {
+        this.processing.value = false
 
-            return
+        if (this.afterCallback) {
+          this.afterCallback(response)
         }
 
-        // await new Promise((resolve) => setTimeout(resolve, 1000))
+        return response
+      })
+    } catch (error) {
+      this.error = error.response?.data?.message || error.message
 
-        try {
-            const url = typeof this.url === 'function' ? this.url(payload) : this.url
+      this.processing.value = false
 
-            return axios.delete(url).then((response) => {
-                this.processing.value = false
-
-
-                if (this.afterCallback) {
-                    this.afterCallback(response)
-                }
-
-                return response
-            })
-        } catch (error) {
-            this.error = error.response?.data?.message || error.message
-
-            this.processing.value = false
-
-
-            return error
-        }
+      return error
     }
+  }
 
-    before(callback) {
-        this.beforeCallback = callback
+  before(callback) {
+    this.beforeCallback = callback
 
-        return this
-    }
+    return this
+  }
 
-    after(callback) {
-        this.afterCallback = callback
+  after(callback) {
+    this.afterCallback = callback
 
-        return this
-    }
+    return this
+  }
 
-    isProcessing(key) {
-        return this.processing.value === key
-    }
+  isProcessing(key) {
+    return this.processing.value === key
+  }
 
-    setKeyResolver(resolver) {
-        this.keyResolver = resolver;
-        return this;
-    }
+  setKeyResolver(resolver) {
+    this.keyResolver = resolver
+    return this
+  }
 }
