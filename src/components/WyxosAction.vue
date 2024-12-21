@@ -1,24 +1,19 @@
 <script setup>
-import Action from '../utilities/Action.js'
 
 defineProps({
-  action: {
-    type: Action,
-    required: true
-  },
-  row: {
-    type: Object,
-    required: true
+  loading: {
+    type: Boolean,
+    default: false
   }
 })
 </script>
 
 <template>
   <button
-    :disabled="action.isProcessing(row)"
-    class="bg-red-500 text-white"
-    @click="action.delete(row)">
-    <i v-if="action.isProcessing(row)" class="fas fa-spinner fa-spin"></i>
-    <i v-else :class="`fas fa-trash`"></i>
+      :disabled="loading">
+    <i v-if="loading" class="fas fa-spinner fa-spin"></i>
+    <slot v-else name="icon">
+      <i class="fas fa-trash"></i>
+    </slot>
   </button>
 </template>
