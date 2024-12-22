@@ -78,8 +78,8 @@ export default {
     },
     updateQuery() {
       this.$emit(
-          'update:modelValue',
-          this.query ? moment(this.query).format(this.submitFormat) : null
+        'update:modelValue',
+        this.query ? moment(this.query).format(this.submitFormat) : null
       )
 
       this.form?.clearError(this.name)
@@ -95,10 +95,10 @@ export default {
     <!--      v-bind="mergedOptions"-->
     <!--      @update:model-value="updateQuery"></VueDatePicker>-->
     <o-datepicker
-        v-model="query"
-        :formatter="dateFormatter"
-        trap-focus
-        v-bind="options"
-        @update:model-value="updateQuery"></o-datepicker>
+      v-model="query"
+      :formatter="dateFormatter"
+      trap-focus
+      v-bind="options"
+      @update:model-value="updateQuery"></o-datepicker>
   </o-field>
 </template>

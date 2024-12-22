@@ -612,9 +612,9 @@ function ct(s, e, t, r, n, i) {
       $(a, W({
         modelValue: n.query,
         "onUpdate:modelValue": e[0] || (e[0] = (d) => n.query = d),
-        "date-formatter": i.dateFormatter,
+        formatter: i.dateFormatter,
         "trap-focus": ""
-      }, t.options, { "onUpdate:modelValue": i.updateQuery }), null, 16, ["modelValue", "date-formatter", "onUpdate:modelValue"])
+      }, t.options, { "onUpdate:modelValue": i.updateQuery }), null, 16, ["modelValue", "formatter", "onUpdate:modelValue"])
     ]),
     _: 1
   }, 16, ["label"]);
