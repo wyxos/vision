@@ -7,17 +7,13 @@ export default {
     form: {
       type: FormBuilder,
       default: null
-    },
-    button: {
-      type: String,
-      default: 'submit'
     }
   }
 }
 </script>
 
 <template>
-  <button :disabled="form.isSubmitting" :type="button">
+  <button :disabled="form.isSubmitting" type="button">
     <slot>
       <span v-if="!form.isSubmitting">Submit</span>
       <span v-if="form.isSubmitting">Processing</span>
