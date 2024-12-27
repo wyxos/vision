@@ -43,7 +43,7 @@ const Te = { class: "wyxos-accordion" }, We = {
   },
   setup(s) {
     return (e, t) => (c(), h("button", { disabled: s.loading }, [
-      s.loading ? (c(), h("i", Ae)) : _(e.$slots, "icon", { key: 1 }, () => [
+      s.loading ? (c(), h("i", Ae)) : _(e.$slots, "default", { key: 1 }, () => [
         Ie
       ])
     ], 8, Re));
@@ -320,17 +320,13 @@ const v = (s, e) => {
     form: {
       type: j,
       default: null
-    },
-    button: {
-      type: String,
-      default: "submit"
     }
   }
-}, Be = ["disabled", "type"], ze = { key: 0 }, De = { key: 1 }, Ye = /* @__PURE__ */ f("i", { class: "fas fa-spinner fa-spin ml-4" }, null, -1);
+}, Be = ["disabled"], ze = { key: 0 }, De = { key: 1 }, Ye = /* @__PURE__ */ f("i", { class: "fas fa-spinner fa-spin ml-4" }, null, -1);
 function Ke(s, e, t, r, n, i) {
   return c(), h("button", {
     disabled: t.form.isSubmitting,
-    type: t.button
+    type: "button"
   }, [
     _(s.$slots, "default", {}, () => [
       t.form.isSubmitting ? g("", !0) : (c(), h("span", ze, "Submit")),
