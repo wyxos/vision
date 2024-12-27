@@ -10,7 +10,7 @@ defineProps({
 <template>
   <button :disabled="loading">
     <i v-if="loading" class="fas fa-spinner fa-spin"></i>
-    <slot v-else name="icon">
+    <slot v-else>
       <i class="fas fa-trash"></i>
     </slot>
   </button>
