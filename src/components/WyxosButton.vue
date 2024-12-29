@@ -13,7 +13,7 @@ export default {
 </script>
 
 <template>
-  <button :disabled="form.isSubmitting" type="button">
+  <button :disabled="form.isSubmitting" type="submit">
     <slot>
       <span v-if="!form.isSubmitting">Submit</span>
       <span v-if="form.isSubmitting">Processing</span>
