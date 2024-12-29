@@ -336,7 +336,7 @@ const v = (s, e) => {
 function Ke(s, e, t, r, n, i) {
   return c(), h("button", {
     disabled: t.form.isSubmitting,
-    type: "button"
+    type: "submit"
   }, [
     _(s.$slots, "default", {}, () => [
       t.form.isSubmitting ? g("", !0) : (c(), h("span", ze, "Submit")),
