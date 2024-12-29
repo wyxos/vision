@@ -218,7 +218,7 @@ class j {
     this.submitting(), this.clearErrors();
     const e = {};
     this.abortSubmitController && this.abortSubmitController.abort(), this.abortSubmitController = new AbortController(), e.signal = this.abortSubmitController.signal, await new Promise((n) => setTimeout(n, 1e3));
-    const t = this.callbacks.formatter ? this.callbacks.formatter(this.form) : this.form, r = this.form._method;
+    const t = this.callbacks.formatter ? this.callbacks.formatter(this.form) : this.form, r = this.form.method;
     return b[r](this.submitUrl, t, e).then((n) => (this.submitted(), this.resetAfterSubmitFlag && this.setAttributes(this.original), this.callbacks.success ? this.callbacks.success(n.data) : n.data)).catch((n) => (this.submitFailed(), this.errors.set(n), Promise.reject(n)));
   }
   load() {
