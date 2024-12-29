@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import {ref} from 'vue'
 
 const props = defineProps({
   modelValue: {
@@ -13,6 +13,10 @@ const props = defineProps({
   processing: {
     type: Boolean,
     default: false
+  },
+  type: {
+    type: String,
+    default: 'text'
   }
 })
 
@@ -41,33 +45,32 @@ const onUpdate = () => {
     <slot v-if="!enableEdit" name="value">
       <span class="value">{{ modelValue }}</span>
     </slot>
-    <slot v-if="enableEdit" name="field" :query="query">
+    <slot v-if="enableEdit" :query="query" name="field">
       <input
-        v-if="enableEdit"
-        v-model="query"
-        :type="typeof modelValue === 'number' ? 'number' : 'text'"
-        :readonly="processing" />
+          v-model="query"
+          :readonly="processing"
+          :type="type"/>
     </slot>
     <slot
-      name="actions"
-      :enable-edit="enableEdit"
-      :on-cancel="onCancel"
-      :on-update="onUpdate">
+        :enable-edit="enableEdit"
+        :on-cancel="onCancel"
+        :on-update="onUpdate"
+        name="actions">
       <button v-if="!enableEdit" class="edit" @click="enableEdit = true">
         <i class="fas fa-pencil-alt"></i>
       </button>
       <button
-        v-if="enableEdit"
-        class="cancel"
-        :disabled="processing"
-        @click="onCancel()">
+          v-if="enableEdit"
+          :disabled="processing"
+          class="cancel"
+          @click="onCancel()">
         <i class="fas fa-times"></i>
       </button>
       <button
-        v-if="enableEdit"
-        class="save"
-        :disabled="processing"
-        @click="onUpdate()">
+          v-if="enableEdit"
+          :disabled="processing"
+          class="save"
+          @click="onUpdate()">
         <i v-if="!processing" class="fas fa-check"></i>
         <i v-if="processing" class="fas fa-spinner fa-spin"></i>
       </button>
