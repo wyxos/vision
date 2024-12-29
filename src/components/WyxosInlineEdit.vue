@@ -1,5 +1,5 @@
 <script setup>
-import {ref} from 'vue'
+import { ref } from 'vue'
 
 const props = defineProps({
   modelValue: {
@@ -46,31 +46,28 @@ const onUpdate = () => {
       <span class="value">{{ modelValue }}</span>
     </slot>
     <slot v-if="enableEdit" :query="query" name="field">
-      <input
-          v-model="query"
-          :readonly="processing"
-          :type="type"/>
+      <input v-model="query" :readonly="processing" :type="type" />
     </slot>
     <slot
-        :enable-edit="enableEdit"
-        :on-cancel="onCancel"
-        :on-update="onUpdate"
-        name="actions">
+      :enable-edit="enableEdit"
+      :on-cancel="onCancel"
+      :on-update="onUpdate"
+      name="actions">
       <button v-if="!enableEdit" class="edit" @click="enableEdit = true">
         <i class="fas fa-pencil-alt"></i>
       </button>
       <button
-          v-if="enableEdit"
-          :disabled="processing"
-          class="cancel"
-          @click="onCancel()">
+        v-if="enableEdit"
+        :disabled="processing"
+        class="cancel"
+        @click="onCancel()">
         <i class="fas fa-times"></i>
       </button>
       <button
-          v-if="enableEdit"
-          :disabled="processing"
-          class="save"
-          @click="onUpdate()">
+        v-if="enableEdit"
+        :disabled="processing"
+        class="save"
+        @click="onUpdate()">
         <i v-if="!processing" class="fas fa-check"></i>
         <i v-if="processing" class="fas fa-spinner fa-spin"></i>
       </button>
