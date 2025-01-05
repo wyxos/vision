@@ -1,6 +1,5 @@
 <script setup>
-
-import WyxosAction from "./WyxosAction.vue";
+import WyxosAction from './WyxosAction.vue'
 
 defineProps({
   action: {
@@ -15,9 +14,9 @@ defineProps({
 </script>
 
 <template>
-  <wyxos-action :loading="action.isProcessing(id)" @click="action.patch()"></wyxos-action>
+  <wyxos-action
+    :loading="action.isProcessing(id)"
+    @click="action.patch()"></wyxos-action>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>
