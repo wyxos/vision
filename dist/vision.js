@@ -2348,7 +2348,7 @@ const Se = /* @__PURE__ */ v(dr, [["render", pr]]), yr = /* @__PURE__ */ Object.
   __proto__: null,
   default: Se
 }, Symbol.toStringTag, { value: "Module" }));
-class jr {
+class kr {
   constructor(e) {
     u(this, "url", "");
     u(this, "processing", x(null));
@@ -2470,7 +2470,7 @@ class br {
     }), this.state.reset();
   }
 }
-const kr = new br();
+const Pr = new br();
 class we {
   constructor(e) {
     u(this, "exclude", null);
@@ -2515,7 +2515,7 @@ class we {
     return this.onCompleteCallback = e, this;
   }
 }
-async function Pr(s = {}) {
+async function Er(s = {}) {
   return (await Q().modal.open({
     component: _e,
     props: Object.assign(
@@ -2608,7 +2608,7 @@ async function vr(s, e) {
   }
   return Promise.reject(s);
 }
-class Er {
+class qr {
   constructor(e) {
     this.data = new FormData(), this.form = e, this.copy = Object.assign({}, JSON.parse(JSON.stringify(e)));
   }
@@ -2647,7 +2647,7 @@ class xe {
     this.state = !1;
   }
 }
-class qr {
+class Vr {
   static create(e, t = null, r = null) {
     return t = t || e, {
       value: e,
@@ -2655,7 +2655,7 @@ class qr {
     };
   }
 }
-class Vr {
+class Tr {
   constructor() {
     u(this, "structure", {});
     u(this, "query", F({
@@ -2739,7 +2739,7 @@ class Vr {
     Object.assign(this.params, this.structure), this.query.isFilterActive = !1, await this.load(e);
   }
 }
-class Tr {
+class Wr {
   constructor(e) {
     u(this, "current", x(null));
     u(this, "history", x([]));
@@ -2776,7 +2776,7 @@ class Tr {
     Object.assign(this, e);
   }
 }
-function Wr(s) {
+function Lr(s) {
   Q().notification.open({
     message: s || "Action successful.",
     duration: 2500,
@@ -2836,24 +2836,33 @@ const ne = /* @__PURE__ */ Object.assign({ "./components/WyxosAccordion.vue": Le
       params: r
     })
   }, Sr(e);
-}, Lr = {
+}, xr = {
+  route(s, e, t) {
+    return {
+      name: s,
+      params: e,
+      query: t
+    };
+  }
+}, Rr = {
   install: wr,
-  ...J
+  ...J,
+  vn: xr
 };
 export {
-  jr as Action,
+  kr as Action,
   we as AutoComplete,
   _r as DateRender,
-  Er as FileRequest,
+  qr as FileRequest,
   _t as Filter,
   k as FormBuilder,
   M as Listing,
   L as LoadState,
   xe as Modal,
-  qr as Option,
-  Vr as ResourceList,
+  Vr as Option,
+  Tr as ResourceList,
   Z as Search,
-  Tr as Steps,
+  Wr as Steps,
   Ce as Tab,
   We as WyxosAccordion,
   Me as WyxosAction,
@@ -2879,11 +2888,11 @@ export {
   ir as WyxosTab,
   ur as WyxosTags,
   Se as WyxosTokenExpired,
-  kr as auth,
-  Pr as confirm,
-  Lr as default,
+  Pr as auth,
+  Er as confirm,
+  Rr as default,
   vr as errorHandler,
-  Wr as success,
+  Lr as success,
   U as useFormErrors
 };
 //# sourceMappingURL=vision.js.map
