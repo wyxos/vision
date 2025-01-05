@@ -46,7 +46,7 @@ const install = (app, options = {}) => {
   errorHandlerSetup(options)
 }
 
-const vn = {
+export const vn = {
   route(name, params, query) {
     return {
       name,
