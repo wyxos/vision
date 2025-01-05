@@ -1,7 +1,6 @@
 <script setup>
-
-import WyxosAction from "./WyxosAction.vue";
-import Action from "../utilities/Action.js";
+import WyxosAction from './WyxosAction.vue'
+import Action from '../utilities/Action.js'
 
 defineProps({
   action: {
@@ -17,10 +16,10 @@ defineProps({
 
 <template>
   <wyxos-action
-:loading="action.isProcessing(id)"
-                @click="action.delete({id}).then((response) => $emit('done', response))"></wyxos-action>
+    :loading="action.isProcessing(id)"
+    @click="
+      action.delete({ id }).then((response) => $emit('done', response))
+    "></wyxos-action>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>
