@@ -253,26 +253,38 @@ export default class FormBuilder {
 
   submitting() {
     this.submitState.value = 'loading'
+
+    return this
   }
 
   submitted() {
     this.submitState.value = 'loaded'
+
+    return this
   }
 
   submitFailed() {
     this.submitState.value = 'failed'
+
+    return this
   }
 
   loading() {
     this.loadState.value = 'loading'
+
+    return this
   }
 
   loaded() {
     this.loadState.value = 'loaded'
+
+    return this
   }
 
   loadFailed() {
     this.loadState.value = 'failed'
+
+    return this
   }
 
   formatter(callback) {
