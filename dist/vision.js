@@ -227,22 +227,22 @@ class j {
     return this.abortLoadController && this.abortLoadController.abort(), this.abortLoadController = new AbortController(), e.signal = this.abortLoadController.signal, b.get(this.loadUrl, e).then((t) => (this.loaded(), t.data.form && this.setAttributes(t.data.form), t.data)).catch((t) => (this.loadFailed(), Promise.reject(t)));
   }
   submitting() {
-    this.submitState.value = "loading";
+    return this.submitState.value = "loading", this;
   }
   submitted() {
-    this.submitState.value = "loaded";
+    return this.submitState.value = "loaded", this;
   }
   submitFailed() {
-    this.submitState.value = "failed";
+    return this.submitState.value = "failed", this;
   }
   loading() {
-    this.loadState.value = "loading";
+    return this.loadState.value = "loading", this;
   }
   loaded() {
-    this.loadState.value = "loaded";
+    return this.loadState.value = "loaded", this;
   }
   loadFailed() {
-    this.loadState.value = "failed";
+    return this.loadState.value = "failed", this;
   }
   formatter(e) {
     return this.callbacks.formatter = e, this;
