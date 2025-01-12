@@ -1,349 +1,349 @@
-import {reactive, ref} from 'vue'
+import { reactive, ref } from 'vue'
 import axios from 'axios'
 import useFormErrors from './useFormErrors.js'
 
 export default class FormBuilder {
-    method = 'post'
-    submitUrl = null
-    loadUrl = null
-    original = {}
-    form = reactive({})
-    abortSubmitController = null
-    abortLoadController = null
-    submitState = ref('')
-    loadState = ref('')
-    errors = useFormErrors()
-    resetAfterSubmitFlag = false
+  method = 'post'
+  submitUrl = null
+  loadUrl = null
+  original = {}
+  form = reactive({})
+  abortSubmitController = null
+  abortLoadController = null
+  submitState = ref('')
+  loadState = ref('')
+  errors = useFormErrors()
+  resetAfterSubmitFlag = false
 
-    callbacks = {
-        submit: null,
-        load: null,
-        success: null,
-        failure: null,
-        formatter: null
-    }
+  callbacks = {
+    submit: null,
+    load: null,
+    success: null,
+    failure: null,
+    formatter: null
+  }
 
-    constructor(form = {}) {
-        this.setAttributes(form)
+  constructor(form = {}) {
+    this.setAttributes(form)
 
-        return new Proxy(this, {
-            get(target, name, receiver) {
-                // Check if the property exists in the instance
-                if (Reflect.has(target, name)) {
-                    return Reflect.get(target, name, receiver)
-                }
-                // If not, attempt to access it from the 'form' object
-                if (Reflect.has(target.form, name)) {
-                    const path = name.split('.')
-                    if (path.length > 1) {
-                        // handle nested properties
-                        let value = target.form
+    return new Proxy(this, {
+      get(target, name, receiver) {
+        // Check if the property exists in the instance
+        if (Reflect.has(target, name)) {
+          return Reflect.get(target, name, receiver)
+        }
+        // If not, attempt to access it from the 'form' object
+        if (Reflect.has(target.form, name)) {
+          const path = name.split('.')
+          if (path.length > 1) {
+            // handle nested properties
+            let value = target.form
 
-                        for (let i = 0; i < path.length; i++) {
-                            value = value[path[i]]
-                        }
-
-                        if (value === undefined || value === null) {
-                            return undefined
-                        }
-
-                        return value
-                    }
-
-                    return Reflect.get(target.form, name)
-                }
-                return undefined
-            },
-            set(target, name, value, receiver) {
-                // Check if the property exists in the instance
-                if (Reflect.has(target, name)) {
-                    return Reflect.set(target, name, value, receiver)
-                }
-                // If not, attempt to set it in the 'form' object
-                if (Reflect.has(target.form, name)) {
-                    const path = name.split('.')
-
-                    if (path.length > 1) {
-                        let obj = target.form
-
-                        for (let i = 0; i < path.length - 1; i++) {
-                            if (!(path[i] in obj)) {
-                                obj[path[i]] = {}
-                            }
-                            obj = obj[path[i]]
-                        }
-
-                        if (obj[path[path.length - 1]] === undefined) {
-                            return false
-                        }
-
-                        obj[path[path.length - 1]] = value
-
-                        return true
-                    }
-
-                    return Reflect.set(target.form, name, value)
-                }
-
-                return false
+            for (let i = 0; i < path.length; i++) {
+              value = value[path[i]]
             }
-        })
-    }
 
-    get isDirty() {
-        const deepSort = (obj) => {
-            if (Array.isArray(obj)) {
-                return obj.map(deepSort) // Sort each item in the array
-            } else if (obj && typeof obj === 'object') {
-                return Object.keys(obj)
-                    .sort() // Sort keys
-                    .reduce((sorted, key) => {
-                        sorted[key] = deepSort(obj[key]) // Recursively sort values
-                        return sorted
-                    }, {})
+            if (value === undefined || value === null) {
+              return undefined
             }
-            return obj // Return non-object values as is
+
+            return value
+          }
+
+          return Reflect.get(target.form, name)
+        }
+        return undefined
+      },
+      set(target, name, value, receiver) {
+        // Check if the property exists in the instance
+        if (Reflect.has(target, name)) {
+          return Reflect.set(target, name, value, receiver)
+        }
+        // If not, attempt to set it in the 'form' object
+        if (Reflect.has(target.form, name)) {
+          const path = name.split('.')
+
+          if (path.length > 1) {
+            let obj = target.form
+
+            for (let i = 0; i < path.length - 1; i++) {
+              if (!(path[i] in obj)) {
+                obj[path[i]] = {}
+              }
+              obj = obj[path[i]]
+            }
+
+            if (obj[path[path.length - 1]] === undefined) {
+              return false
+            }
+
+            obj[path[path.length - 1]] = value
+
+            return true
+          }
+
+          return Reflect.set(target.form, name, value)
         }
 
-        return (
-            JSON.stringify(deepSort(this.original)) !==
-            JSON.stringify(deepSort(this.form))
-        )
+        return false
+      }
+    })
+  }
+
+  get isDirty() {
+    const deepSort = (obj) => {
+      if (Array.isArray(obj)) {
+        return obj.map(deepSort) // Sort each item in the array
+      } else if (obj && typeof obj === 'object') {
+        return Object.keys(obj)
+          .sort() // Sort keys
+          .reduce((sorted, key) => {
+            sorted[key] = deepSort(obj[key]) // Recursively sort values
+            return sorted
+          }, {})
+      }
+      return obj // Return non-object values as is
     }
 
-    get isSubmitting() {
-        return this.submitState.value === 'loading'
+    return (
+      JSON.stringify(deepSort(this.original)) !==
+      JSON.stringify(deepSort(this.form))
+    )
+  }
+
+  get isSubmitting() {
+    return this.submitState.value === 'loading'
+  }
+
+  get isSubmitted() {
+    return this.submitState.value === 'loaded'
+  }
+
+  get isSubmitFailed() {
+    return this.submitState.value === 'failed'
+  }
+
+  get isLoading() {
+    return this.loadState.value === 'loading'
+  }
+
+  get isLoaded() {
+    return this.loadState.value === 'loaded'
+  }
+
+  get isLoadFailed() {
+    return this.loadState.value === 'failed'
+  }
+
+  //
+  static create(options) {
+    return new this(options)
+  }
+
+  isPost() {
+    this.method = 'post'
+
+    return this
+  }
+
+  isPatch() {
+    this.method = 'patch'
+
+    return this
+  }
+
+  isPut() {
+    this.method = 'put'
+
+    return this
+  }
+
+  resetAfterSubmit(flag = true) {
+    this.resetAfterSubmitFlag = flag
+
+    return this
+  }
+
+  setAttributes(form) {
+    this.original = form
+    Object.assign(this.form, this.original)
+
+    return this
+  }
+
+  submitAt(path) {
+    this.submitUrl = path
+
+    return this
+  }
+
+  async submit() {
+    this.submitting()
+
+    this.clearErrors()
+
+    const axiosConfig = {}
+
+    // If there's an ongoing request, abort it
+    if (this.abortSubmitController) {
+      this.abortSubmitController.abort()
     }
 
-    get isSubmitted() {
-        return this.submitState.value === 'loaded'
-    }
+    // Create a new AbortController
+    this.abortSubmitController = new AbortController()
 
-    get isSubmitFailed() {
-        return this.submitState.value === 'failed'
-    }
+    // Add the signal to the axios config
+    axiosConfig.signal = this.abortSubmitController.signal
 
-    get isLoading() {
-        return this.loadState.value === 'loading'
-    }
+    // delay by 1 second
+    await new Promise((resolve) => setTimeout(resolve, 1000))
 
-    get isLoaded() {
-        return this.loadState.value === 'loaded'
-    }
+    const data = this.callbacks.formatter
+      ? this.callbacks.formatter(this.form)
+      : this.form
 
-    get isLoadFailed() {
-        return this.loadState.value === 'failed'
-    }
+    const method = this.method
 
-    //
-    static create(options) {
-        return new this(options)
-    }
+    return axios[method](this.submitUrl, data, axiosConfig)
+      .then((response) => {
+        this.submitted()
 
-    isPost() {
-        this.method = 'post'
-
-        return this
-    }
-
-    isPatch() {
-        this.method = 'patch'
-
-        return this
-    }
-
-    isPut() {
-        this.method = 'put'
-
-        return this
-    }
-
-    resetAfterSubmit(flag = true) {
-        this.resetAfterSubmitFlag = flag
-
-        return this
-    }
-
-    setAttributes(form) {
-        this.original = form
-        Object.assign(this.form, this.original)
-
-        return this
-    }
-
-    submitAt(path) {
-        this.submitUrl = path
-
-        return this
-    }
-
-    async submit() {
-        this.submitting()
-
-        this.clearErrors()
-
-        const axiosConfig = {}
-
-        // If there's an ongoing request, abort it
-        if (this.abortSubmitController) {
-            this.abortSubmitController.abort()
+        if (this.resetAfterSubmitFlag) {
+          this.setAttributes(this.original)
         }
 
-        // Create a new AbortController
-        this.abortSubmitController = new AbortController()
+        return this.callbacks.success
+          ? this.callbacks.success(response.data)
+          : response.data
+      })
+      .catch((error) => {
+        this.submitFailed()
 
-        // Add the signal to the axios config
-        axiosConfig.signal = this.abortSubmitController.signal
+        this.errors.set(error)
 
-        // delay by 1 second
-        await new Promise((resolve) => setTimeout(resolve, 1000))
-
-        const data = this.callbacks.formatter
-            ? this.callbacks.formatter(this.form)
-            : this.form
-
-        const method = this.method
-
-        return axios[method](this.submitUrl, data, axiosConfig)
-            .then((response) => {
-                this.submitted()
-
-                if (this.resetAfterSubmitFlag) {
-                    this.setAttributes(this.original)
-                }
-
-                return this.callbacks.success
-                    ? this.callbacks.success(response.data)
-                    : response.data
-            })
-            .catch((error) => {
-                this.submitFailed()
-
-                this.errors.set(error)
-
-                if (this.callbacks.failure) {
-                    return this.callbacks.failure(error)
-                }
-
-                return Promise.reject(error)
-            })
-    }
-
-    load() {
-        this.loading()
-
-        const axiosConfig = {}
-
-        // If there's an ongoing request, abort it
-        if (this.abortLoadController) {
-            this.abortLoadController.abort()
+        if (this.callbacks.failure) {
+          return this.callbacks.failure(error)
         }
 
-        // Create a new AbortController
-        this.abortLoadController = new AbortController()
+        return Promise.reject(error)
+      })
+  }
 
-        // Add the signal to the axios config
-        axiosConfig.signal = this.abortLoadController.signal
+  load() {
+    this.loading()
 
-        return axios
-            .get(this.loadUrl, axiosConfig)
-            .then((response) => {
-                this.loaded()
+    const axiosConfig = {}
 
-                if (response.data.form) {
-                    this.setAttributes(response.data.form)
-                }
-
-                return response.data
-            })
-            .catch((error) => {
-                this.loadFailed()
-
-                return Promise.reject(error)
-            })
+    // If there's an ongoing request, abort it
+    if (this.abortLoadController) {
+      this.abortLoadController.abort()
     }
 
-    submitting() {
-        this.submitState.value = 'loading'
+    // Create a new AbortController
+    this.abortLoadController = new AbortController()
 
-        return this
-    }
+    // Add the signal to the axios config
+    axiosConfig.signal = this.abortLoadController.signal
 
-    submitted() {
-        this.submitState.value = 'loaded'
+    return axios
+      .get(this.loadUrl, axiosConfig)
+      .then((response) => {
+        this.loaded()
 
-        return this
-    }
+        if (response.data.form) {
+          this.setAttributes(response.data.form)
+        }
 
-    submitFailed() {
-        this.submitState.value = 'failed'
+        return response.data
+      })
+      .catch((error) => {
+        this.loadFailed()
 
-        return this
-    }
+        return Promise.reject(error)
+      })
+  }
 
-    loading() {
-        this.loadState.value = 'loading'
+  submitting() {
+    this.submitState.value = 'loading'
 
-        return this
-    }
+    return this
+  }
 
-    loaded() {
-        this.loadState.value = 'loaded'
+  submitted() {
+    this.submitState.value = 'loaded'
 
-        return this
-    }
+    return this
+  }
 
-    loadFailed() {
-        this.loadState.value = 'failed'
+  submitFailed() {
+    this.submitState.value = 'failed'
 
-        return this
-    }
+    return this
+  }
 
-    formatter(callback) {
-        this.callbacks.formatter = callback
+  loading() {
+    this.loadState.value = 'loading'
 
-        return this
-    }
+    return this
+  }
 
-    loadFrom(path) {
-        this.loadUrl = path
+  loaded() {
+    this.loadState.value = 'loaded'
 
-        return this
-    }
+    return this
+  }
 
-    getError(key) {
-        return this.errors.get(key)
-    }
+  loadFailed() {
+    this.loadState.value = 'failed'
 
-    hasError(key) {
-        return this.errors.has(key)
-    }
+    return this
+  }
 
-    clearError(key) {
-        this.errors.clear(key)
-    }
+  formatter(callback) {
+    this.callbacks.formatter = callback
 
-    clearErrors() {
-        this.errors.clear()
-    }
+    return this
+  }
 
-    getErrors() {
-        return this.errors.all()
-    }
+  loadFrom(path) {
+    this.loadUrl = path
 
-    onSuccess(callback) {
-        this.callbacks.success = callback
+    return this
+  }
 
-        return this
-    }
+  getError(key) {
+    return this.errors.get(key)
+  }
 
-    onFail(callback) {
-        this.callbacks.failure = callback
+  hasError(key) {
+    return this.errors.has(key)
+  }
 
-        return this
-    }
+  clearError(key) {
+    this.errors.clear(key)
+  }
 
-    toJson() {
-        return JSON.parse(JSON.stringify(this.form))
-    }
+  clearErrors() {
+    this.errors.clear()
+  }
+
+  getErrors() {
+    return this.errors.all()
+  }
+
+  onSuccess(callback) {
+    this.callbacks.success = callback
+
+    return this
+  }
+
+  onFail(callback) {
+    this.callbacks.failure = callback
+
+    return this
+  }
+
+  toJson() {
+    return JSON.parse(JSON.stringify(this.form))
+  }
 }
