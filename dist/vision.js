@@ -192,6 +192,15 @@ class j {
   get isSubmitFailed() {
     return this.submitState.value === "failed";
   }
+  get isLoading() {
+    return this.loadState.value === "loading";
+  }
+  get isLoaded() {
+    return this.loadState.value === "loaded";
+  }
+  get isLoadFailed() {
+    return this.loadState.value === "failed";
+  }
   //
   static create(e) {
     return new this(e);
@@ -271,50 +280,6 @@ class j {
   onFail(e) {
     return this.callbacks.failure = e, this;
   }
-  //
-  // clearErrors() {
-  //   this.errors.clear(null, this.errorBag)
-  // }
-  //
-  // reset() {
-  //   Object.assign(this.form, this.original)
-  // }
-  //
-  // resetOnly(keys) {
-  //   // Ensure keys is an array
-  //   if (!Array.isArray(keys)) {
-  //     throw new Error('The keys should be an array.')
-  //   }
-  //
-  //   // Loop through the keys and reset only those
-  //   keys.forEach((key) => {
-  //     if (Object.prototype.hasOwnProperty.call(this.original, key)) {
-  //       this.form[key] = this.original[key]
-  //     }
-  //   })
-  // }
-  //
-  // resetExcept(keys) {
-  //   // Ensure keys is an array
-  //   if (!Array.isArray(keys)) {
-  //     throw new Error('The keys should be an array.')
-  //   }
-  //
-  //   // Assign the new form object back to the reactive form
-  //   Object.keys(this.form).forEach((key) => {
-  //     console.log('key', key, !keys.includes(key), this.original[key])
-  //     if (!keys.includes(key)) {
-  //       this.form[key] = this.original[key]
-  //     }
-  //   })
-  // }
-  //
-  // delay(timeout = 0, callback) {
-  //   clearTimeout(this.timeout)
-  //
-  //   this.timeout = setTimeout(callback, timeout)
-  // }
-  //
   toJson() {
     return JSON.parse(JSON.stringify(this.form));
   }
