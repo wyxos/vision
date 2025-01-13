@@ -30,13 +30,9 @@ export default {
       <slot :name="slot" v-bind="slotData"></slot>
     </template>
     <template #empty>
-      <p v-if="listing.isEmpty">No records found.</p>
-      <p v-if="listing.isSearchEmpty">
-        No results for your query. Please adjust your search and try again.
-      </p>
-      <p v-if="listing.isFailure">
-        Failure to load the list. Try again or reload the page.
-      </p>
+      <slot name="empty">
+        <p v-if="listing.isEmpty">No records found.</p>
+      </slot>
     </template>
   </o-table>
 </template>
