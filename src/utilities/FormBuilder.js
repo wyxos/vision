@@ -167,7 +167,9 @@ export default class FormBuilder {
   setAttributes(form) {
     // Use deep cloning to prevent reactivity in `original`
     this.original = JSON.parse(JSON.stringify(form))
-    this.form = Object.assign({}, this.form, reactive(form))
+    this.form = reactive(
+      Object.assign({}, this.form, JSON.parse(JSON.stringify(form)))
+    )
 
     return this
   }
@@ -223,7 +225,7 @@ export default class FormBuilder {
         this.errors.set(error)
 
         if (this.callbacks.failure) {
-          return this.callbacks.failure(error)
+          return Promise.reject(this.callbacks.failure(error))
         }
 
         return Promise.reject(error)
