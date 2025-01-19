@@ -9,6 +9,10 @@ defineProps({
   id: {
     type: [String, Number],
     required: true
+  },
+  payload: {
+    type: Object,
+    default: () => ({})
   }
 })
 </script>
@@ -16,7 +20,11 @@ defineProps({
 <template>
   <wyxos-action
     :loading="action.isProcessing(id)"
-    @click="action.patch()"></wyxos-action>
+    @click="action.patch({ id, ...payload })">
+    <slot>
+      <i class="fas fa-edit"></i>
+    </slot>
+  </wyxos-action>
 </template>
 
 <style scoped></style>

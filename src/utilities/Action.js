@@ -149,7 +149,7 @@ export default class Action {
     return this.processing.value === key
   }
 
-  setKeyResolver(resolver) {
+  withKey(resolver) {
     this.keyResolver = resolver
     return this
   }
