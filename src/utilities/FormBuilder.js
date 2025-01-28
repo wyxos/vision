@@ -167,9 +167,12 @@ export default class FormBuilder {
   setAttributes(form) {
     // Use deep cloning to prevent reactivity in `original`
     this.original = JSON.parse(JSON.stringify(form))
-    this.form = reactive(
-      Object.assign({}, this.form, JSON.parse(JSON.stringify(form)))
-    )
+    // this.form = reactive(
+    //   Object.assign({}, this.form, JSON.parse(JSON.stringify(form)))
+    // )
+    Object.keys(form).forEach(key => {
+      this.form[key] = form[key]
+    })
 
     return this
   }
