@@ -2441,60 +2441,6 @@ const we = /* @__PURE__ */ v(Zs, [["render", sr]]), rr = /* @__PURE__ */ Object.
   __proto__: null,
   default: nr
 }, Symbol.toStringTag, { value: "Module" }));
-class or {
-  constructor() {
-    u(this, "attributes", j({
-      user: null
-    }));
-    u(this, "state", new L());
-    return new Proxy(this, {
-      get(e, t, r) {
-        return Reflect.has(e, t) ? Reflect.get(e, t, r) : t in e.attributes ? e.attributes[t] : null;
-      },
-      set(e, t, r, n) {
-        return !Reflect.has(e, t) && !(t in e.attributes) ? (Reflect.set(e, t, r, n), !0) : t in e.attributes ? (e.attributes[t] = r, !0) : Reflect.set(e, t, r, n);
-      }
-    });
-  }
-  get isLoading() {
-    return this.state.isLoading;
-  }
-  get isLoaded() {
-    return this.state.isLoaded;
-  }
-  get isFailure() {
-    return this.state.isFailure;
-  }
-  get isAuthenticated() {
-    return !!this.attributes.user;
-  }
-  async load() {
-    this.loading(), await _.get("/sanctum/csrf-cookie").catch((t) => {
-      throw this.failed(), t;
-    });
-    const { data: e } = await _.get("/api/user");
-    if (!("user" in e))
-      throw Error("Instance of user is not defined.");
-    Object.keys(e).forEach((t) => {
-      this.attributes[t] = e[t];
-    }), this.loaded();
-  }
-  loading() {
-    return this.state.loading();
-  }
-  loaded() {
-    return this.state.loaded();
-  }
-  failed() {
-    return this.state.failed();
-  }
-  reset() {
-    this.attributes = j({
-      user: null
-    }), this.state.reset();
-  }
-}
-const yr = new or();
 class xe {
   constructor(e) {
     u(this, "exclude", null);
@@ -2539,28 +2485,13 @@ class xe {
     return this.onCompleteCallback = e, this;
   }
 }
-async function br(s = {}) {
-  return (await Q().modal.open({
-    component: ve,
-    props: Object.assign(
-      {
-        title: "Confirm",
-        message: "Are you sure you want proceed?",
-        confirmText: "Yes",
-        cancelText: "Cancel"
-      },
-      s
-    ),
-    trapFocus: !0
-  }).promise).action;
-}
 const z = {
   UK_TIME: "DD/MM/YYYY HH:mm:ss",
   UK: "DD/MM/YYYY",
   DB_TIME: "YYYY-MM-DD HH:mm:ss",
   DB: "YYYY-MM-DD"
 };
-class ar {
+class or {
   constructor(e, t) {
     u(this, "date", null);
     u(this, "empty", "");
@@ -2576,63 +2507,8 @@ class ar {
     return this.format(this.date, e, t);
   }
 }
-u(ar, "FORMATS", z);
-async function lr(s, e) {
-  var i, o, a, l, d, q;
-  if ((s == null ? void 0 : s.code) === "ERR_CANCELED")
-    return Promise.reject(s);
-  const t = {
-    401: "Authentication required. Please reload the page and sign in.",
-    403: "You do not have permission to perform this action.",
-    404: "The page or action you are looking for could not be found.",
-    419: "Your session has likely expired. Try again or reload the page.",
-    422: "The action attempted was invalid. Please review your input and try again.",
-    500: "An unexpected error has occurred. This issue has been reported.",
-    503: "The site is currently under maintenance. Please try again later."
-  };
-  Object.assign(t, (e == null ? void 0 : e.messages) || {});
-  const r = t[(i = s.response) == null ? void 0 : i.status] || t[500], n = Q();
-  if (n.notification.open({
-    message: r,
-    duration: 1e3 * 5,
-    variant: "danger",
-    position: "bottom-right",
-    closable: !0
-  }), ((o = s.response) == null ? void 0 : o.status) === 419) {
-    n.modal.open({
-      component: ((a = e.components) == null ? void 0 : a.TokenExpired) || we,
-      trapFocus: !0,
-      closable: !1
-    });
-    const F = (await _.get("/heartbeat")).data.csrfToken;
-    _.defaults.headers.common["X-CSRF-TOKEN"] = F;
-  }
-  if (((l = s.response) == null ? void 0 : l.status) === 401 && n.modal.open({
-    component: ((d = e.components) == null ? void 0 : d.SessionExpired) || Se,
-    trapFocus: !0,
-    closable: !1
-  }), ((q = s.response) == null ? void 0 : q.status) === 422) {
-    const S = setInterval(() => {
-      const F = document.querySelectorAll(
-        ".o-field__message-danger, .wyxos-error"
-      ), U = (T) => {
-        const N = T.getBoundingClientRect(), A = window.getComputedStyle(T);
-        return N.width > 0 && N.height > 0 && A.display !== "none" && A.visibility !== "hidden" && A.opacity !== "0";
-      }, V = Array.from(F).find(U);
-      if (V) {
-        clearInterval(S);
-        let T;
-        if (V.classList.contains("o-field__message-danger") ? T = V.closest(".o-field") : V.classList.contains("wyxos-error") && (T = V.closest("label")), T) {
-          const A = T.getBoundingClientRect().top + window.scrollY - 10;
-          window.scrollTo({ top: A, behavior: "smooth" });
-        } else
-          console.error("Could not determine the scroll target.");
-      }
-    }, 100);
-  }
-  return Promise.reject(s);
-}
-class _r {
+u(or, "FORMATS", z);
+class yr {
   constructor(e) {
     this.data = new FormData(), this.form = e, this.copy = Object.assign({}, JSON.parse(JSON.stringify(e)));
   }
@@ -2671,7 +2547,7 @@ class Ce {
     this.state = !1;
   }
 }
-class vr {
+class br {
   static create(e, t = null, r = null) {
     return t = t || e, {
       value: e,
@@ -2679,7 +2555,7 @@ class vr {
     };
   }
 }
-class Sr {
+class _r {
   constructor() {
     u(this, "structure", {});
     u(this, "query", j({
@@ -2763,7 +2639,7 @@ class Sr {
     Object.assign(this.params, this.structure), this.query.isFilterActive = !1, await this.load(e);
   }
 }
-class wr {
+class vr {
   constructor(e) {
     u(this, "current", x(null));
     u(this, "history", x([]));
@@ -2800,15 +2676,6 @@ class wr {
     Object.assign(this, e);
   }
 }
-function xr(s) {
-  Q().notification.open({
-    message: s || "Action successful.",
-    duration: 2500,
-    variant: "success",
-    position: "bottom-right",
-    closable: !0
-  });
-}
 class Oe {
   constructor(e) {
     u(this, "attributes", j({
@@ -2837,6 +2704,139 @@ class Oe {
   static create(e) {
     return new Oe(e);
   }
+}
+class ar {
+  constructor() {
+    u(this, "attributes", j({
+      user: null
+    }));
+    u(this, "state", new L());
+    return new Proxy(this, {
+      get(e, t, r) {
+        return Reflect.has(e, t) ? Reflect.get(e, t, r) : t in e.attributes ? e.attributes[t] : null;
+      },
+      set(e, t, r, n) {
+        return !Reflect.has(e, t) && !(t in e.attributes) ? (Reflect.set(e, t, r, n), !0) : t in e.attributes ? (e.attributes[t] = r, !0) : Reflect.set(e, t, r, n);
+      }
+    });
+  }
+  get isLoading() {
+    return this.state.isLoading;
+  }
+  get isLoaded() {
+    return this.state.isLoaded;
+  }
+  get isFailure() {
+    return this.state.isFailure;
+  }
+  get isAuthenticated() {
+    return !!this.attributes.user;
+  }
+  async load() {
+    this.loading(), await _.get("/sanctum/csrf-cookie").catch((t) => {
+      throw this.failed(), t;
+    });
+    const { data: e } = await _.get("/api/user");
+    if (!("user" in e))
+      throw Error("Instance of user is not defined.");
+    Object.keys(e).forEach((t) => {
+      this.attributes[t] = e[t];
+    }), this.loaded();
+  }
+  loading() {
+    return this.state.loading();
+  }
+  loaded() {
+    return this.state.loaded();
+  }
+  failed() {
+    return this.state.failed();
+  }
+  reset() {
+    this.attributes = j({
+      user: null
+    }), this.state.reset();
+  }
+}
+const Sr = new ar();
+async function wr(s = {}) {
+  return (await Q().modal.open({
+    component: ve,
+    props: Object.assign(
+      {
+        title: "Confirm",
+        message: "Are you sure you want proceed?",
+        confirmText: "Yes",
+        cancelText: "Cancel"
+      },
+      s
+    ),
+    trapFocus: !0
+  }).promise).action;
+}
+async function lr(s, e) {
+  var i, o, a, l, d, q;
+  if ((s == null ? void 0 : s.code) === "ERR_CANCELED")
+    return Promise.reject(s);
+  const t = {
+    401: "Authentication required. Please reload the page and sign in.",
+    403: "You do not have permission to perform this action.",
+    404: "The page or action you are looking for could not be found.",
+    419: "Your session has likely expired. Try again or reload the page.",
+    422: "The action attempted was invalid. Please review your input and try again.",
+    500: "An unexpected error has occurred. This issue has been reported.",
+    503: "The site is currently under maintenance. Please try again later."
+  };
+  Object.assign(t, (e == null ? void 0 : e.messages) || {});
+  const r = t[(i = s.response) == null ? void 0 : i.status] || t[500], n = Q();
+  if (n.notification.open({
+    message: r,
+    duration: 1e3 * 5,
+    variant: "danger",
+    position: "bottom-right",
+    closable: !0
+  }), ((o = s.response) == null ? void 0 : o.status) === 419) {
+    n.modal.open({
+      component: ((a = e.components) == null ? void 0 : a.TokenExpired) || we,
+      trapFocus: !0,
+      closable: !1
+    });
+    const F = (await _.get("/heartbeat")).data.csrfToken;
+    _.defaults.headers.common["X-CSRF-TOKEN"] = F;
+  }
+  if (((l = s.response) == null ? void 0 : l.status) === 401 && n.modal.open({
+    component: ((d = e.components) == null ? void 0 : d.SessionExpired) || Se,
+    trapFocus: !0,
+    closable: !1
+  }), ((q = s.response) == null ? void 0 : q.status) === 422) {
+    const S = setInterval(() => {
+      const F = document.querySelectorAll(
+        ".o-field__message-danger, .wyxos-error"
+      ), U = (T) => {
+        const N = T.getBoundingClientRect(), A = window.getComputedStyle(T);
+        return N.width > 0 && N.height > 0 && A.display !== "none" && A.visibility !== "hidden" && A.opacity !== "0";
+      }, V = Array.from(F).find(U);
+      if (V) {
+        clearInterval(S);
+        let T;
+        if (V.classList.contains("o-field__message-danger") ? T = V.closest(".o-field") : V.classList.contains("wyxos-error") && (T = V.closest("label")), T) {
+          const A = T.getBoundingClientRect().top + window.scrollY - 10;
+          window.scrollTo({ top: A, behavior: "smooth" });
+        } else
+          console.error("Could not determine the scroll target.");
+      }
+    }, 100);
+  }
+  return Promise.reject(s);
+}
+function xr(s) {
+  Q().notification.open({
+    message: s || "Action successful.",
+    duration: 2500,
+    variant: "success",
+    position: "bottom-right",
+    closable: !0
+  });
 }
 function ur(s) {
   _.interceptors.response.use(null, (e) => lr(e, s));
@@ -2876,17 +2876,17 @@ const ie = /* @__PURE__ */ Object.assign({ "./components/WyxosAccordion.vue": Ae
 export {
   dt as Action,
   xe as AutoComplete,
-  ar as DateRender,
-  _r as FileRequest,
+  or as DateRender,
+  yr as FileRequest,
   _t as Filter,
   P as FormBuilder,
   B as Listing,
   L as LoadState,
   Ce as Modal,
-  vr as Option,
-  Sr as ResourceList,
+  br as Option,
+  _r as ResourceList,
   ee as Search,
-  wr as Steps,
+  vr as Steps,
   Oe as Tab,
   Le as WyxosAccordion,
   X as WyxosAction,
@@ -2914,8 +2914,8 @@ export {
   Xs as WyxosTags,
   we as WyxosTokenExpired,
   nr as WyxosUpdateButton,
-  yr as auth,
-  br as confirm,
+  Sr as auth,
+  wr as confirm,
   Cr as default,
   lr as errorHandler,
   xr as success,
