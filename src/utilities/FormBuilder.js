@@ -170,7 +170,7 @@ export default class FormBuilder {
     // this.form = reactive(
     //   Object.assign({}, this.form, JSON.parse(JSON.stringify(form)))
     // )
-    Object.keys(form).forEach(key => {
+    Object.keys(form).forEach((key) => {
       this.form[key] = form[key]
     })
 
