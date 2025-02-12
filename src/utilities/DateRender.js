@@ -10,16 +10,21 @@ export const FORMATS = {
 export default class DateRender {
   static FORMATS = FORMATS
 
-  date = null
+  value = null
   empty = ''
+  interval = null
 
   constructor(date, empty) {
-    this.date = date
+    this.value = date
     this.empty = empty
   }
 
   static load(date, empty = '') {
     return new this(date, empty)
+  }
+
+  static create() {
+    return new this()
   }
 
   format(date, format = FORMATS.UK, empty = '') {
@@ -30,7 +35,19 @@ export default class DateRender {
     return moment(date).format(format)
   }
 
-  render(format = FORMATS.UK, empty = '') {
-    return this.format(this.date, format, empty)
+  render(format = FORMATS.UK_TIME, empty = '') {
+    return this.format(this.value, format, empty)
+  }
+
+  date(format = FORMATS.UK, empty = '') {
+    return this.format(this.value, format, empty)
+  }
+
+  time(format = FORMATS.UK_TIME, empty = '') {
+    return this.format(this.value, format, empty).split(' ')[1]
+  }
+
+  ago() {
+    return moment(this.value).fromNow()
   }
 }
