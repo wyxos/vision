@@ -15,12 +15,18 @@ defineProps({
     default: () => ({})
   }
 })
+
+const emit = defineEmits(['done'])
 </script>
 
 <template>
   <wyxos-action
     :loading="action.isProcessing(id)"
-    @click="action.patch({ id, ...payload })">
+    @click="
+      action
+        .patch({ id, ...payload })
+        .then((response) => emit('done', response))
+    ">
     <slot>
       <i class="fas fa-edit"></i>
     </slot>

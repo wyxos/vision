@@ -656,7 +656,7 @@ class yt {
     }
     try {
       const i = typeof this.url == "function" ? this.url(e) : this.url;
-      return this.processing.value = !1, _.patch(i, e).then((o) => (this.processing.value = !1, this.onSuccessCallback && this.onSuccessCallback(o), o));
+      return console.log(i, e), this.processing.value = !1, _.patch(i, e).then((o) => (this.processing.value = !1, this.onSuccessCallback && this.onSuccessCallback(o), o));
     } catch (i) {
       this.processing.value = !1, this.error = ((n = (r = i.response) == null ? void 0 : r.data) == null ? void 0 : n.message) || i.message;
     }
@@ -2447,14 +2447,16 @@ const xe = /* @__PURE__ */ w(or, [["render", ur]]), dr = /* @__PURE__ */ Object.
       default: () => ({})
     }
   },
-  setup(s) {
-    return (e, t) => (d(), C(G, {
+  emits: ["done"],
+  setup(s, { emit: e }) {
+    const t = e;
+    return (r, n) => (d(), C(G, {
       loading: s.action.isProcessing(s.id),
-      onClick: t[0] || (t[0] = (r) => s.action.patch({ id: s.id, ...s.payload }))
+      onClick: n[0] || (n[0] = (i) => s.action.patch({ id: s.id, ...s.payload }).then((o) => t("done", o)))
     }, {
       default: m(() => [
-        p(e.$slots, "default", {}, () => [
-          t[1] || (t[1] = f("i", { class: "fas fa-edit" }, null, -1))
+        p(r.$slots, "default", {}, () => [
+          n[1] || (n[1] = f("i", { class: "fas fa-edit" }, null, -1))
         ])
       ]),
       _: 3
