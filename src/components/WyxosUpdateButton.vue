@@ -1,9 +1,10 @@
 <script setup>
 import WyxosAction from './WyxosAction.vue'
+import Action from '../utilities/Action.js'
 
 defineProps({
   action: {
-    type: Object,
+    type: Action,
     required: true
   },
   id: {

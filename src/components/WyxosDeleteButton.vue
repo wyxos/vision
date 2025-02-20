@@ -12,13 +12,15 @@ defineProps({
     required: true
   }
 })
+
+const emit = defineEmits(['done'])
 </script>
 
 <template>
   <wyxos-action
     :loading="action.isProcessing(id)"
     @click="
-      action.delete({ id }).then((response) => $emit('done', response))
+      action.delete({ id }).then((response) => emit('done', response))
     "></wyxos-action>
 </template>
 
