@@ -2,6 +2,8 @@ import { ref } from "vue";
 import axios from "axios";
 
 class AsyncData {
+    url = null;
+
     constructor() {
         this.data = ref(null);
         this.isLoaded = ref(false);
@@ -16,6 +18,8 @@ class AsyncData {
 
     async load(url) {
         this.loading();
+
+        url = url || this.url;
 
         try {
             const response = await axios.get(url);
@@ -53,10 +57,31 @@ class AsyncData {
         throw error;
     }
 
-    refresh() {
+    loadFrom(url){
+        this.url = url;
+
+        return this;
+    }
+
+    async refresh(url) {
+        url = url || this.url;
+
+        try {
+            const response = await axios.get(url);
+            this.data.value = response.data;
+
+            return response
+        } catch (error) {
+            this.failed(error);
+
+            return Promise.reject(error);
+        }
+    }
+
+    reload(url){
         this.loading();
 
-        return this.load();
+        return this.load(url);
     }
 }
 
