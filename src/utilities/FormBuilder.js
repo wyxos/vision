@@ -59,33 +59,33 @@ export default class FormBuilder {
         if (Reflect.has(target, name)) {
           return Reflect.set(target, name, value, receiver)
         }
-        // If not, attempt to set it in the 'form' object
+        // If not, attempt to set it in the 'form' object if it exists there
         if (Reflect.has(target.form, name)) {
-          const path = name.split('.')
+          const path = name.split('.');
 
           if (path.length > 1) {
-            let obj = target.form
+            let obj = target.form;
 
             for (let i = 0; i < path.length - 1; i++) {
               if (!(path[i] in obj)) {
-                obj[path[i]] = {}
+                obj[path[i]] = {};
               }
-              obj = obj[path[i]]
+              obj = obj[path[i]];
             }
 
-            if (obj[path[path.length - 1]] === undefined) {
-              return false
-            }
+            // Optionally, if you want to ensure the final property already exists:
+            // if (obj[path[path.length - 1]] === undefined) {
+            //   return false;
+            // }
 
-            obj[path[path.length - 1]] = value
-
-            return true
+            obj[path[path.length - 1]] = value;
+            return true;
           }
 
-          return Reflect.set(target.form, name, value)
+          return Reflect.set(target.form, name, value);
         }
-
-        return false
+        // Allow new properties (such as new functions) to be created on the instance
+        return Reflect.set(target, name, value, receiver);
       }
     })
   }
