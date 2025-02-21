@@ -1,9 +1,10 @@
 <script setup>
 import WyxosAction from './WyxosAction.vue'
+import Action from '../utilities/Action.js'
 
 defineProps({
   action: {
-    type: Object,
+    type: Action,
     required: true
   },
   id: {
@@ -15,12 +16,18 @@ defineProps({
     default: () => ({})
   }
 })
+
+const emit = defineEmits(['done'])
 </script>
 
 <template>
   <wyxos-action
     :loading="action.isProcessing(id)"
-    @click="action.patch({ id, ...payload })">
+    @click="
+      action
+        .patch({ id, ...payload })
+        .then((response) => emit('done', response))
+    ">
     <slot>
       <i class="fas fa-edit"></i>
     </slot>
