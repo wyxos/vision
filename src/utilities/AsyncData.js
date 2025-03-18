@@ -16,13 +16,18 @@ class AsyncData {
     return new AsyncData()
   }
 
-  async load(url) {
+  async load(url, options) {
     this.loading()
+
+    if (typeof url === 'object') {
+      options = url
+      url = null
+    }
 
     url = url || this.url
 
     try {
-      const response = await axios.get(url)
+      const response = await axios.get(url, options)
       this.data.value = response.data
       this.loaded()
 

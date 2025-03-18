@@ -19,7 +19,7 @@ export default {
       <span v-if="form.isSubmitting">Processing</span>
     </slot>
     <slot v-if="form.isSubmitting" name="icon">
-      <i class="fas fa-spinner fa-spin ml-4"></i>
+      <i class="fas fa-spinner fa-spin"></i>
     </slot>
   </button>
 </template>
