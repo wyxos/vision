@@ -1195,7 +1195,9 @@ class U {
       params: e
     }).then((t) => (t.data.listing && Object.assign(this.attributes, t.data.listing), t.data.filters && (this.filter.applied = t.data.filters), this.attributes.masonry && this.attributes.pages.push({
       page: this.filter.query.page,
-      items: JSON.parse(JSON.stringify(this.attributes.items)).map((r, i) => (r.uid = `${this.filter.query.page}-${i}`, r))
+      items: JSON.parse(JSON.stringify(this.attributes.items)).map(
+        (r, i) => (r.uid = `${this.filter.query.page}-${i}`, r)
+      )
     }), this.router && this.router.push({ query: this.filter.query }), t)).finally(() => {
       this.loaded();
     });
@@ -1209,7 +1211,9 @@ class U {
       params: e
     }).then((r) => (r.data.listing && Object.assign(this.attributes, r.data.listing), r.data.filters && (this.filter.applied = r.data.filters), this.attributes.masonry && this.attributes.pages.push({
       page: this.filter.query.page,
-      items: JSON.parse(JSON.stringify(this.attributes.items)).map((i, n) => (i.uid = `${this.filter.query.page}-${n}`, i))
+      items: JSON.parse(JSON.stringify(this.attributes.items)).map(
+        (i, n) => (i.uid = `${this.filter.query.page}-${n}`, i)
+      )
     }), r)).finally(() => {
       this.loaded();
     });
