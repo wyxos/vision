@@ -39,7 +39,7 @@ const install = (app, options = {}) => {
     }
   }
 
-  errorHandlerSetup(options)
+  // errorHandlerSetup(options)
 }
 
 export default {
