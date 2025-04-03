@@ -283,7 +283,7 @@ function V() {
       };
     },
     clear(s = null, e = "default") {
-      if (console.log("Clearing error", s, "in bag", e, E), s) {
+      if (s) {
         const t = E[e];
         if (!t) {
           console.warn(`Bag ${e} is not defined.`);
