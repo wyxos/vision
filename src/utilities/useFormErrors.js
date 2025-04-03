@@ -78,7 +78,7 @@ export default function useFormErrors() {
       }
     },
     clear(key = null, bag = 'default') {
-      console.log('Clearing error', key, 'in bag', bag, formErrors)
+      // console.log('Clearing error', key, 'in bag', bag, formErrors)
 
       if (key) {
         const target = formErrors[bag]
