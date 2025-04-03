@@ -118,6 +118,12 @@ export default class Listing {
     return this
   }
 
+  setFilter(attributes) {
+    this.filter = new Filter(attributes)
+
+    return this
+  }
+
   search(query = {}) {
     if (typeof query === 'function') {
       query = Object.assign({}, this.filter.query, query(this.filter.query))
