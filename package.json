@@ -33,7 +33,7 @@
   "license": "ISC",
   "dependencies": {
     "@vuepic/vue-datepicker": "^9.0.2",
-    "axios": "1.7.4",
+    "axios": "1.8.2",
     "iconv-lite": "^0.6.3",
     "qs": "^6.13.1",
     "query-string": "^8.1.0"
@@ -67,7 +67,7 @@
   },
   "peerDependencies": {
     "@oruga-ui/oruga-next": ">=0.9.1 <1.0.0",
-    "axios": "1.7.4",
+    "axios": "1.8.2",
     "moment": "^2.29.4",
     "query-string": "^8.1.0",
     "vue": "^3.3.8",
