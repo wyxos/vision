@@ -90,7 +90,6 @@ export default class Listing {
       data: this.attributes.items,
       total: this.attributes.total,
       currentPage: this.filter.query.page,
-      perPage: this.filter.query.perPage,
       loading: this.isLoading,
       paginated: this.attributes.total > this.attributes.perPage,
       backendPagination: true,
