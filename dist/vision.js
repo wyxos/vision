@@ -1,9 +1,9 @@
-var qe = Object.defineProperty;
-var Ee = (s, e, t) => e in s ? qe(s, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : s[e] = t;
-var u = (s, e, t) => Ee(s, typeof e != "symbol" ? e + "" : e, t);
-import { ref as b, onMounted as le, openBlock as d, createElementBlock as h, renderSlot as p, createCommentVNode as y, createElementVNode as f, unref as I, createTextVNode as $, toDisplayString as S, reactive as j, normalizeProps as Y, guardReactiveProps as J, resolveComponent as g, createBlock as O, withCtx as m, createVNode as C, normalizeClass as B, mergeProps as W, defineComponent as ue, watch as Pe, withModifiers as de, withDirectives as Le, vModelDynamic as Te, createSlots as Ve, renderList as ce, Fragment as fe, Teleport as We, onUnmounted as Ae } from "vue";
+var Ee = Object.defineProperty;
+var Pe = (s, e, t) => e in s ? Ee(s, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : s[e] = t;
+var u = (s, e, t) => Pe(s, typeof e != "symbol" ? e + "" : e, t);
+import { ref as b, onMounted as le, openBlock as d, createElementBlock as h, renderSlot as p, createCommentVNode as y, createElementVNode as f, unref as I, createTextVNode as $, toDisplayString as S, reactive as j, normalizeProps as Y, guardReactiveProps as J, resolveComponent as g, createBlock as O, withCtx as m, createVNode as C, normalizeClass as B, mergeProps as W, defineComponent as ue, watch as qe, withModifiers as de, withDirectives as Le, vModelDynamic as Ve, createSlots as Te, renderList as ce, Fragment as fe, Teleport as We, onUnmounted as Ae } from "vue";
 import _ from "axios";
-import V from "moment";
+import T from "moment";
 import Re, { useOruga as X } from "@oruga-ui/oruga-next";
 const Ie = { class: "wyxos-accordion" }, Me = {
   __name: "WyxosAccordion",
@@ -150,7 +150,7 @@ function N() {
     }
   };
 }
-class q {
+class E {
   constructor(e = {}) {
     u(this, "method", "post");
     u(this, "submitUrl", null);
@@ -308,6 +308,9 @@ class q {
   toJson() {
     return JSON.parse(JSON.stringify(this.form));
   }
+  reset() {
+    return this.setAttributes(this.original), this;
+  }
 }
 const w = (s, e) => {
   const t = s.__vccOpts || s;
@@ -318,7 +321,7 @@ const w = (s, e) => {
   name: "WyxosButton",
   props: {
     form: {
-      type: q,
+      type: E,
       default: null
     }
   }
@@ -550,7 +553,7 @@ const ht = /* @__PURE__ */ w(at, [["render", ft]]), mt = /* @__PURE__ */ Object.
       default: null
     },
     form: {
-      type: q,
+      type: E,
       default: null
     },
     options: {
@@ -578,24 +581,24 @@ const ht = /* @__PURE__ */ w(at, [["render", ft]]), mt = /* @__PURE__ */ Object.
   watch: {
     modelValue: {
       handler(s) {
-        this.query = s ? V(s, this.submitFormat)._d : null;
+        this.query = s ? T(s, this.submitFormat)._d : null;
       },
       immediate: !0,
       deep: !0
     }
   },
   mounted() {
-    this.modelValue && (this.query = V(this.modelValue, this.submitFormat)._d);
+    this.modelValue && (this.query = T(this.modelValue, this.submitFormat)._d);
   },
   methods: {
     dateFormatter(s) {
-      return s ? V(s).format(this.displayFormat) : null;
+      return s ? T(s).format(this.displayFormat) : null;
     },
     updateQuery() {
       var s;
       this.$emit(
         "update:modelValue",
-        this.query ? V(this.query).format(this.submitFormat) : null
+        this.query ? T(this.query).format(this.submitFormat) : null
       ), (s = this.form) == null || s.clearError(this.name);
     }
   }
@@ -718,7 +721,7 @@ const _t = {
   name: "WyxosError",
   props: {
     form: {
-      type: q,
+      type: E,
       default: null
     },
     name: {
@@ -749,7 +752,7 @@ const Ct = /* @__PURE__ */ w(St, [["render", Ot]]), $t = /* @__PURE__ */ Object.
 class se {
   constructor(e) {
     u(this, "visibility", b(!1));
-    u(this, "applied", {});
+    u(this, "applied", []);
     this.original = e, this.query = j({
       page: 1,
       perPage: 10,
@@ -784,6 +787,12 @@ class se {
       perPage: 10,
       ...this.original
     }), t && t();
+  }
+  getAppliedQuery() {
+    const e = {};
+    return this.applied.forEach((t) => {
+      e[t.key] = t.rawValue;
+    }), e;
   }
 }
 const me = "%[a-f0-9]{2}", re = new RegExp("(" + me + ")|([^%]+?)", "gi"), ie = new RegExp("(" + me + ")+", "gi");
@@ -849,7 +858,7 @@ function ge(s, e) {
     s.slice(t + e.length)
   ];
 }
-function qt(s, e) {
+function Et(s, e) {
   const t = {};
   if (Array.isArray(e))
     for (const r of e) {
@@ -866,7 +875,7 @@ function qt(s, e) {
     }
   return t;
 }
-const Et = (s) => s == null, Pt = (s) => encodeURIComponent(s).replace(/[!'()*]/g, (e) => `%${e.charCodeAt(0).toString(16).toUpperCase()}`), H = Symbol("encodeFragmentIdentifier");
+const Pt = (s) => s == null, qt = (s) => encodeURIComponent(s).replace(/[!'()*]/g, (e) => `%${e.charCodeAt(0).toString(16).toUpperCase()}`), H = Symbol("encodeFragmentIdentifier");
 function Lt(s) {
   switch (s.arrayFormat) {
     case "index":
@@ -912,7 +921,7 @@ function Lt(s) {
       ];
   }
 }
-function Tt(s) {
+function Vt(s) {
   let e;
   switch (s.arrayFormat) {
     case "index":
@@ -950,19 +959,19 @@ function Tt(s) {
     case "comma":
     case "separator":
       return (t, r, i) => {
-        const n = typeof r == "string" && r.includes(s.arrayFormatSeparator), o = typeof r == "string" && !n && P(r, s).includes(s.arrayFormatSeparator);
-        r = o ? P(r, s) : r;
-        const a = n || o ? r.split(s.arrayFormatSeparator).map((l) => P(l, s)) : r === null ? r : P(r, s);
+        const n = typeof r == "string" && r.includes(s.arrayFormatSeparator), o = typeof r == "string" && !n && q(r, s).includes(s.arrayFormatSeparator);
+        r = o ? q(r, s) : r;
+        const a = n || o ? r.split(s.arrayFormatSeparator).map((l) => q(l, s)) : r === null ? r : q(r, s);
         i[t] = a;
       };
     case "bracket-separator":
       return (t, r, i) => {
         const n = /(\[])$/.test(t);
         if (t = t.replace(/\[]$/, ""), !n) {
-          i[t] = r && P(r, s);
+          i[t] = r && q(r, s);
           return;
         }
-        const o = r === null ? [] : r.split(s.arrayFormatSeparator).map((a) => P(a, s));
+        const o = r === null ? [] : r.split(s.arrayFormatSeparator).map((a) => q(a, s));
         if (i[t] === void 0) {
           i[t] = o;
           return;
@@ -984,9 +993,9 @@ function pe(s) {
     throw new TypeError("arrayFormatSeparator must be single character string");
 }
 function v(s, e) {
-  return e.encode ? e.strict ? Pt(s) : encodeURIComponent(s) : s;
+  return e.encode ? e.strict ? qt(s) : encodeURIComponent(s) : s;
 }
-function P(s, e) {
+function q(s, e) {
   return e.decode ? kt(s) : s;
 }
 function ye(s) {
@@ -996,7 +1005,7 @@ function be(s) {
   const e = s.indexOf("#");
   return e !== -1 && (s = s.slice(0, e)), s;
 }
-function Vt(s) {
+function Tt(s) {
   let e = "";
   const t = s.indexOf("#");
   return t !== -1 && (e = s.slice(t)), e;
@@ -1019,7 +1028,7 @@ function ee(s, e) {
     parseBooleans: !1,
     ...e
   }, pe(e.arrayFormatSeparator);
-  const t = Tt(e), r = /* @__PURE__ */ Object.create(null);
+  const t = Vt(e), r = /* @__PURE__ */ Object.create(null);
   if (typeof s != "string" || (s = s.trim().replace(/^[?#&]/, ""), !s))
     return r;
   for (const i of s.split("&")) {
@@ -1027,7 +1036,7 @@ function ee(s, e) {
       continue;
     const n = e.decode ? i.replace(/\+/g, " ") : i;
     let [o, a] = ge(n, "=");
-    o === void 0 && (o = n), a = a === void 0 ? null : ["comma", "separator", "bracket-separator"].includes(e.arrayFormat) ? a : P(a, e), t(P(o, e), a, r);
+    o === void 0 && (o = n), a = a === void 0 ? null : ["comma", "separator", "bracket-separator"].includes(e.arrayFormat) ? a : q(a, e), t(q(o, e), a, r);
   }
   for (const [i, n] of Object.entries(r))
     if (typeof n == "object" && n !== null)
@@ -1050,7 +1059,7 @@ function _e(s, e) {
     arrayFormatSeparator: ",",
     ...e
   }, pe(e.arrayFormatSeparator);
-  const t = (o) => e.skipNull && Et(s[o]) || e.skipEmptyString && s[o] === "", r = Lt(e), i = {};
+  const t = (o) => e.skipNull && Pt(s[o]) || e.skipEmptyString && s[o] === "", r = Lt(e), i = {};
   for (const [o, a] of Object.entries(s))
     t(o) || (i[o] = a);
   const n = Object.keys(i);
@@ -1069,7 +1078,7 @@ function ve(s, e) {
   return t === void 0 && (t = s), {
     url: ((i = t == null ? void 0 : t.split("?")) == null ? void 0 : i[0]) ?? "",
     query: ee(Z(s), e),
-    ...e && e.parseFragmentIdentifier && r ? { fragmentIdentifier: P(r, e) } : {}
+    ...e && e.parseFragmentIdentifier && r ? { fragmentIdentifier: q(r, e) } : {}
   };
 }
 function Se(s, e) {
@@ -1085,7 +1094,7 @@ function Se(s, e) {
   };
   let n = _e(i, e);
   n && (n = `?${n}`);
-  let o = Vt(s.url);
+  let o = Tt(s.url);
   if (s.fragmentIdentifier) {
     const a = new URL(t);
     a.hash = s.fragmentIdentifier, o = e[H] ? a.hash : `#${s.fragmentIdentifier}`;
@@ -1101,7 +1110,7 @@ function we(s, e, t) {
   const { url: r, query: i, fragmentIdentifier: n } = ve(s, t);
   return Se({
     url: r,
-    query: qt(i, e),
+    query: Et(i, e),
     fragmentIdentifier: n
   }, t);
 }
@@ -1183,6 +1192,9 @@ class U {
   get isLoading() {
     return this.loadingState.value === "loading";
   }
+  get isLoaded() {
+    return this.loadingState.value === "loaded";
+  }
   static create(e) {
     return new U(e);
   }
@@ -1200,7 +1212,7 @@ class U {
       items: JSON.parse(JSON.stringify(this.attributes.items)).map(
         (r, i) => (r.uid = `${this.filter.query.page}-${i}`, r)
       )
-    }), this.router && this.router.push({ query: this.filter.query }), t)).finally(() => {
+    }), this.router && this.router.push({ query: this.filter.getAppliedQuery() }), t)).finally(() => {
       this.loaded();
     });
   }
@@ -1253,7 +1265,7 @@ class U {
     return this.router = e, this;
   }
   syncOnRouteChange(e) {
-    return Pe(
+    return qe(
       () => e.query,
       () => {
         this.refresh();
@@ -1268,7 +1280,7 @@ const At = {
   name: "WyxosForm",
   props: {
     form: {
-      type: q,
+      type: E,
       required: !0
     },
     submit: {
@@ -1443,11 +1455,11 @@ const Yt = /* @__PURE__ */ w(Nt, [["render", Dt]]), Jt = /* @__PURE__ */ Object.
         query: i.value
       }, () => [
         Le(f("input", {
-          "onUpdate:modelValue": c[0] || (c[0] = (E) => i.value = E),
+          "onUpdate:modelValue": c[0] || (c[0] = (P) => i.value = P),
           readonly: s.processing,
           type: s.type
         }, null, 8, Qt), [
-          [Te, i.value]
+          [Ve, i.value]
         ])
       ]) : y("", !0),
       p(l.$slots, "actions", {
@@ -1458,7 +1470,7 @@ const Yt = /* @__PURE__ */ w(Nt, [["render", Dt]]), Jt = /* @__PURE__ */ Object.
         n.value ? y("", !0) : (d(), h("button", {
           key: 0,
           class: "edit",
-          onClick: c[1] || (c[1] = (E) => n.value = !0)
+          onClick: c[1] || (c[1] = (P) => n.value = !0)
         }, c[4] || (c[4] = [
           f("i", { class: "fas fa-pencil-alt" }, null, -1)
         ]))),
@@ -1466,7 +1478,7 @@ const Yt = /* @__PURE__ */ w(Nt, [["render", Dt]]), Jt = /* @__PURE__ */ Object.
           key: 1,
           disabled: s.processing,
           class: "cancel",
-          onClick: c[2] || (c[2] = (E) => o())
+          onClick: c[2] || (c[2] = (P) => o())
         }, c[5] || (c[5] = [
           f("i", { class: "fas fa-times" }, null, -1)
         ]), 8, Xt)) : y("", !0),
@@ -1474,7 +1486,7 @@ const Yt = /* @__PURE__ */ w(Nt, [["render", Dt]]), Jt = /* @__PURE__ */ Object.
           key: 2,
           disabled: s.processing,
           class: "save",
-          onClick: c[3] || (c[3] = (E) => a())
+          onClick: c[3] || (c[3] = (P) => a())
         }, [
           s.processing ? y("", !0) : (d(), h("i", Zt)),
           s.processing ? (d(), h("i", es)) : y("", !0)
@@ -1529,7 +1541,7 @@ const Yt = /* @__PURE__ */ w(Nt, [["render", Dt]]), Jt = /* @__PURE__ */ Object.
       default: null
     },
     form: {
-      type: q,
+      type: E,
       default: null
     },
     disabled: {
@@ -1609,7 +1621,7 @@ const ns = /* @__PURE__ */ w(rs, [["render", is]]), os = /* @__PURE__ */ Object.
 }, ls = { key: 0 };
 function us(s, e, t, r, i, n) {
   const o = g("o-table");
-  return d(), O(o, Y(J(n.allPropsAndEvents)), Ve({
+  return d(), O(o, Y(J(n.allPropsAndEvents)), Te({
     empty: m(() => [
       p(s.$slots, "empty", {}, () => [
         t.listing.isEmpty ? (d(), h("p", ls, "No records found.")) : y("", !0)
@@ -1672,7 +1684,7 @@ const ds = /* @__PURE__ */ w(as, [["render", us]]), cs = /* @__PURE__ */ Object.
       default: null
     },
     form: {
-      type: q,
+      type: E,
       default: null
     },
     disabled: {
@@ -1877,7 +1889,7 @@ function js(s, e, t, r, i, n) {
 const xe = /* @__PURE__ */ w($s, [["render", js]]), ks = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: xe
-}, Symbol.toStringTag, { value: "Module" })), qs = {
+}, Symbol.toStringTag, { value: "Module" })), Es = {
   name: "WyxosRemove",
   props: {
     listing: {
@@ -1892,7 +1904,7 @@ const xe = /* @__PURE__ */ w($s, [["render", js]]), ks = /* @__PURE__ */ Object.
   emits: ["removed", "failed"],
   setup() {
     return {
-      destroy: q.create()
+      destroy: E.create()
     };
   },
   data() {
@@ -1912,7 +1924,7 @@ const xe = /* @__PURE__ */ w($s, [["render", js]]), ks = /* @__PURE__ */ Object.
       });
     }
   }
-}, Es = { class: "content p-6" }, Ps = { class: "buttons flex gap-6 justify-end" };
+}, Ps = { class: "content p-6" }, qs = { class: "buttons flex gap-6 justify-end" };
 function Ls(s, e, t, r, i, n) {
   const o = g("o-button"), a = g("w-button"), l = g("o-modal");
   return d(), O(a, {
@@ -1932,14 +1944,14 @@ function Ls(s, e, t, r, i, n) {
           "onUpdate:active": e[2] || (e[2] = (c) => i.isVisible = c)
         }, {
           default: m(() => [
-            f("div", Es, [
+            f("div", Ps, [
               p(s.$slots, "title", {}, () => [
                 e[5] || (e[5] = f("h3", { class: "title" }, "Delete", -1))
               ]),
               p(s.$slots, "message", {}, () => [
                 e[6] || (e[6] = f("p", { class: "mb-4" }, " Are you sure you want to delete this record? ", -1))
               ]),
-              f("div", Ps, [
+              f("div", qs, [
                 C(o, {
                   class: "button is-secondary",
                   onClick: e[0] || (e[0] = (c) => i.isVisible = !1)
@@ -1971,9 +1983,9 @@ function Ls(s, e, t, r, i, n) {
     _: 3
   });
 }
-const Ts = /* @__PURE__ */ w(qs, [["render", Ls]]), Vs = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const Vs = /* @__PURE__ */ w(Es, [["render", Ls]]), Ts = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
-  default: Ts
+  default: Vs
 }, Symbol.toStringTag, { value: "Module" })), Ws = {
   name: "WyxosSelect",
   props: {
@@ -1998,7 +2010,7 @@ const Ts = /* @__PURE__ */ w(qs, [["render", Ls]]), Vs = /* @__PURE__ */ Object.
       required: !0
     },
     form: {
-      type: q,
+      type: E,
       default: null
     },
     items: {
@@ -2050,7 +2062,7 @@ const Is = /* @__PURE__ */ w(Ws, [["render", Rs]]), Ms = /* @__PURE__ */ Object.
   emits: ["close"],
   setup() {
     return {
-      login: q.create({
+      login: E.create({
         email: null,
         password: null
       })
@@ -2130,7 +2142,7 @@ const Oe = /* @__PURE__ */ w(Bs, [["render", zs]]), Ds = /* @__PURE__ */ Object.
   name: "WyxosSubmit",
   props: {
     form: {
-      type: q,
+      type: E,
       required: !0
     },
     labels: {
@@ -2216,7 +2228,7 @@ const Gs = /* @__PURE__ */ w(Ys, [["render", Xs]]), Zs = /* @__PURE__ */ Object.
       L.set(x, F), window.location.hash = L.toString();
     }, o = b(i()[t.hashKey] || t.active), a = b(!1), l = (x) => a.value ? !0 : x === o.value, c = () => {
       a.value = window.innerWidth <= t.responsiveResolution;
-    }, E = (x) => {
+    }, P = (x) => {
       o.value = x, r("update:active", x), n(t.hashKey, x);
     };
     return le(() => {
@@ -2230,7 +2242,7 @@ const Gs = /* @__PURE__ */ w(Ys, [["render", Xs]]), Zs = /* @__PURE__ */ Object.
     }), (x, F) => (d(), h("div", null, [
       p(x.$slots, "navigation", {
         isActive: l,
-        setActive: E
+        setActive: P
       }, () => [
         F[0] || (F[0] = $(" Fill in navigation content here "))
       ]),
@@ -2594,7 +2606,7 @@ class hr {
     return new this();
   }
   format(e, t = M.UK, r = "") {
-    return e ? V(e).format(t) : r || this.empty;
+    return e ? T(e).format(t) : r || this.empty;
   }
   render(e = M.UK_TIME, t = "") {
     return this.format(this.value, e, t);
@@ -2606,7 +2618,7 @@ class hr {
     return this.format(this.value, e, t).split(" ")[1];
   }
   ago() {
-    return V(this.value).fromNow();
+    return T(this.value).fromNow();
   }
 }
 u(hr, "FORMATS", M);
@@ -2877,7 +2889,7 @@ async function kr(s = {}) {
   }).promise).action;
 }
 async function gr(s, e) {
-  var n, o, a, l, c, E;
+  var n, o, a, l, c, P;
   if ((s == null ? void 0 : s.code) === "ERR_CANCELED")
     return Promise.reject(s);
   const t = {
@@ -2910,19 +2922,19 @@ async function gr(s, e) {
     component: ((c = e.components) == null ? void 0 : c.SessionExpired) || Oe,
     trapFocus: !0,
     closable: !1
-  }), ((E = s.response) == null ? void 0 : E.status) === 422) {
+  }), ((P = s.response) == null ? void 0 : P.status) === 422) {
     const x = setInterval(() => {
       const F = document.querySelectorAll(
         ".o-field__message-danger, .wyxos-error"
-      ), z = (T) => {
-        const D = T.getBoundingClientRect(), R = window.getComputedStyle(T);
+      ), z = (V) => {
+        const D = V.getBoundingClientRect(), R = window.getComputedStyle(V);
         return D.width > 0 && D.height > 0 && R.display !== "none" && R.visibility !== "hidden" && R.opacity !== "0";
       }, L = Array.from(F).find(z);
       if (L) {
         clearInterval(x);
-        let T;
-        if (L.classList.contains("o-field__message-danger") ? T = L.closest(".o-field") : L.classList.contains("wyxos-error") && (T = L.closest("label")), T) {
-          const R = T.getBoundingClientRect().top + window.scrollY - 10;
+        let V;
+        if (L.classList.contains("o-field__message-danger") ? V = L.closest(".o-field") : L.classList.contains("wyxos-error") && (V = L.closest("label")), V) {
+          const R = V.getBoundingClientRect().top + window.scrollY - 10;
           window.scrollTo({ top: R, behavior: "smooth" });
         } else
           console.error("Could not determine the scroll target.");
@@ -2931,7 +2943,7 @@ async function gr(s, e) {
   }
   return Promise.reject(s);
 }
-function qr(s) {
+function Er(s) {
   X().notification.open({
     message: s || "Action successful.",
     duration: 2500,
@@ -2943,7 +2955,7 @@ function qr(s) {
 function pr(s) {
   _.interceptors.response.use(null, (e) => gr(e, s));
 }
-const ae = /* @__PURE__ */ Object.assign({ "./components/WyxosAccordion.vue": Be, "./components/WyxosAction.vue": ze, "./components/WyxosAsync.vue": He, "./components/WyxosButton.vue": st, "./components/WyxosCollection.vue": ot, "./components/WyxosConfirm.vue": mt, "./components/WyxosDatepicker.vue": bt, "./components/WyxosDeleteButton.vue": vt, "./components/WyxosError.vue": $t, "./components/WyxosForm.vue": Mt, "./components/WyxosIcon.vue": Ut, "./components/WyxosImage.vue": Jt, "./components/WyxosInlineEdit.vue": ss, "./components/WyxosInput.vue": os, "./components/WyxosListing.vue": cs, "./components/WyxosLiveInput.vue": gs, "./components/WyxosLogout.vue": _s, "./components/WyxosProgress.vue": Cs, "./components/WyxosPrompt.vue": ks, "./components/WyxosRemove.vue": Vs, "./components/WyxosSelect.vue": Ms, "./components/WyxosSessionExpired.vue": Ds, "./components/WyxosSubmit.vue": Zs, "./components/WyxosTab.vue": tr, "./components/WyxosTags.vue": nr, "./components/WyxosTokenExpired.vue": dr, "./components/WyxosUpdateButton.vue": fr }), Q = {}, yr = (s, e = {}) => {
+const ae = /* @__PURE__ */ Object.assign({ "./components/WyxosAccordion.vue": Be, "./components/WyxosAction.vue": ze, "./components/WyxosAsync.vue": He, "./components/WyxosButton.vue": st, "./components/WyxosCollection.vue": ot, "./components/WyxosConfirm.vue": mt, "./components/WyxosDatepicker.vue": bt, "./components/WyxosDeleteButton.vue": vt, "./components/WyxosError.vue": $t, "./components/WyxosForm.vue": Mt, "./components/WyxosIcon.vue": Ut, "./components/WyxosImage.vue": Jt, "./components/WyxosInlineEdit.vue": ss, "./components/WyxosInput.vue": os, "./components/WyxosListing.vue": cs, "./components/WyxosLiveInput.vue": gs, "./components/WyxosLogout.vue": _s, "./components/WyxosProgress.vue": Cs, "./components/WyxosPrompt.vue": ks, "./components/WyxosRemove.vue": Ts, "./components/WyxosSelect.vue": Ms, "./components/WyxosSessionExpired.vue": Ds, "./components/WyxosSubmit.vue": Zs, "./components/WyxosTab.vue": tr, "./components/WyxosTags.vue": nr, "./components/WyxosTokenExpired.vue": dr, "./components/WyxosUpdateButton.vue": fr }), Q = {}, yr = (s, e = {}) => {
   e = { vision: {}, oruga: {}, use: { oruga: !0 }, ...e }, e.use.oruga && s.use(Re, e.oruga), Object.keys(ae).forEach((t) => {
     const r = ae[t];
     if (r && r.default) {
@@ -2970,7 +2982,7 @@ const ae = /* @__PURE__ */ Object.assign({ "./components/WyxosAccordion.vue": Be
       query: t
     };
   }
-}, Er = {
+}, Pr = {
   install: yr,
   ...Q,
   vn: br
@@ -2982,7 +2994,7 @@ export {
   hr as DateRender,
   Or as FileRequest,
   se as Filter,
-  q as FormBuilder,
+  E as FormBuilder,
   U as Listing,
   A as LoadState,
   je as Modal,
@@ -3010,7 +3022,7 @@ export {
   bs as WyxosLogout,
   Os as WyxosProgress,
   xe as WyxosPrompt,
-  Ts as WyxosRemove,
+  Vs as WyxosRemove,
   Is as WyxosSelect,
   Oe as WyxosSessionExpired,
   Gs as WyxosSubmit,
@@ -3020,9 +3032,9 @@ export {
   cr as WyxosUpdateButton,
   jr as auth,
   kr as confirm,
-  Er as default,
+  Pr as default,
   gr as errorHandler,
-  qr as success,
+  Er as success,
   N as useFormErrors,
   br as vn
 };
