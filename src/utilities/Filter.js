@@ -3,7 +3,7 @@ import { reactive, ref } from 'vue'
 export default class Filter {
   visibility = ref(false)
 
-  applied = {}
+  applied = []
 
   constructor(query) {
     this.original = query
@@ -57,5 +57,14 @@ export default class Filter {
     if (callback) {
       callback()
     }
+  }
+
+  getAppliedQuery() {
+    const output = {}
+    this.applied.forEach((item) => {
+      output[item.key] = item.rawValue
+    })
+
+    return output
   }
 }

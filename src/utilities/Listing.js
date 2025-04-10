@@ -107,6 +107,10 @@ export default class Listing {
     return this.loadingState.value === 'loading'
   }
 
+  get isLoaded() {
+    return this.loadingState.value === 'loaded'
+  }
+
   static create(query) {
     return new Listing(query)
   }
@@ -162,7 +166,7 @@ export default class Listing {
         }
 
         if (this.router) {
-          this.router.push({ query: this.filter.query })
+          this.router.push({ query: this.filter.getAppliedQuery() })
         }
 
         return response

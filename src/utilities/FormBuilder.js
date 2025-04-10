@@ -352,4 +352,10 @@ export default class FormBuilder {
   toJson() {
     return JSON.parse(JSON.stringify(this.form))
   }
+
+  reset() {
+    this.setAttributes(this.original)
+
+    return this
+  }
 }
