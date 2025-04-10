@@ -6,17 +6,26 @@ export default class Filter {
   applied = []
 
   constructor(query) {
+    query = {
+      page: 1,
+      ...query
+    }
+
     this.original = query
 
     this.query = reactive({
-      page: 1,
-      perPage: 10,
       ...query
     })
   }
 
   get isVisible() {
     return this.visibility.value
+  }
+
+  get isDirty() {
+    console.log(JSON.stringify(this.query))
+    console.log(JSON.stringify(this.original))
+    return JSON.stringify(this.query) !== JSON.stringify(this.original)
   }
 
   show() {
@@ -37,8 +46,6 @@ export default class Filter {
 
   reset() {
     this.query = reactive({
-      page: 1,
-      perPage: 10,
       ...this.original
     })
   }
@@ -48,8 +55,6 @@ export default class Filter {
       this.query[key] = this.original[key]
     } else {
       this.query = reactive({
-        page: 1,
-        perPage: 10,
         ...this.original
       })
     }

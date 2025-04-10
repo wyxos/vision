@@ -111,6 +111,10 @@ export default class Listing {
     return this.loadingState.value === 'loaded'
   }
 
+  get isDirty() {
+    return this.filter.isDirty
+  }
+
   static create(query) {
     return new Listing(query)
   }
@@ -149,6 +153,10 @@ export default class Listing {
           this.filter.applied = response.data.filters
         }
 
+        if (this.router) {
+          this.router.replace({ query: this.filter.getAppliedQuery() })
+        }
+
         if (this.attributes.masonry) {
           // if(this.attributes.pages.length > this.attributes.masonry){
           //     this.attributes.pages.shift()
@@ -163,10 +171,6 @@ export default class Listing {
               }
             )
           })
-        }
-
-        if (this.router) {
-          this.router.push({ query: this.filter.getAppliedQuery() })
         }
 
         return response
@@ -313,6 +317,14 @@ export default class Listing {
 
   next() {
     this.filter.query.page += 1
+
+    return this.search()
+  }
+
+  resetSearch() {
+    this.filter.reset()
+
+    this.filter.applied = []
 
     return this.search()
   }
