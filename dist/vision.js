@@ -1,6 +1,6 @@
-var qe = Object.defineProperty;
-var Ee = (s, e, t) => e in s ? qe(s, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : s[e] = t;
-var u = (s, e, t) => Ee(s, typeof e != "symbol" ? e + "" : e, t);
+var Ee = Object.defineProperty;
+var qe = (s, e, t) => e in s ? Ee(s, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : s[e] = t;
+var u = (s, e, t) => qe(s, typeof e != "symbol" ? e + "" : e, t);
 import { ref as b, onMounted as le, openBlock as d, createElementBlock as h, renderSlot as p, createCommentVNode as y, createElementVNode as f, unref as I, createTextVNode as $, toDisplayString as S, reactive as j, normalizeProps as Y, guardReactiveProps as J, resolveComponent as g, createBlock as O, withCtx as m, createVNode as C, normalizeClass as B, mergeProps as W, defineComponent as ue, watch as Pe, withModifiers as de, withDirectives as Le, vModelDynamic as Ve, createSlots as Te, renderList as ce, Fragment as fe, Teleport as We, onUnmounted as Ae } from "vue";
 import _ from "axios";
 import T from "moment";
@@ -150,7 +150,7 @@ function U() {
     }
   };
 }
-class q {
+class E {
   constructor(e = {}) {
     u(this, "method", "post");
     u(this, "submitUrl", null);
@@ -321,7 +321,7 @@ const w = (s, e) => {
   name: "WyxosButton",
   props: {
     form: {
-      type: q,
+      type: E,
       default: null
     }
   }
@@ -553,7 +553,7 @@ const ht = /* @__PURE__ */ w(at, [["render", ft]]), mt = /* @__PURE__ */ Object.
       default: null
     },
     form: {
-      type: q,
+      type: E,
       default: null
     },
     options: {
@@ -659,7 +659,7 @@ class he {
     }
     try {
       const n = typeof this.url == "function" ? this.url(e) : this.url;
-      return console.log(n, e), this.processing.value = !1, _.patch(n, e).then((o) => (this.processing.value = !1, this.onSuccessCallback && this.onSuccessCallback(o), o));
+      return this.processing.value = !1, _.patch(n, e).then((o) => (this.processing.value = !1, this.onSuccessCallback && this.onSuccessCallback(o), o));
     } catch (n) {
       this.processing.value = !1, this.error = ((i = (r = n.response) == null ? void 0 : r.data) == null ? void 0 : i.message) || n.message;
     }
@@ -721,7 +721,7 @@ const _t = {
   name: "WyxosError",
   props: {
     form: {
-      type: q,
+      type: E,
       default: null
     },
     name: {
@@ -764,7 +764,7 @@ class se {
     return this.visibility.value;
   }
   get isDirty() {
-    return console.log(JSON.stringify(this.query)), console.log(JSON.stringify(this.original)), JSON.stringify(this.query) !== JSON.stringify(this.original);
+    return JSON.stringify(this.query) !== JSON.stringify(this.original);
   }
   show() {
     this.visibility.value = !0;
@@ -861,7 +861,7 @@ function ge(s, e) {
     s.slice(t + e.length)
   ];
 }
-function qt(s, e) {
+function Et(s, e) {
   const t = {};
   if (Array.isArray(e))
     for (const r of e) {
@@ -878,7 +878,7 @@ function qt(s, e) {
     }
   return t;
 }
-const Et = (s) => s == null, Pt = (s) => encodeURIComponent(s).replace(/[!'()*]/g, (e) => `%${e.charCodeAt(0).toString(16).toUpperCase()}`), H = Symbol("encodeFragmentIdentifier");
+const qt = (s) => s == null, Pt = (s) => encodeURIComponent(s).replace(/[!'()*]/g, (e) => `%${e.charCodeAt(0).toString(16).toUpperCase()}`), H = Symbol("encodeFragmentIdentifier");
 function Lt(s) {
   switch (s.arrayFormat) {
     case "index":
@@ -1062,7 +1062,7 @@ function _e(s, e) {
     arrayFormatSeparator: ",",
     ...e
   }, pe(e.arrayFormatSeparator);
-  const t = (o) => e.skipNull && Et(s[o]) || e.skipEmptyString && s[o] === "", r = Lt(e), i = {};
+  const t = (o) => e.skipNull && qt(s[o]) || e.skipEmptyString && s[o] === "", r = Lt(e), i = {};
   for (const [o, a] of Object.entries(s))
     t(o) || (i[o] = a);
   const n = Object.keys(i);
@@ -1113,7 +1113,7 @@ function we(s, e, t) {
   const { url: r, query: i, fragmentIdentifier: n } = ve(s, t);
   return Se({
     url: r,
-    query: qt(i, e),
+    query: Et(i, e),
     fragmentIdentifier: n
   }, t);
 }
@@ -1289,7 +1289,7 @@ const At = {
   name: "WyxosForm",
   props: {
     form: {
-      type: q,
+      type: E,
       required: !0
     },
     submit: {
@@ -1464,7 +1464,7 @@ const Yt = /* @__PURE__ */ w(Ut, [["render", Dt]]), Jt = /* @__PURE__ */ Object.
         query: i.value
       }, () => [
         Le(f("input", {
-          "onUpdate:modelValue": c[0] || (c[0] = (E) => i.value = E),
+          "onUpdate:modelValue": c[0] || (c[0] = (q) => i.value = q),
           readonly: s.processing,
           type: s.type
         }, null, 8, Qt), [
@@ -1479,7 +1479,7 @@ const Yt = /* @__PURE__ */ w(Ut, [["render", Dt]]), Jt = /* @__PURE__ */ Object.
         n.value ? y("", !0) : (d(), h("button", {
           key: 0,
           class: "edit",
-          onClick: c[1] || (c[1] = (E) => n.value = !0)
+          onClick: c[1] || (c[1] = (q) => n.value = !0)
         }, c[4] || (c[4] = [
           f("i", { class: "fas fa-pencil-alt" }, null, -1)
         ]))),
@@ -1487,7 +1487,7 @@ const Yt = /* @__PURE__ */ w(Ut, [["render", Dt]]), Jt = /* @__PURE__ */ Object.
           key: 1,
           disabled: s.processing,
           class: "cancel",
-          onClick: c[2] || (c[2] = (E) => o())
+          onClick: c[2] || (c[2] = (q) => o())
         }, c[5] || (c[5] = [
           f("i", { class: "fas fa-times" }, null, -1)
         ]), 8, Xt)) : y("", !0),
@@ -1495,7 +1495,7 @@ const Yt = /* @__PURE__ */ w(Ut, [["render", Dt]]), Jt = /* @__PURE__ */ Object.
           key: 2,
           disabled: s.processing,
           class: "save",
-          onClick: c[3] || (c[3] = (E) => a())
+          onClick: c[3] || (c[3] = (q) => a())
         }, [
           s.processing ? y("", !0) : (d(), h("i", Zt)),
           s.processing ? (d(), h("i", es)) : y("", !0)
@@ -1550,7 +1550,7 @@ const Yt = /* @__PURE__ */ w(Ut, [["render", Dt]]), Jt = /* @__PURE__ */ Object.
       default: null
     },
     form: {
-      type: q,
+      type: E,
       default: null
     },
     disabled: {
@@ -1693,7 +1693,7 @@ const ds = /* @__PURE__ */ w(as, [["render", us]]), cs = /* @__PURE__ */ Object.
       default: null
     },
     form: {
-      type: q,
+      type: E,
       default: null
     },
     disabled: {
@@ -1898,7 +1898,7 @@ function js(s, e, t, r, i, n) {
 const xe = /* @__PURE__ */ w($s, [["render", js]]), ks = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: xe
-}, Symbol.toStringTag, { value: "Module" })), qs = {
+}, Symbol.toStringTag, { value: "Module" })), Es = {
   name: "WyxosRemove",
   props: {
     listing: {
@@ -1913,7 +1913,7 @@ const xe = /* @__PURE__ */ w($s, [["render", js]]), ks = /* @__PURE__ */ Object.
   emits: ["removed", "failed"],
   setup() {
     return {
-      destroy: q.create()
+      destroy: E.create()
     };
   },
   data() {
@@ -1933,7 +1933,7 @@ const xe = /* @__PURE__ */ w($s, [["render", js]]), ks = /* @__PURE__ */ Object.
       });
     }
   }
-}, Es = { class: "content p-6" }, Ps = { class: "buttons flex gap-6 justify-end" };
+}, qs = { class: "content p-6" }, Ps = { class: "buttons flex gap-6 justify-end" };
 function Ls(s, e, t, r, i, n) {
   const o = g("o-button"), a = g("w-button"), l = g("o-modal");
   return d(), O(a, {
@@ -1953,7 +1953,7 @@ function Ls(s, e, t, r, i, n) {
           "onUpdate:active": e[2] || (e[2] = (c) => i.isVisible = c)
         }, {
           default: m(() => [
-            f("div", Es, [
+            f("div", qs, [
               p(s.$slots, "title", {}, () => [
                 e[5] || (e[5] = f("h3", { class: "title" }, "Delete", -1))
               ]),
@@ -1992,7 +1992,7 @@ function Ls(s, e, t, r, i, n) {
     _: 3
   });
 }
-const Vs = /* @__PURE__ */ w(qs, [["render", Ls]]), Ts = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+const Vs = /* @__PURE__ */ w(Es, [["render", Ls]]), Ts = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: Vs
 }, Symbol.toStringTag, { value: "Module" })), Ws = {
@@ -2019,7 +2019,7 @@ const Vs = /* @__PURE__ */ w(qs, [["render", Ls]]), Ts = /* @__PURE__ */ Object.
       required: !0
     },
     form: {
-      type: q,
+      type: E,
       default: null
     },
     items: {
@@ -2071,7 +2071,7 @@ const Is = /* @__PURE__ */ w(Ws, [["render", Rs]]), Ms = /* @__PURE__ */ Object.
   emits: ["close"],
   setup() {
     return {
-      login: q.create({
+      login: E.create({
         email: null,
         password: null
       })
@@ -2151,7 +2151,7 @@ const Oe = /* @__PURE__ */ w(Bs, [["render", zs]]), Ds = /* @__PURE__ */ Object.
   name: "WyxosSubmit",
   props: {
     form: {
-      type: q,
+      type: E,
       required: !0
     },
     labels: {
@@ -2237,7 +2237,7 @@ const Gs = /* @__PURE__ */ w(Ys, [["render", Xs]]), Zs = /* @__PURE__ */ Object.
       L.set(x, F), window.location.hash = L.toString();
     }, o = b(i()[t.hashKey] || t.active), a = b(!1), l = (x) => a.value ? !0 : x === o.value, c = () => {
       a.value = window.innerWidth <= t.responsiveResolution;
-    }, E = (x) => {
+    }, q = (x) => {
       o.value = x, r("update:active", x), n(t.hashKey, x);
     };
     return le(() => {
@@ -2251,7 +2251,7 @@ const Gs = /* @__PURE__ */ w(Ys, [["render", Xs]]), Zs = /* @__PURE__ */ Object.
     }), (x, F) => (d(), h("div", null, [
       p(x.$slots, "navigation", {
         isActive: l,
-        setActive: E
+        setActive: q
       }, () => [
         F[0] || (F[0] = $(" Fill in navigation content here "))
       ]),
@@ -2898,7 +2898,7 @@ async function kr(s = {}) {
   }).promise).action;
 }
 async function gr(s, e) {
-  var n, o, a, l, c, E;
+  var n, o, a, l, c, q;
   if ((s == null ? void 0 : s.code) === "ERR_CANCELED")
     return Promise.reject(s);
   const t = {
@@ -2931,7 +2931,7 @@ async function gr(s, e) {
     component: ((c = e.components) == null ? void 0 : c.SessionExpired) || Oe,
     trapFocus: !0,
     closable: !1
-  }), ((E = s.response) == null ? void 0 : E.status) === 422) {
+  }), ((q = s.response) == null ? void 0 : q.status) === 422) {
     const x = setInterval(() => {
       const F = document.querySelectorAll(
         ".o-field__message-danger, .wyxos-error"
@@ -2952,7 +2952,7 @@ async function gr(s, e) {
   }
   return Promise.reject(s);
 }
-function qr(s) {
+function Er(s) {
   X().notification.open({
     message: s || "Action successful.",
     duration: 2500,
@@ -2991,7 +2991,7 @@ const ae = /* @__PURE__ */ Object.assign({ "./components/WyxosAccordion.vue": Be
       query: t
     };
   }
-}, Er = {
+}, qr = {
   install: yr,
   ...Q,
   vn: br
@@ -3003,7 +3003,7 @@ export {
   hr as DateRender,
   Or as FileRequest,
   se as Filter,
-  q as FormBuilder,
+  E as FormBuilder,
   N as Listing,
   A as LoadState,
   je as Modal,
@@ -3041,9 +3041,9 @@ export {
   cr as WyxosUpdateButton,
   jr as auth,
   kr as confirm,
-  Er as default,
+  qr as default,
   gr as errorHandler,
-  qr as success,
+  Er as success,
   U as useFormErrors,
   br as vn
 };
