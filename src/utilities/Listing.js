@@ -154,7 +154,7 @@ export default class Listing {
         }
 
         if (this.router) {
-          this.router.replace({ query: this.filter.getAppliedQuery() })
+          this.router.push({ query: this.filter.getAppliedQuery() })
         }
 
         if (this.attributes.masonry) {
@@ -172,6 +172,8 @@ export default class Listing {
             )
           })
         }
+
+        this.filter.hide()
 
         return response
       })
@@ -221,6 +223,10 @@ export default class Listing {
               }
             )
           })
+        }
+
+        if (this.router) {
+          this.router.push({ query: {} })
         }
 
         return response
@@ -326,6 +332,6 @@ export default class Listing {
 
     this.filter.applied = []
 
-    return this.search()
+    return this.load()
   }
 }

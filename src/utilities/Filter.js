@@ -72,4 +72,8 @@ export default class Filter {
 
     return output
   }
+
+  isDefault(key) {
+    return this.original[key] === this.query[key]
+  }
 }
