@@ -74,8 +74,6 @@ export default class Action {
     try {
       const url = typeof this.url === 'function' ? this.url(payload) : this.url
 
-      console.log(url, payload)
-
       this.processing.value = false
 
       return axios.patch(url, payload).then((response) => {

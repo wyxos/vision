@@ -23,8 +23,6 @@ export default class Filter {
   }
 
   get isDirty() {
-    console.log(JSON.stringify(this.query))
-    console.log(JSON.stringify(this.original))
     return JSON.stringify(this.query) !== JSON.stringify(this.original)
   }
 
