@@ -2615,7 +2615,7 @@ class hr {
     return new this();
   }
   format(e, t = M.UK, r = "") {
-    return e ? T(e).format(t) : r || this.empty;
+    return e ? T(e).format(t) : this.value ? T(this.value).format(t) : r || this.empty;
   }
   render(e = M.UK_TIME, t = "") {
     return this.format(this.value, e, t);

@@ -29,6 +29,10 @@ export default class DateRender {
 
   format(date, format = FORMATS.UK, empty = '') {
     if (!date) {
+      if (this.value) {
+        return moment(this.value).format(format)
+      }
+
       return empty || this.empty
     }
 
