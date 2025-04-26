@@ -10,8 +10,6 @@ export default class Listing {
   router = null
 
   attributes = reactive({
-    masonry: null,
-    pages: [],
     items: [],
     showing: 0,
     perPage: 0,
@@ -119,12 +117,6 @@ export default class Listing {
     return new Listing(query)
   }
 
-  masonry(number = 5) {
-    this.attributes.masonry = number
-
-    return this
-  }
-
   setFilter(attributes) {
     this.filter = new Filter(attributes)
 
@@ -154,26 +146,8 @@ export default class Listing {
         }
 
         if (this.router) {
-          this.router.push({ query: this.filter.getAppliedQuery() })
+          this.router.push({ query: this.filter.query })
         }
-
-        if (this.attributes.masonry) {
-          // if(this.attributes.pages.length > this.attributes.masonry){
-          //     this.attributes.pages.shift()
-          // }
-
-          this.attributes.pages.push({
-            page: this.filter.query.page,
-            items: JSON.parse(JSON.stringify(this.attributes.items)).map(
-              (item, index) => {
-                item.uid = `${this.filter.query.page}-${index}`
-                return item
-              }
-            )
-          })
-        }
-
-        this.filter.hide()
 
         return response
       })
@@ -211,22 +185,6 @@ export default class Listing {
 
         if (response.data.filters) {
           this.filter.applied = response.data.filters
-        }
-
-        if (this.attributes.masonry) {
-          this.attributes.pages.push({
-            page: this.filter.query.page,
-            items: JSON.parse(JSON.stringify(this.attributes.items)).map(
-              (item, index) => {
-                item.uid = `${this.filter.query.page}-${index}`
-                return item
-              }
-            )
-          })
-        }
-
-        if (this.router) {
-          this.router.push({ query: {} })
         }
 
         return response
