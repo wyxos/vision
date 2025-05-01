@@ -14,23 +14,33 @@ export default {
     },
     displayFormat: {
       type: String,
-      default: 'DD/MM/YYYY'
+      default() {
+        return 'DD/MM/YYYY'
+      }
     },
     submitFormat: {
       type: String,
-      default: 'YYYY-MM-DD'
+      default() {
+        return 'YYYY-MM-DD'
+      }
     },
     label: {
       type: String,
-      default: null
+      default() {
+        return null
+      }
     },
     name: {
       type: String,
-      default: null
+      default() {
+        return null
+      }
     },
     form: {
       type: FormBuilder,
-      default: null
+      default() {
+        return null
+      }
     },
     options: {
       type: Object,
