@@ -1,6 +1,6 @@
 {
   "name": "@wyxos/vision",
-  "version": "1.22.16",
+  "version": "1.23.0",
   "description": "",
   "type": "module",
   "files": [
@@ -33,12 +33,12 @@
   "license": "ISC",
   "dependencies": {
     "@vuepic/vue-datepicker": "^9.0.2",
-    "axios": "1.8.2",
-    "iconv-lite": "^0.6.3",
     "qs": "^6.13.1",
     "query-string": "^8.1.0"
   },
   "devDependencies": {
+    "axios": "1.8.2",
+    "iconv-lite": "^0.6.3",
     "@oruga-ui/oruga-next": ">=0.9.1 <1.0.0",
     "@vitejs/plugin-vue": "^4.4.1",
     "chalk": "^5.3.0",
@@ -66,7 +66,6 @@
     "vue-router": "^4.3.2"
   },
   "peerDependencies": {
-    "@oruga-ui/oruga-next": ">=0.9.1 <1.0.0",
     "axios": "1.8.2",
     "moment": "^2.29.4",
     "query-string": "^8.1.0",
