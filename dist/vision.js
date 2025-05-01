@@ -538,23 +538,33 @@ const ht = /* @__PURE__ */ w(at, [["render", ft]]), mt = /* @__PURE__ */ Object.
     },
     displayFormat: {
       type: String,
-      default: "DD/MM/YYYY"
+      default() {
+        return "DD/MM/YYYY";
+      }
     },
     submitFormat: {
       type: String,
-      default: "YYYY-MM-DD"
+      default() {
+        return "YYYY-MM-DD";
+      }
     },
     label: {
       type: String,
-      default: null
+      default() {
+        return null;
+      }
     },
     name: {
       type: String,
-      default: null
+      default() {
+        return null;
+      }
     },
     form: {
       type: E,
-      default: null
+      default() {
+        return null;
+      }
     },
     options: {
       type: Object,
@@ -1531,39 +1541,57 @@ const Yt = /* @__PURE__ */ w(Ut, [["render", Dt]]), Jt = /* @__PURE__ */ Object.
     },
     clearable: {
       type: Boolean,
-      default: !1
+      default() {
+        return !1;
+      }
     },
     fieldClass: {
       type: String,
-      default: null
+      default() {
+        return null;
+      }
     },
     inputRootClass: {
       type: String,
-      default: null
+      default() {
+        return null;
+      }
     },
     inputClass: {
       type: String,
-      default: null
+      default() {
+        return null;
+      }
     },
     modelValue: {
       type: [String, Number, null],
-      default: null
+      default() {
+        return null;
+      }
     },
     form: {
       type: E,
-      default: null
+      default() {
+        return null;
+      }
     },
     disabled: {
       type: [Boolean, String],
-      default: null
+      default() {
+        return null;
+      }
     },
     placeholder: {
       type: String,
-      default: null
+      default() {
+        return null;
+      }
     },
     passwordReveal: {
       type: Boolean,
-      default: !1
+      default() {
+        return !1;
+      }
     }
   },
   emits: ["update:modelValue"],
@@ -1595,7 +1623,7 @@ function is(s, e, t, r, i, n) {
         class: B(t.inputClass),
         clearable: t.clearable,
         disabled: t.disabled,
-        "model-value": t.modelValue,
+        "model-value": t.modelValue ?? "",
         name: t.name,
         "password-reveal": t.passwordReveal,
         placeholder: t.placeholder,

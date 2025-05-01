@@ -29,39 +29,57 @@ export default {
     },
     clearable: {
       type: Boolean,
-      default: false
+      default() {
+        return false
+      }
     },
     fieldClass: {
       type: String,
-      default: null
+      default() {
+        return null
+      }
     },
     inputRootClass: {
       type: String,
-      default: null
+      default() {
+        return null
+      }
     },
     inputClass: {
       type: String,
-      default: null
+      default() {
+        return null
+      }
     },
     modelValue: {
       type: [String, Number, null],
-      default: null
+      default() {
+        return null
+      }
     },
     form: {
       type: FormBuilder,
-      default: null
+      default() {
+        return null
+      }
     },
     disabled: {
       type: [Boolean, String],
-      default: null
+      default() {
+        return null
+      }
     },
     placeholder: {
       type: String,
-      default: null
+      default() {
+        return null
+      }
     },
     passwordReveal: {
       type: Boolean,
-      default: false
+      default() {
+        return false
+      }
     }
   },
   emits: ['update:modelValue'],
@@ -107,7 +125,7 @@ export default {
       :class="inputClass"
       :clearable="clearable"
       :disabled="disabled"
-      :model-value="modelValue"
+      :model-value="modelValue ?? ''"
       :name="name"
       :password-reveal="passwordReveal"
       :placeholder="placeholder"
