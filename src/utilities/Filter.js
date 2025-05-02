@@ -74,4 +74,12 @@ export default class Filter {
   isDefault(key) {
     return this.original[key] === this.query[key]
   }
+
+  getFilledFields() {
+    return Object.fromEntries(
+      Object.entries(this.query).filter(
+        ([_, value]) => value !== null && value !== undefined && value !== ''
+      )
+    )
+  }
 }

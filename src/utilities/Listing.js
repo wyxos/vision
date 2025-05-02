@@ -19,7 +19,7 @@ export default class Listing {
   constructor(query) {
     this.filter = new Filter(query)
 
-    return new Proxy(this, {
+    const proxy = new Proxy(this, {
       get(target, name, receiver) {
         // Check if the property exists in the instance
         if (Reflect.has(target, name)) {
@@ -81,6 +81,8 @@ export default class Listing {
         return false
       }
     })
+
+    return proxy
   }
 
   get config() {
@@ -146,7 +148,7 @@ export default class Listing {
         }
 
         if (this.router) {
-          this.router.push({ query: this.filter.query })
+          this.router.push({ query: this.filter.getFilledFields() })
         }
 
         return response
@@ -157,10 +159,14 @@ export default class Listing {
   }
 
   load(query = {}) {
+    console.log('search', window.location.search)
+
     const urlQuery = queryString.parse(window.location.search, {
       parseNumbers: true,
       parseBooleans: true
     })
+
+    console.log(urlQuery)
 
     Object.assign(this.filter.query, urlQuery)
 
@@ -286,9 +292,15 @@ export default class Listing {
   }
 
   resetSearch() {
-    this.filter.reset()
+    this.reset()
 
     this.filter.applied = []
+
+    window.location.search = ''
+
+    if (this.router) {
+      this.router.push({ query: this.filter.query })
+    }
 
     return this.load()
   }
