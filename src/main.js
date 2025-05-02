@@ -1,4 +1,17 @@
-import Oruga from '@oruga-ui/oruga-next'
+import {
+  OButton,
+  ODatepicker,
+  OField,
+  OInput,
+  OModal,
+  ORadio,
+  OSelect,
+  OTabItem,
+  OTableColumn,
+  OTabs,
+  OTaginput,
+  OTooltip
+} from '@oruga-ui/oruga-next'
 import errorHandlerSetup from './errorHandlerSetup.js'
 
 const components = import.meta.glob('./components/*.vue', { eager: true })
@@ -6,11 +19,20 @@ const components = import.meta.glob('./components/*.vue', { eager: true })
 const MappedComponents = {}
 
 const install = (app, options = {}) => {
-  options = { ...{ vision: {}, oruga: {}, use: { oruga: true } }, ...options }
+  options = { ...{ vision: {} }, ...options }
 
-  if (options.use.oruga) {
-    app.use(Oruga, options.oruga)
-  }
+  app.component('OButton', OButton)
+  app.component('OField', OField)
+  app.component('ORadio', ORadio)
+  app.component('OModal', OModal)
+  app.component('OTooltip', OTooltip)
+  app.component('OTableColumn', OTableColumn)
+  app.component('OTabs', OTabs)
+  app.component('OTabItem', OTabItem)
+  app.component('OTaginput', OTaginput)
+  app.component('ODatepicker', ODatepicker)
+  app.component('OSelect', OSelect)
+  app.component('OInput', OInput)
 
   Object.keys(components).forEach((key) => {
     const componentModule = components[key]
