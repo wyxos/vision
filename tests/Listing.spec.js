@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import Listing from '../src/utilities/Listing'
 
 vi.stubGlobal('window', { location: { search: '?page=1&name=test' } })
