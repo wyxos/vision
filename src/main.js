@@ -1,16 +1,22 @@
 import {
+  OAutocomplete,
   OButton,
+  OCheckbox,
   ODatepicker,
   OField,
+  OIcon,
   OInput,
   OModal,
+  ONotification,
   ORadio,
   OSelect,
   OTabItem,
+  OTable,
   OTableColumn,
   OTabs,
   OTaginput,
-  OTooltip
+  OTooltip,
+  OUpload
 } from '@oruga-ui/oruga-next'
 import errorHandlerSetup from './errorHandlerSetup.js'
 
@@ -26,6 +32,7 @@ const install = (app, options = {}) => {
   app.component('ORadio', ORadio)
   app.component('OModal', OModal)
   app.component('OTooltip', OTooltip)
+  app.component('OTable', OTable)
   app.component('OTableColumn', OTableColumn)
   app.component('OTabs', OTabs)
   app.component('OTabItem', OTabItem)
@@ -33,6 +40,11 @@ const install = (app, options = {}) => {
   app.component('ODatepicker', ODatepicker)
   app.component('OSelect', OSelect)
   app.component('OInput', OInput)
+  app.component('OIcon', OIcon)
+  app.component('OUpload', OUpload)
+  app.component('OCheckbox', OCheckbox)
+  app.component('ONotification', ONotification)
+  app.component('OAutocomplete', OAutocomplete)
 
   Object.keys(components).forEach((key) => {
     const componentModule = components[key]
