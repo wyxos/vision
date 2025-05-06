@@ -1,9 +1,14 @@
 <script>
 import useFormErrors from '../utilities/useFormErrors'
 import FormBuilder from '../utilities/FormBuilder.js'
+import { OInput, OField } from '@oruga-ui/oruga-next'
 
 export default {
   name: 'WyxosInput',
+  components: {
+    OInput,
+    OField
+  },
   props: {
     label: {
       type: String,
