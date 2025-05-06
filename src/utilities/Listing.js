@@ -292,7 +292,7 @@ export default class Listing {
     this.filter.applied = []
 
     if (this.router) {
-      this.router.push({ query: {} }) // Clear query params without reload
+      return this.router.push({ query: {} }) // Clear query params without reload
     }
 
     return this.load()
