@@ -90,26 +90,26 @@ export default class FormBuilder {
     })
   }
 
-  get isDirty() {
-    const deepSort = (obj) => {
-      if (Array.isArray(obj)) {
-        return obj.map(deepSort) // Sort each item in the array
-      } else if (obj && typeof obj === 'object') {
-        return Object.keys(obj)
-          .sort() // Sort keys
-          .reduce((sorted, key) => {
-            sorted[key] = deepSort(obj[key]) // Recursively sort values
-            return sorted
-          }, {})
-      }
-      return obj // Return non-object values as is
-    }
-
-    return (
-      JSON.stringify(deepSort(this.original)) !==
-      JSON.stringify(deepSort(this.form))
-    )
-  }
+  // get isDirty() {
+  //   const deepSort = (obj) => {
+  //     if (Array.isArray(obj)) {
+  //       return obj.map(deepSort) // Sort each item in the array
+  //     } else if (obj && typeof obj === 'object') {
+  //       return Object.keys(obj)
+  //         .sort() // Sort keys
+  //         .reduce((sorted, key) => {
+  //           sorted[key] = deepSort(obj[key]) // Recursively sort values
+  //           return sorted
+  //         }, {})
+  //     }
+  //     return obj // Return non-object values as is
+  //   }
+  //
+  //   return (
+  //     JSON.stringify(deepSort(this.original)) !==
+  //     JSON.stringify(deepSort(this.form))
+  //   )
+  // }
 
   get isSubmitting() {
     return this.submitState.value === 'loading'

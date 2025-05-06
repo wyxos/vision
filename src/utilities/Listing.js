@@ -289,13 +289,10 @@ export default class Listing {
 
   resetSearch() {
     this.reset()
-
     this.filter.applied = []
 
-    window.location.search = ''
-
     if (this.router) {
-      this.router.push({ query: this.filter.query })
+      this.router.push({ query: {} }) // Clear query params without reload
     }
 
     return this.load()
