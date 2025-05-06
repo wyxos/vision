@@ -159,14 +159,10 @@ export default class Listing {
   }
 
   load(query = {}) {
-    console.log('search', window.location.search)
-
     const urlQuery = queryString.parse(window.location.search, {
       parseNumbers: true,
       parseBooleans: true
     })
-
-    console.log(urlQuery)
 
     Object.assign(this.filter.query, urlQuery)
 
