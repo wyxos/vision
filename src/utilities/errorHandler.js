@@ -1,4 +1,7 @@
-import { NotificationProgrammatic } from '@oruga-ui/oruga-next'
+import {
+  NotificationProgrammatic,
+  ModalProgrammatic
+} from '@oruga-ui/oruga-next'
 import axios from 'axios'
 import SessionExpired from '../components/WyxosSessionExpired.vue'
 import TokenExpired from '../components/WyxosTokenExpired.vue'
@@ -22,7 +25,7 @@ export default async function errorHandler(error, options) {
 
   const message = errors[error.response?.status] || errors[500]
 
-  NotificationProgrammatic.notification.open({
+  NotificationProgrammatic.open({
     message,
     duration: 1000 * 5,
     variant: 'danger',
@@ -31,7 +34,7 @@ export default async function errorHandler(error, options) {
   })
 
   if (error.response?.status === 419) {
-    NotificationProgrammatic.modal.open({
+    ModalProgrammatic.open({
       component: options.components?.TokenExpired || TokenExpired,
       trapFocus: true,
       closable: false
@@ -46,7 +49,7 @@ export default async function errorHandler(error, options) {
   }
 
   if (error.response?.status === 401) {
-    NotificationProgrammatic.modal.open({
+    ModalProgrammatic.open({
       component: options.components?.SessionExpired || SessionExpired,
       trapFocus: true,
       closable: false
