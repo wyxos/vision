@@ -9,6 +9,8 @@ export default class Listing {
 
   router = null
 
+  transformCallback = null
+
   attributes = reactive({
     items: [],
     showing: 0,
@@ -132,6 +134,12 @@ export default class Listing {
       query = Object.assign({}, this.filter.query, query)
     }
 
+    if (this.transformCallback) {
+      query = this.transformCallback(query)
+    }
+
+    console.log('query', query)
+
     this.loading()
 
     return axios
@@ -148,7 +156,7 @@ export default class Listing {
         }
 
         if (this.router) {
-          this.router.push({ query: this.filter.getFilledFields() })
+          this.router.push({ query })
         }
 
         return response
@@ -296,5 +304,11 @@ export default class Listing {
     }
 
     return this.load()
+  }
+
+  transform(callback) {
+    this.transformCallback = callback
+
+    return this
   }
 }
