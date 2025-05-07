@@ -138,8 +138,6 @@ export default class Listing {
       query = this.transformCallback(query)
     }
 
-    console.log('query', query)
-
     this.loading()
 
     return axios
