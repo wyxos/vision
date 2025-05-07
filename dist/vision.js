@@ -1240,7 +1240,7 @@ class U {
     return this.filter = new te(e), this;
   }
   search(e = {}) {
-    return typeof e == "function" ? e = Object.assign({}, this.filter.query, e(this.filter.query)) : e = Object.assign({}, this.filter.query, e), this.transformCallback && (e = this.transformCallback(e)), console.log("query", e), this.loading(), _.get(this.loadUrl, {
+    return typeof e == "function" ? e = Object.assign({}, this.filter.query, e(this.filter.query)) : e = Object.assign({}, this.filter.query, e), this.transformCallback && (e = this.transformCallback(e)), this.loading(), _.get(this.loadUrl, {
       params: e
     }).then((t) => (t.data.listing && Object.assign(this.attributes, t.data.listing), t.data.filters && (this.filter.applied = t.data.filters), this.router && this.router.push({ query: e }), t)).finally(() => {
       this.loaded();
