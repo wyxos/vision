@@ -1285,9 +1285,7 @@ class U {
   useRouter(e, t) {
     return this.router = e, Le(
       () => t.query,
-      (r, n) => {
-        console.log("Query changed:", r), this.refresh();
-      },
+      () => this.refresh(),
       { deep: !0 }
     ), this;
   }
