@@ -268,11 +268,7 @@ export default class Listing {
 
     watch(
       () => route.query,
-      (newQuery, oldQuery) => {
-        // handle query change
-        console.log('Query changed:', newQuery)
-        this.refresh()
-      },
+      () => this.refresh(),
       { deep: true }
     )
 
