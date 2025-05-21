@@ -138,6 +138,10 @@ export default class Listing {
       query = this.transformCallback(query)
     }
 
+    if (this.router) {
+      return this.router.push({ query })
+    }
+
     this.loading()
 
     return axios
@@ -151,10 +155,6 @@ export default class Listing {
 
         if (response.data.filters) {
           this.filter.applied = response.data.filters
-        }
-
-        if (this.router) {
-          this.router.push({ query })
         }
 
         return response
@@ -203,13 +203,6 @@ export default class Listing {
   }
 
   refresh(query) {
-    const urlQuery = queryString.parse(window.location.search, {
-      parseNumbers: true,
-      parseBooleans: true
-    })
-
-    Object.assign(this.filter.query, urlQuery)
-
     if (typeof query === 'function') {
       query = Object.assign({}, this.filter.query, query(this.filter.query))
     } else {
@@ -270,18 +263,17 @@ export default class Listing {
     return this.search()
   }
 
-  enableRouterSync(router) {
+  useRouter(router, route) {
     this.router = router
 
-    return this
-  }
-
-  syncOnRouteChange(route) {
     watch(
       () => route.query,
-      () => {
+      (newQuery, oldQuery) => {
+        // handle query change
+        console.log('Query changed:', newQuery)
         this.refresh()
-      }
+      },
+      { deep: true }
     )
 
     return this
