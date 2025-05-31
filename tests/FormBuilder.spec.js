@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest'
+import { describe, it, expect, beforeEach, vi, afterEach, test } from 'vitest'
 import FormBuilder from '../src/utilities/FormBuilder'
 import axios from 'axios'
 import useFormErrors from '../src/utilities/useFormErrors'
@@ -44,7 +44,7 @@ describe('FormBuilder', () => {
     vi.clearAllMocks()
 
     // Mock setTimeout to execute immediately
-    vi.spyOn(global, 'setTimeout').mockImplementation(fn => fn())
+    vi.spyOn(global, 'setTimeout').mockImplementation((fn) => fn())
 
     // Create mock error methods
     mockErrorsInstance = {
@@ -72,6 +72,29 @@ describe('FormBuilder', () => {
 
   afterEach(() => {
     vi.resetAllMocks()
+  })
+
+  it('initialize', () => {
+    const form = FormBuilder.create({
+      name: ''
+    })
+
+    expect(form).toBeInstanceOf(FormBuilder)
+
+    form.name = 'John Doe'
+    expect(form.name).toBe('John Doe')
+  })
+
+  it('Assign as property in a class', () => {
+    class User {
+      form = FormBuilder.create({
+        name: ''
+      })
+    }
+
+    const user = new User()
+    expect(user.form).toBeInstanceOf(FormBuilder)
+    expect(user.form.name).toBe('')
   })
 
   // Core functionality tests
@@ -181,7 +204,10 @@ describe('FormBuilder', () => {
     await expect(form.submit()).rejects.toBe('Custom error')
 
     // Test error handling methods
-    mockErrorsInstance.get.mockReturnValue({ message: 'Error message', variant: 'danger' })
+    mockErrorsInstance.get.mockReturnValue({
+      message: 'Error message',
+      variant: 'danger'
+    })
     mockErrorsInstance.has.mockReturnValue(true)
     form.getError('email')
     expect(mockErrorsInstance.get).toHaveBeenCalledWith('email')
