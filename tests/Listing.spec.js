@@ -1,47 +1,189 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import Listing from '../src/utilities/Listing'
+import axios from 'axios'
 
-vi.stubGlobal('window', { location: { search: '?page=1&name=test' } })
-vi.mock('axios', () => ({
-  default: {
-    get: vi.fn(() => Promise.resolve({ data: { listing: {} } }))
-  }
-}))
+// Mock axios
+vi.mock('axios')
 
 describe('Listing', () => {
-  it('allow reset filter', async () => {
-    const listing = Listing.create({
+  let listing
+  const defaultQuery = { page: 1, query: '' }
+  const apiUrl = '/api/listings'
+
+  beforeEach(() => {
+    // Reset mocks
+    vi.clearAllMocks()
+
+    // Mock window.location
+    vi.stubGlobal('window', { location: { search: '?page=1&name=test' } })
+
+    // Create a new listing instance for each test
+    listing = Listing.c
+    listing.loadFrom(apiUrl)
+
+    // Setup default axios response
+    axios.get.mockResolvedValue({
+      data: {
+        listing: {
+          items: [{ id: 1, name: 'Item 1' }],
+          total: 10,
+          perPage: 10,
+          showing: 1
+        },
+        filters: []
+      }
+    })
+  })
+
+  afterEach(() => {
+    vi.resetAllMocks()
+  })
+
+  it('should initialize with the provided query', () => {
+    expect(listing.filter.query.page).toBe(1)
+    expect(listing.filter.query.query).toBe('')
+    expect(listing.loadUrl).toBe(apiUrl)
+  })
+
+  it('should call filter.reset when resetting filter', async () => {
+    // Create a new listing with a name property in the filter
+    const testListing = new Listing({
+      name: ''
+    })
+    testListing.loadFrom(apiUrl)
+
+    // Mock axios for this specific test
+    axios.get.mockResolvedValue({
+      data: { listing: {}, filters: [] }
+    })
+
+    // Spy on the filter.reset method
+    const resetSpy = vi.spyOn(testListing.filter, 'reset')
+
+    // Change the filter value
+    testListing.filter.query.name = 'test'
+
+    // Reset and verify the method was called
+    await testListing.resetSearch()
+    expect(resetSpy).toHaveBeenCalled()
+    expect(testListing.filter.applied).toEqual([])
+  })
+
+  it('should call filter.reset when programmatically setting filter', async () => {
+    // Create a new listing
+    const testListing = new Listing()
+    testListing.loadFrom(apiUrl)
+
+    // Mock axios for this specific test
+    axios.get.mockResolvedValue({
+      data: { listing: {}, filters: [] }
+    })
+
+    // Set filter programmatically
+    testListing.setFilter({
       name: ''
     })
 
-    expect(listing.name).toBe('')
+    // Spy on the filter.reset method
+    const resetSpy = vi.spyOn(testListing.filter, 'reset')
 
-    listing.name = 'test'
+    // Change the filter value
+    testListing.filter.query.name = 'test'
 
-    expect(listing.name).toBe('test')
-
-    await listing.resetSearch()
-
-    expect(listing.name).toBe('')
+    // Reset and verify the method was called
+    await testListing.resetSearch()
+    expect(resetSpy).toHaveBeenCalled()
+    expect(testListing.filter.applied).toEqual([])
   })
 
-  it('allow reset programmatically set filter', async () => {
-    const listing = Listing.create()
-
-    listing.setFilter({
+  it('should call filter.reset after a search', async () => {
+    // Create a new listing with a name property in the filter
+    const testListing = new Listing({
       name: ''
     })
+    testListing.loadFrom(apiUrl)
 
-    expect(listing.name).toBe('')
+    // Mock axios for this specific test
+    axios.get.mockResolvedValue({
+      data: { listing: {}, filters: [] }
+    })
 
-    listing.name = 'test'
+    // Change the filter value
+    testListing.filter.query.name = 'test'
 
-    expect(listing.name).toBe('test')
+    // Perform search
+    await testListing.search()
+    expect(axios.get).toHaveBeenCalledWith(apiUrl, {
+      params: expect.objectContaining({ name: 'test' })
+    })
 
-    await listing.resetSearch()
+    // Spy on the filter.reset method
+    const resetSpy = vi.spyOn(testListing.filter, 'reset')
 
-    expect(listing.name).toBe('')
+    // Reset and verify the method was called
+    await testListing.resetSearch()
+    expect(resetSpy).toHaveBeenCalled()
+    expect(testListing.filter.applied).toEqual([])
   })
 
-  it('allow reset filter after a search', () => {})
+  it('should handle pagination correctly', async () => {
+    // Test page change
+    await listing.onPageChange(2)
+    expect(listing.filter.query.page).toBe(2)
+    expect(axios.get).toHaveBeenCalledWith(apiUrl, {
+      params: expect.objectContaining({ page: 2 })
+    })
+
+    // Test next page
+    await listing.next()
+    expect(listing.filter.query.page).toBe(3)
+    expect(axios.get).toHaveBeenCalledWith(apiUrl, {
+      params: expect.objectContaining({ page: 3 })
+    })
+  })
+
+  it('should handle loading states correctly', async () => {
+    expect(listing.isLoading).toBe(false)
+
+    // Start loading
+    const promise = listing.load()
+    expect(listing.isLoading).toBe(true)
+
+    // Complete loading
+    await promise
+    expect(listing.isLoaded).toBe(true)
+  })
+
+  it('should handle router integration', async () => {
+    const mockRouter = {
+      push: vi.fn().mockResolvedValue(true)
+    }
+
+    const mockRoute = {
+      query: { page: 1 }
+    }
+
+    // Setup watch mock
+    vi.mock('vue', async () => {
+      const actual = await vi.importActual('vue')
+      return {
+        ...actual,
+        watch: vi.fn()
+      }
+    })
+
+    listing.useRouter(mockRouter, mockRoute)
+
+    // Test search with router
+    listing.filter.query.name = 'router-test'
+    await listing.search()
+
+    expect(mockRouter.push).toHaveBeenCalledWith({
+      query: expect.objectContaining({ name: 'router-test' })
+    })
+
+    // Test resetSearch with router
+    await listing.resetSearch()
+    expect(mockRouter.push).toHaveBeenCalledWith({ query: {} })
+  })
 })
