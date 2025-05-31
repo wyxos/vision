@@ -18,7 +18,7 @@ describe('Listing', () => {
     vi.stubGlobal('window', { location: { search: '?page=1&name=test' } })
 
     // Create a new listing instance for each test
-    listing = Listing.c
+    listing = Listing.create(defaultQuery)
     listing.loadFrom(apiUrl)
 
     // Setup default axios response
