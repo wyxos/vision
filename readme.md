@@ -1,90 +1,147 @@
 # @wyxos/vision
 
-`@wyxos/vision` is a Laravel plugin designed to scaffold and enhance web applications by providing a set of Vue.js
-components, utilities, and CLI commands. It integrates seamlessly with Laravel, offering tools for rapid SPA (Single
-Page Application) development, streamlined forms and listings management, and custom command utilities for efficient
-project configuration and management.
+A comprehensive Vue.js utility library that extends Oruga UI with additional components and utilities to simplify common tasks in Vue applications.
 
 ## Features
 
-- **Vue.js Components**: Leverage a variety of components like `WyxosForm`, `WyxosImage`, and `WyxosInput` for building
-  dynamic, responsive user interfaces with minimal boilerplate.
-- **Utilities**: Utilize helper classes such as `FormBuilder`, `Listing`, and `Auth` to simplify form handling, data
-  listing, and authentication processes.
-- **CLI Commands**: Automate routine tasks with commands like `make:route` for route and component generation,
-  and `toggle` commands to switch between different library configurations or versions.
-
-## Getting Started
-
-To get started with `@wyxos/vision`, ensure you have a Laravel project set up. Then, run the following command to
-install the plugin and scaffold your project with the necessary configurations and dependencies:
-
-```bash
-npx @wyxos/vision make:laravel <projectName>
-```
+- **Enhanced Oruga UI Components**: Seamlessly integrates with Oruga UI and provides additional components with extended functionality
+- **Form Handling**: Powerful form building, validation, and submission utilities
+- **Async Data Management**: Simplified API for handling asynchronous data fetching and state management
+- **Listing and Pagination**: Comprehensive tools for creating data tables with filtering, pagination, and sorting
+- **Error Handling**: Built-in error handling and validation utilities
+- **UI Components**: Rich set of UI components for common tasks like confirmation dialogs, inline editing, and more
 
 ## Installation
-
-The plugin can be installed directly from npm:
 
 ```bash
 npm install @wyxos/vision
 ```
 
-Or, if you prefer using Yarn:
+## Requirements
 
-```bash
-yarn add @wyxos/vision
-```
+This package has the following peer dependencies:
+
+- Vue 3.x
+- axios
+- moment
+- query-string
+- vue-router
 
 ## Usage
 
-After installation, you can start using the Vue.js components and utilities in your Laravel project. Here's a quick
-example of how you might use the `WyxosForm` component:
+### Basic Setup
 
-```vue
+```javascript
+import { createApp } from 'vue'
+import App from './App.vue'
+import Vision from '@wyxos/vision'
 
-<template>
-  <WyxosForm :form="form" @submit="submitForm">
-    <WyxosInput label="Username" v-model="form.username"/>
-    <WyxosInput label="Password" type="password" v-model="form.password"/>
-    <o-button @click="form.submit">Submit</o-button>
-  </WyxosForm>
-</template>
+const app = createApp(App)
 
-<script>
-  import {WyxosForm, WyxosInput} from '@wyxos/vision';
-  import FormBuilder from '@wyxos/vision/utilities/FormBuilder';
+app.use(Vision)
 
-  export default {
-    components: {
-      WyxosForm,
-      WyxosInput
-    },
-    data() {
-      return {
-        form: new FormBuilder({
-          username: '',
-          password: '',
-        })
-      };
-    },
-    methods: {
-      submitForm() {
-        // Handle form submission
-      }
-    }
-  }
-</script>
+app.mount('#app')
 ```
 
-For more detailed documentation on components and utilities, refer to
-the [official documentation](https://github.com/wyxos/vision).
+### Components
 
-## Contributing
+Vision provides a rich set of components with the `Wyxos` prefix (also accessible with the `W` prefix for brevity):
 
-Contributions are welcome! If you'd like to contribute, please fork the repository and submit a pull request.
+- `WyxosAccordion` - Collapsible content panels
+- `WyxosAction` - Action button with loading states
+- `WyxosAsync` - Component for handling async data loading
+- `WyxosButton` - Enhanced button with loading states
+- `WyxosCollection` - Collection management
+- `WyxosConfirm` - Confirmation dialog
+- `WyxosDatepicker` - Date picker component
+- `WyxosDeleteButton` - Button for delete operations with confirmation
+- `WyxosError` - Error display component
+- `WyxosForm` - Form component with validation
+- `WyxosIcon` - Icon component
+- `WyxosImage` - Image component with loading states
+- `WyxosInlineEdit` - Inline editing component
+- `WyxosInput` - Enhanced input component
+- `WyxosListing` - Data listing component with pagination
+- `WyxosLiveInput` - Input with live updates
+- `WyxosLogout` - Logout button with confirmation
+- `WyxosProgress` - Progress indicator
+- `WyxosPrompt` - Prompt dialog
+- `WyxosRemove` - Remove button with confirmation
+- `WyxosSelect` - Enhanced select component
+- `WyxosSessionExpired` - Session expired notification
+- `WyxosSubmit` - Submit button with loading states
+- `WyxosTab` - Tab component
+- `WyxosTags` - Tags input component
+- `WyxosTokenExpired` - Token expired notification
+- `WyxosUpdateButton` - Button for update operations with loading states
+
+### Utilities
+
+Vision provides several utility classes to simplify common tasks:
+
+#### AsyncData
+
+Simplifies handling asynchronous data fetching with loading states:
+
+```javascript
+import { AsyncData } from '@wyxos/vision'
+
+const users = AsyncData.create()
+users.load('/api/users')
+  .then(response => {
+    console.log('Users loaded:', users.data.value)
+  })
+```
+
+#### FormBuilder
+
+Powerful form handling with validation and submission:
+
+```javascript
+import { FormBuilder } from '@wyxos/vision'
+
+const form = FormBuilder.create({
+  name: '',
+  email: ''
+})
+
+form.submitAt('/api/users')
+  .onSuccess(data => {
+    console.log('Form submitted successfully:', data)
+  })
+  .submit()
+```
+
+#### Listing
+
+Comprehensive listing and pagination utility:
+
+```javascript
+import { Listing } from '@wyxos/vision'
+
+const listing = Listing.create({ page: 1, perPage: 10 })
+listing.loadFrom('/api/users')
+  .load()
+  .then(() => {
+    console.log('Users:', listing.attributes.items)
+    console.log('Total:', listing.attributes.total)
+  })
+```
+
+## Additional Utilities
+
+- `Action` - Utility for handling actions with loading states
+- `AutoComplete` - Autocomplete functionality
+- `DateRender` - Date formatting and rendering
+- `Filter` - Query filtering utility
+- `FileRequest` - File upload and download handling
+- `LoadState` - Loading state management
+- `ResourceList` - Resource listing utility
+- `Search` - Search functionality
+- `Steps` - Multi-step process management
+- `Tab` - Tab management
+- `useFormErrors` - Form error handling composable
 
 ## License
 
-`@wyxos/vision` is licensed under the MIT License. See the LICENSE file for more details.
+ISC
