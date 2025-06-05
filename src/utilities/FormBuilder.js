@@ -3,9 +3,10 @@ import axios from 'axios'
 import useFormErrors from './useFormErrors.js'
 
 export default class FormBuilder {
-  method = 'post'
-  submitUrl = null
-  loadUrl = null
+  // Function to transform the request payload
+  transformCallback = null
+  // Whether to force the use of FormData
+  forceFormDataFlag = false
   original = {}
   form = reactive({})
   abortSubmitController = null
@@ -19,8 +20,7 @@ export default class FormBuilder {
     submit: null,
     load: null,
     success: null,
-    failure: null,
-    formatter: null
+    failure: null
   }
 
   constructor(form = {}) {
@@ -140,24 +140,6 @@ export default class FormBuilder {
     return new this(options)
   }
 
-  isPost() {
-    this.method = 'post'
-
-    return this
-  }
-
-  isPatch() {
-    this.method = 'patch'
-
-    return this
-  }
-
-  isPut() {
-    this.method = 'put'
-
-    return this
-  }
-
   resetAfterSubmit(flag = true) {
     this.resetAfterSubmitFlag = flag
 
@@ -177,18 +159,38 @@ export default class FormBuilder {
     return this
   }
 
-  submitAt(path) {
-    this.submitUrl = path
+  forceFormData(flag = true) {
+    this.forceFormDataFlag = flag
 
     return this
   }
 
-  async submit() {
+  get(url, options = {}) {
+    return this.submit('get', url, options)
+  }
+
+  post(url, options = {}) {
+    return this.submit('post', url, options)
+  }
+
+  patch(url, options = {}) {
+    return this.submit('patch', url, options)
+  }
+
+  put(url, options = {}) {
+    return this.submit('put', url, options)
+  }
+
+  delete(url, options = {}) {
+    return this.submit('delete', url, options)
+  }
+
+  async submit(method, url, options = {}) {
     this.submitting()
 
     this.clearErrors()
 
-    const axiosConfig = {}
+    const axiosConfig = { ...options }
 
     // If there's an ongoing request, abort it
     if (this.abortSubmitController) {
@@ -201,16 +203,28 @@ export default class FormBuilder {
     // Add the signal to the axios config
     axiosConfig.signal = this.abortSubmitController.signal
 
-    // delay by 1 second
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-
-    const data = this.callbacks.formatter
-      ? this.callbacks.formatter(this.form)
+    let data = this.transformCallback
+      ? this.transformCallback(this.form)
       : this.form
 
-    const method = this.method
+    if (this.forceFormDataFlag) {
+      const formData = new FormData()
+      Object.entries(data).forEach(([key, value]) => {
+        formData.append(key, value)
+      })
+      data = formData
+    }
 
-    return axios[method](this.submitUrl, data, axiosConfig)
+    let request
+    if (method === 'get') {
+      request = axios.get(url, axiosConfig)
+    } else if (method === 'delete') {
+      request = axios.delete(url, axiosConfig)
+    } else {
+      request = axios[method](url, data, axiosConfig)
+    }
+
+    return request
       .then((response) => {
         this.submitted()
 
@@ -235,7 +249,7 @@ export default class FormBuilder {
       })
   }
 
-  load() {
+  load(url) {
     this.loading()
 
     const axiosConfig = {}
@@ -252,7 +266,7 @@ export default class FormBuilder {
     axiosConfig.signal = this.abortLoadController.signal
 
     return axios
-      .get(this.loadUrl, axiosConfig)
+      .get(url, axiosConfig)
       .then((response) => {
         this.loaded()
 
@@ -305,14 +319,8 @@ export default class FormBuilder {
     return this
   }
 
-  formatter(callback) {
-    this.callbacks.formatter = callback
-
-    return this
-  }
-
-  loadFrom(path) {
-    this.loadUrl = path
+  transform(callback) {
+    this.transformCallback = callback
 
     return this
   }
