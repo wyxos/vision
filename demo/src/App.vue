@@ -1,69 +1,53 @@
-<script>
-import {
-  FormBuilder,
-  WyxosButton,
-  WyxosForm,
-  WyxosInput
-} from '../../src/main.js'
+<script setup>
+import { onMounted } from 'vue'
+import { FormBuilder, Listing } from '../../src/main'
 
-export default {
-  components: {
-    WyxosForm,
-    WyxosInput,
-    WyxosButton
-  },
-  setup() {
-    return {
-      errors: FormBuilder.create({
-        path: '',
-        errorBag: 'form'
-      })
-    }
-  },
-  methods: {
-    submit() {
-      class ValidationError extends Error {
-        constructor(message, data) {
-          super(message)
+const form = FormBuilder.create({ title: '', body: '' })
+const listing = Listing.create({ page: 1 }).loadFrom('https://jsonplaceholder.typicode.com/posts')
 
-          Object.assign(this, data)
-        }
-      }
-
-      this.errors.advancedSubmit(
-        () =>
-          new Promise((resolve, reject) => {
-            setTimeout(() => {
-              reject(
-                new ValidationError('Validation error', {
-                  response: {
-                    status: 422,
-                    data: {
-                      errors: {
-                        email: ['The email field is required.']
-                      }
-                    }
-                  }
-                })
-              )
-            }, 1000)
-          })
-      )
-    }
-  }
+const submit = async () => {
+  await form.post('https://jsonplaceholder.typicode.com/posts')
+  await listing.load()
 }
+
+onMounted(() => {
+  listing.load()
+})
 </script>
 
 <template>
   <div class="container">
-    <h1 class="title is-3">Demo App</h1>
-    <wyxos-form :form="errors" @submit="submit()">
-      <wyxos-input
-        :bag="errors.errorBag"
-        label="Email"
-        name="email"></wyxos-input>
-
-      <wyxos-button native-type="submit">Submit</wyxos-button>
+    <h1 class="title">Vision Demo</h1>
+    <wyxos-form :form="form" :submit="submit" form-class="box">
+      <wyxos-input label="Title" name="title" :form="form" />
+      <wyxos-input label="Body" name="body" :form="form" />
+      <wyxos-button :form="form">Create</wyxos-button>
     </wyxos-form>
+
+    <h2 class="title is-4 mt-4">Posts</h2>
+    <table class="table is-fullwidth">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Title</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="item in listing.attributes.items" :key="item.id">
+          <td>{{ item.id }}</td>
+          <td>{{ item.title }}</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </template>
+
+<style>
+.container {
+  max-width: 600px;
+  margin: 2rem auto;
+}
+.table {
+  margin-top: 1rem;
+}
+</style>
