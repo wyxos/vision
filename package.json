@@ -3,18 +3,7 @@
   "version": "1.24.0",
   "description": "",
   "type": "module",
-  "files": [
-    "dist",
-    "types"
-  ],
-  "main": "./dist/vision.umd.cjs",
-  "module": "./dist/vision.js",
-  "exports": {
-    ".": {
-      "import": "./dist/vision.js",
-      "require": "./dist/vision.umd.cjs"
-    }
-  },
+  "main": "./src/main.js",
   "types": "./types/index.d.ts",
   "scripts": {
     "dev": "vite --config demo/vite.config.js",
@@ -32,14 +21,14 @@
     "oruga helpers"
   ],
   "author": "Wyxos",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
+    "@oruga-ui/oruga-next": "^0.10.4",
     "@vuepic/vue-datepicker": "^9.0.2",
     "qs": "^6.13.1",
     "query-string": "^8.1.0"
   },
   "devDependencies": {
-    "@oruga-ui/oruga-next": "^0.10.4",
     "@vitejs/plugin-vue": "^4.4.1",
     "axios": "1.8.2",
     "chalk": "^5.3.0",
@@ -61,7 +50,7 @@
     "sass-loader": "^13.3.2",
     "simple-git": "^3.25.0",
     "source-map": "^0.7.4",
-    "vite": "5.4.6",
+    "vite": "6.3.4",
     "vite-plugin-eslint": "^1.8.1",
     "vitest": "^2.1.9",
     "vue": "^3.5.12",

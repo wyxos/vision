@@ -143,4 +143,4 @@ listing.loadFrom('/api/users')
 
 ## License
 
-ISC
+MIT
