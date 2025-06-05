@@ -105,11 +105,10 @@ const form = FormBuilder.create({
   email: ''
 })
 
-form.submitAt('/api/users')
+form.post('/api/users')
   .onSuccess(data => {
     console.log('Form submitted successfully:', data)
   })
-  .submit()
 ```
 
 #### Listing
