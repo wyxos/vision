@@ -12,19 +12,28 @@ describe('Listing', () => {
   })
 
   it('searches using current filter', async () => {
-    axios.get.mockResolvedValue({ data: { listing: { items: ['a'], total: 1, perPage: 10 } } })
+    axios.get.mockResolvedValue({
+      data: { listing: { items: ['a'], total: 1, perPage: 10 } }
+    })
 
     const listing = Listing.create({ page: 1, name: '' }).loadFrom('/items')
     await listing.search()
 
-    expect(axios.get).toHaveBeenCalledWith('/items', { params: { page: 1, name: '' } })
+    expect(axios.get).toHaveBeenCalledWith('/items', {
+      params: { page: 1, name: '' }
+    })
     expect(listing.attributes.items).toEqual(['a'])
     expect(listing.isLoaded).toBe(true)
   })
 
   it('loads using query params from window', async () => {
     window.location.search = '?page=2&name=test'
-    axios.get.mockResolvedValue({ data: { listing: { items: [1, 2], total: 2, perPage: 10 }, filters: [{ key: 'name', rawValue: 'test' }] } })
+    axios.get.mockResolvedValue({
+      data: {
+        listing: { items: [1, 2], total: 2, perPage: 10 },
+        filters: [{ key: 'name', rawValue: 'test' }]
+      }
+    })
 
     const listing = Listing.create({ page: 1, name: '' }).loadFrom('/items')
     await listing.load()
@@ -59,10 +68,12 @@ describe('Listing', () => {
   it('applies transform callback before search', async () => {
     axios.get.mockResolvedValue({ data: { listing: {} } })
     const listing = Listing.create({ name: 'john' }).loadFrom('/items')
-    listing.transform(q => ({ ...q, name: q.name.toUpperCase() }))
+    listing.transform((q) => ({ ...q, name: q.name.toUpperCase() }))
 
     await listing.search()
 
-    expect(axios.get).toHaveBeenCalledWith('/items', { params: { page: 1, name: 'JOHN' } })
+    expect(axios.get).toHaveBeenCalledWith('/items', {
+      params: { page: 1, name: 'JOHN' }
+    })
   })
 })

@@ -36,7 +36,7 @@ describe('FormBuilder', () => {
   it('transforms data before submit', async () => {
     axios.post.mockResolvedValueOnce({ data: {} })
     const form = FormBuilder.create({ name: 'john' })
-    form.transform(data => ({ ...data, name: data.name.toUpperCase() }))
+    form.transform((data) => ({ ...data, name: data.name.toUpperCase() }))
 
     await form.post('/api')
 
