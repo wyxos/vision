@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import Filter from '../src/utilities/Filter'
+import Filter from '../../src/utilities/Filter.js'
 
 describe('Filter', () => {
   let filter
