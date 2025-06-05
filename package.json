@@ -6,12 +6,8 @@
   "main": "./src/main.js",
   "types": "./types/index.d.ts",
   "scripts": {
-    "dev": "vite --config demo/vite.config.js",
-    "build": "vite --config demo/vite.config.js build --emptyOutDir",
-    "watch": "npm run build -- --watch",
     "lint": "eslint . --fix --ext .js,.vue,.json && prettier --write **/*{.js,.vue,.json}",
     "release": "node release.mjs",
-    "preview": "vite preview",
     "test": "vitest"
   },
   "keywords": [
@@ -29,7 +25,7 @@
     "query-string": "^8.1.0"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^4.4.1",
+    "@vitejs/plugin-vue": "^5.2.4",
     "axios": "1.8.2",
     "chalk": "^5.3.0",
     "dotenv": "^16.3.1",
