@@ -4,7 +4,8 @@
   "description": "",
   "type": "module",
   "files": [
-    "dist"
+    "dist",
+    "types"
   ],
   "main": "./dist/vision.umd.cjs",
   "module": "./dist/vision.js",
@@ -14,6 +15,7 @@
       "require": "./dist/vision.umd.cjs"
     }
   },
+  "types": "./types/index.d.ts",
   "scripts": {
     "dev": "vite --config demo/vite.config.js",
     "build": "vite --config demo/vite.config.js build --emptyOutDir",
