@@ -22,6 +22,13 @@ export class FormBuilder<T extends Record<string, any> = Record<string, any>> {
   form: T;
   original: T;
 
+  readonly successful: boolean;
+  readonly failed: boolean;
+  readonly loading: boolean;
+  readonly loaded: boolean;
+  readonly wasLoading: boolean;
+  readonly wasSubmitting: boolean;
+
   readonly isSubmitting: boolean;
   readonly isSubmitted: boolean;
   readonly isSubmitFailed: boolean;
@@ -41,12 +48,12 @@ export class FormBuilder<T extends Record<string, any> = Record<string, any>> {
   submit(method: string, url: string, options?: any): Promise<any>;
   load(url: string): Promise<any>;
 
-  submitting(): this;
-  submitted(): this;
-  submitFailed(): this;
-  loading(): this;
-  loaded(): this;
-  loadFailed(): this;
+  setSubmitting(): this;
+  setSubmitted(): this;
+  setSubmitFailed(): this;
+  setLoading(): this;
+  setLoaded(): this;
+  setLoadFailed(): this;
 
   transform(callback: (data: T) => any): this;
 
