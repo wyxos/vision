@@ -98,31 +98,34 @@
       </div>
     </div>
 
-    <div v-if="selectedItem" class="item-details">
-      <h3>Post Details</h3>
-      <div class="details-card">
-        <h4>{{ selectedItem.title }}</h4>
-        <p>{{ selectedItem.body }}</p>
-        <div class="details-meta">
-          <span>ID: {{ selectedItem.id }}</span>
-          <span>User ID: {{ selectedItem.userId }}</span>
+    <o-modal v-model:active="isModalActive" :width="640" aria-role="dialog" aria-modal>
+      <div v-if="selectedItem" class="modal-content">
+        <h3>Post Details</h3>
+        <div class="details-card">
+          <h4>{{ selectedItem.title }}</h4>
+          <p>{{ selectedItem.body }}</p>
+          <div class="details-meta">
+            <span>ID: {{ selectedItem.id }}</span>
+            <span>User ID: {{ selectedItem.userId }}</span>
+          </div>
+          <button class="close-button" @click="closeModal">Close</button>
         </div>
-        <button class="close-button" @click="selectedItem = null">Close</button>
       </div>
-    </div>
+    </o-modal>
   </div>
 </template>
 
 <script>
 import { ref, onMounted } from 'vue'
 import Listing from '@/utilities/Listing.js'
-import { OTable, OTableColumn } from '@oruga-ui/oruga-next'
+import { OTable, OTableColumn, OModal } from '@oruga-ui/oruga-next'
 
 export default {
   name: 'ListingDemo',
   components: {
     OTable,
-    OTableColumn
+    OTableColumn,
+    OModal
   },
   setup() {
     // Create a new listing with initial query parameters
@@ -137,6 +140,9 @@ export default {
 
     // Selected item for details view
     const selectedItem = ref(null)
+
+    // Modal visibility control
+    const isModalActive = ref(false)
 
     // Last action performed (for retry functionality)
     const lastAction = ref(null)
@@ -181,6 +187,13 @@ export default {
     // Function to view item details
     const viewDetails = (item) => {
       selectedItem.value = item
+      isModalActive.value = true
+    }
+
+    // Function to close the modal
+    const closeModal = () => {
+      isModalActive.value = false
+      selectedItem.value = null
     }
 
     // Function to format the response to match what the Listing class expects
@@ -240,11 +253,13 @@ export default {
     return {
       listing,
       selectedItem,
+      isModalActive,
       getLoadingMessage,
       retryLoad,
       applyFilters,
       resetFilters,
-      viewDetails
+      viewDetails,
+      closeModal
     }
   }
 }
@@ -439,12 +454,8 @@ button:disabled {
 }
 
 
-.item-details {
-  margin-top: 30px;
-  padding: 15px;
-  background-color: #e3f2fd;
-  border-radius: 4px;
-  border-left: 4px solid #2196F3;
+.modal-content {
+  padding: 20px;
 }
 
 .details-card {
