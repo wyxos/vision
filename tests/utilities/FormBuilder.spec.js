@@ -8,6 +8,7 @@ vi.stubGlobal('window', {})
 describe('FormBuilder', () => {
   beforeEach(() => {
     axios.post.mockReset()
+    axios.get.mockReset()
   })
 
   it('creates instance and exposes fields', () => {
@@ -30,6 +31,8 @@ describe('FormBuilder', () => {
 
     expect(sent).toEqual({ url: '/api', data: { name: 'John' } })
     expect(form.isSubmitted).toBe(true)
+    expect(form.successful).toBe(true)
+    expect(form.wasSubmitting).toBe(true)
     expect(form.name).toBe('')
   })
 
@@ -52,5 +55,28 @@ describe('FormBuilder', () => {
     await expect(form.post('/api')).rejects.toBeDefined()
     expect(form.hasError('name')).toBe(true)
     expect(form.isSubmitFailed).toBe(true)
+    expect(form.failed).toBe(true)
+    expect(form.wasSubmitting).toBe(true)
+  })
+
+  it('loads data and updates state on success', async () => {
+    axios.get.mockResolvedValueOnce({ data: { form: { name: 'Jane' } } })
+    const form = FormBuilder.create({ name: '' })
+
+    await form.load('/api')
+
+    expect(form.loaded).toBe(true)
+    expect(form.wasLoading).toBe(true)
+    expect(form.name).toBe('Jane')
+  })
+
+  it('handles failed load', async () => {
+    axios.get.mockRejectedValueOnce({})
+    const form = FormBuilder.create({ name: '' })
+
+    await expect(form.load('/api')).rejects.toBeDefined()
+
+    expect(form.failed).toBe(true)
+    expect(form.wasLoading).toBe(true)
   })
 })
