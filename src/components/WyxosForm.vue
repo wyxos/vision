@@ -59,7 +59,7 @@ export default {
     <slot></slot>
   </form>
   <o-loading v-else-if="form.isLoading" :active="true"></o-loading>
-  <o-button v-else-if="form.isFailure" @click="form.load()">
+  <o-button v-else-if="form.isLoadFailed" @click="form.load()">
     Error. Retry or refresh.
   </o-button>
 </template>
