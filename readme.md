@@ -141,6 +141,22 @@ listing.loadFrom('/api/users')
 - `Tab` - Tab management
 - `useFormErrors` - Form error handling composable
 
+## Demo
+
+A demo application is included in this repository to showcase the usage of FormBuilder and Listing utilities. To run the demo:
+
+```bash
+npm run demo
+```
+
+This will start a Vite development server, and you can access the demo in your browser at http://localhost:3000.
+
+The demo includes:
+- FormBuilder example with validation and submission
+- Listing example with pagination and filtering
+
+For more details, see the [demo README](./demo/README.md).
+
 ## License
 
 MIT
