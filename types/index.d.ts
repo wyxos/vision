@@ -82,12 +82,11 @@ export class Listing<Q extends Record<string, any> = Record<string, any>, Item =
 
   setFilter(attributes: Q): this;
   search(query?: Partial<Q> | ((current: Q) => Partial<Q>)): Promise<any> | any;
-  load(query?: Partial<Q> | ((current: Q) => Partial<Q>)): Promise<any>;
+  load(url: string, query?: Partial<Q> | ((current: Q) => Partial<Q>)): Promise<any>;
   refresh(query?: Partial<Q> | ((current: Q) => Partial<Q>)): Promise<any>;
   loading(): void;
   loaded(): void;
   onPageChange(page: number): any;
-  loadFrom(path: string): this;
   reset(): Promise<any>;
   clear(key?: keyof Q): Promise<any>;
   useRouter(router: any, route: any): this;

@@ -1,11 +1,13 @@
 import FormBuilder from './utilities/FormBuilder.js'
 import Listing from './utilities/Listing.js'
+import WyxosError from './components/WyxosError.vue'
 
-export { FormBuilder, Listing }
+export { FormBuilder, Listing, WyxosError }
 
 export default {
   FormBuilder,
-  Listing
+  Listing,
+  WyxosError
 }
 
 // import {
