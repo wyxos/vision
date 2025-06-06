@@ -10,17 +10,17 @@
         <div class="state-item">
           <div class="state-label">Submit States:</div>
           <div class="state-badges">
-            <span class="state-badge" :class="{ active: form.isSubmitting }">Loading</span>
-            <span class="state-badge" :class="{ active: form.isSubmitted }">Loaded</span>
-            <span class="state-badge" :class="{ active: form.isSubmitFailed }">Failed</span>
+            <span :class="{ active: form.isSubmitting }" class="state-badge">Loading</span>
+            <span :class="{ active: form.isSubmitted }" class="state-badge">Loaded</span>
+            <span :class="{ active: form.isSubmitFailed }" class="state-badge">Failed</span>
           </div>
         </div>
         <div class="state-item">
           <div class="state-label">Load States:</div>
           <div class="state-badges">
-            <span class="state-badge" :class="{ active: form.isLoading }">Loading</span>
-            <span class="state-badge" :class="{ active: form.isLoaded }">Loaded</span>
-            <span class="state-badge" :class="{ active: form.isLoadFailed }">Failed</span>
+            <span :class="{ active: form.isLoading }" class="state-badge">Loading</span>
+            <span :class="{ active: form.isLoaded }" class="state-badge">Loaded</span>
+            <span :class="{ active: form.isLoadFailed }" class="state-badge">Failed</span>
           </div>
         </div>
       </div>
@@ -32,9 +32,9 @@
       <p>Load existing data into the form from an API endpoint.</p>
       <div class="preload-actions">
         <button
-          @click="preloadData"
           :disabled="form.isLoading"
           class="preload-button"
+          @click="preloadData"
         >
           {{ form.isLoading ? 'Loading...' : 'Preload Data' }}
         </button>
@@ -65,9 +65,9 @@
           <label for="title">Title</label>
           <input
             id="title"
-            type="text"
             v-model="form.title"
             :class="{ 'has-error': form.hasError('title') }"
+            type="text"
           >
           <div v-if="form.hasError('title')" class="error-message">
             {{ form.getError('title') }}
@@ -90,9 +90,9 @@
           <label for="userId">User ID</label>
           <input
             id="userId"
-            type="number"
             v-model="form.userId"
             :class="{ 'has-error': form.hasError('userId') }"
+            type="number"
           >
           <div v-if="form.hasError('userId')" class="error-message">
             {{ form.getError('userId') }}
@@ -101,16 +101,16 @@
 
         <div class="form-actions">
           <button
-            type="submit"
             :disabled="form.isSubmitting"
             class="submit-button"
+            type="submit"
           >
             {{ form.isSubmitting ? 'Submitting...' : 'Submit' }}
           </button>
           <button
+            class="reset-button"
             type="button"
             @click="resetForm"
-            class="reset-button"
           >
             Reset
           </button>
@@ -202,17 +202,17 @@ export default {
       let hasErrors = false
 
       if (!form.title) {
-        form.errors.set('title', 'Title is required')
+        form.errors.setOne('title', 'Title is required')
         hasErrors = true
       }
 
       if (!form.body) {
-        form.errors.set('body', 'Body is required')
+        form.errors.setOne('body', 'Body is required')
         hasErrors = true
       }
 
       if (!form.userId) {
-        form.errors.set('userId', 'User ID is required')
+        form.errors.setOne('userId', 'User ID is required')
         hasErrors = true
       }
 
