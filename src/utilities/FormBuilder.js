@@ -1,4 +1,4 @@
-import { reactive, ref } from 'vue'
+import { reactive } from 'vue'
 import axios from 'axios'
 import useFormErrors from './useFormErrors.js'
 
@@ -11,8 +11,14 @@ export default class FormBuilder {
   form = reactive({})
   abortSubmitController = null
   abortLoadController = null
-  submitState = ref('')
-  loadState = ref('')
+  state = reactive({
+    loading: false,
+    loaded: false,
+    successful: false,
+    failed: false,
+    wasLoading: false,
+    wasSubmitting: false
+  })
   errors = useFormErrors()
   resetAfterSubmitFlag = false
 
@@ -90,28 +96,52 @@ export default class FormBuilder {
     })
   }
 
+  get successful() {
+    return this.state.successful
+  }
+
+  get failed() {
+    return this.state.failed
+  }
+
+  get loading() {
+    return this.state.loading
+  }
+
+  get loaded() {
+    return this.state.loaded
+  }
+
+  get wasLoading() {
+    return this.state.wasLoading
+  }
+
+  get wasSubmitting() {
+    return this.state.wasSubmitting
+  }
+
   get isSubmitting() {
-    return this.submitState.value === 'loading'
+    return this.state.loading && this.state.wasSubmitting
   }
 
   get isSubmitted() {
-    return this.submitState.value === 'loaded'
+    return this.state.successful
   }
 
   get isSubmitFailed() {
-    return this.submitState.value === 'failed'
+    return this.state.failed && this.state.wasSubmitting
   }
 
   get isLoading() {
-    return this.loadState.value === 'loading'
+    return this.state.loading && this.state.wasLoading
   }
 
   get isLoaded() {
-    return this.loadState.value === 'loaded'
+    return this.state.loaded
   }
 
   get isLoadFailed() {
-    return this.loadState.value === 'failed'
+    return this.state.failed && this.state.wasLoading
   }
 
   //
@@ -163,7 +193,7 @@ export default class FormBuilder {
   }
 
   async submit(method, url, options = {}) {
-    this.submitting()
+    this.setSubmitting()
 
     this.clearErrors()
 
@@ -203,7 +233,7 @@ export default class FormBuilder {
 
     return request
       .then((response) => {
-        this.submitted()
+        this.setSubmitted()
 
         if (this.resetAfterSubmitFlag) {
           this.setAttributes(this.original)
@@ -214,7 +244,7 @@ export default class FormBuilder {
           : response.data
       })
       .catch((error) => {
-        this.submitFailed()
+        this.setSubmitFailed()
 
         this.errors.set(error)
 
@@ -227,7 +257,7 @@ export default class FormBuilder {
   }
 
   load(url) {
-    this.loading()
+    this.setLoading()
 
     const axiosConfig = {}
 
@@ -245,7 +275,7 @@ export default class FormBuilder {
     return axios
       .get(url, axiosConfig)
       .then((response) => {
-        this.loaded()
+        this.setLoaded()
 
         if (response.data.form) {
           this.setAttributes(response.data.form)
@@ -254,44 +284,84 @@ export default class FormBuilder {
         return response.data
       })
       .catch((error) => {
-        this.loadFailed()
+        this.setLoadFailed()
 
         return Promise.reject(error)
       })
   }
 
-  submitting() {
-    this.submitState.value = 'loading'
+  setSubmitting() {
+    Object.assign(this.state, {
+      loading: true,
+      successful: false,
+      failed: false,
+      wasSubmitting: true,
+      wasLoading: false,
+      loaded: false
+    })
 
     return this
   }
 
-  submitted() {
-    this.submitState.value = 'loaded'
+  setSubmitted() {
+    Object.assign(this.state, {
+      loading: false,
+      successful: true,
+      failed: false,
+      wasSubmitting: true,
+      wasLoading: false
+    })
 
     return this
   }
 
-  submitFailed() {
-    this.submitState.value = 'failed'
+  setSubmitFailed() {
+    Object.assign(this.state, {
+      loading: false,
+      failed: true,
+      successful: false,
+      wasSubmitting: true,
+      wasLoading: false
+    })
 
     return this
   }
 
-  loading() {
-    this.loadState.value = 'loading'
+  setLoading() {
+    Object.assign(this.state, {
+      loading: true,
+      loaded: false,
+      failed: false,
+      successful: false,
+      wasLoading: true,
+      wasSubmitting: false
+    })
 
     return this
   }
 
-  loaded() {
-    this.loadState.value = 'loaded'
+  setLoaded() {
+    Object.assign(this.state, {
+      loading: false,
+      loaded: true,
+      failed: false,
+      wasLoading: true,
+      wasSubmitting: false,
+      successful: false
+    })
 
     return this
   }
 
-  loadFailed() {
-    this.loadState.value = 'failed'
+  setLoadFailed() {
+    Object.assign(this.state, {
+      loading: false,
+      loaded: false,
+      failed: true,
+      successful: false,
+      wasLoading: true,
+      wasSubmitting: false
+    })
 
     return this
   }
