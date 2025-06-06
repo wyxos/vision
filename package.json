@@ -1,10 +1,13 @@
 {
   "name": "@wyxos/vision",
   "version": "1.24.0",
-  "description": "",
+  "description": "A collection of Vue utilities and components for building web applications",
   "type": "module",
   "main": "./src/main.js",
   "types": "./types/index.d.ts",
+  "bin": {
+    "@wyxos/vision": "./bin/toggle.js"
+  },
   "scripts": {
     "lint": "eslint . --fix --ext .js,.vue,.json && prettier --write **/*{.js,.vue,.json}",
     "release": "node release.mjs",
@@ -13,22 +16,30 @@
   },
   "keywords": [
     "vue",
+    "vue3",
     "helper functions",
-    "helper components"
+    "helper components",
+    "form builder",
+    "listing",
+    "data table",
+    "pagination",
+    "error handling",
+    "utilities"
   ],
   "author": "Wyxos",
   "license": "MIT",
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^6.5.1",
     "@oruga-ui/oruga-next": "^0.10.4",
-    "@vuepic/vue-datepicker": "^9.0.2",
-    "qs": "^6.13.1",
-    "query-string": "^8.1.0"
+    "axios": "1.8.2",
+    "moment": "^2.29.4",
+    "query-string": "^8.1.0",
+    "vue": "^3.5.12"
   },
   "devDependencies": {
     "@oruga-ui/theme-oruga": "^0.6.0",
     "@tailwindcss/vite": "^4.0.0",
     "@vitejs/plugin-vue": "^5.2.4",
-    "axios": "1.8.2",
     "chalk": "^5.3.0",
     "dotenv": "^16.3.1",
     "eslint": "^8.53.0",
@@ -43,16 +54,14 @@
     "iconv-lite": "^0.6.3",
     "inquirer": "^10.1.8",
     "jsdom": "^26.1.0",
-    "moment": "^2.29.4",
     "prettier": "^3.1.0",
     "simple-git": "^3.25.0",
     "source-map": "^0.7.4",
     "tailwindcss": "^4.0.0",
     "vite": "6.3.4",
-    "vitest": "^2.1.9",
-    "vue": "^3.5.12"
+    "vitest": "^2.1.9"
   },
   "peerDependencies": {
-    "vue": "^3.3.8"
+    "vue": "^3.5.12"
   }
 }
