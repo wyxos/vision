@@ -69,9 +69,7 @@
             :class="{ 'has-error': form.hasError('title') }"
             type="text"
           >
-          <div v-if="form.hasError('title')" class="error-message">
-            {{ form.getError('title') }}
-          </div>
+          <WyxosError :form="form" name="title" />
         </div>
 
         <div class="form-group">
@@ -81,9 +79,7 @@
             v-model="form.body"
             :class="{ 'has-error': form.hasError('body') }"
           ></textarea>
-          <div v-if="form.hasError('body')" class="error-message">
-            {{ form.getError('body') }}
-          </div>
+          <WyxosError :form="form" name="body" />
         </div>
 
         <div class="form-group">
@@ -94,9 +90,7 @@
             :class="{ 'has-error': form.hasError('userId') }"
             type="number"
           >
-          <div v-if="form.hasError('userId')" class="error-message">
-            {{ form.getError('userId') }}
-          </div>
+          <WyxosError :form="form" name="userId" />
         </div>
 
         <div class="form-actions">
@@ -141,9 +135,13 @@
 <script>
 import { ref } from 'vue'
 import FormBuilder from '@/utilities/FormBuilder.js'
+import WyxosError from '@/components/WyxosError.vue'
 
 export default {
   name: 'FormBuilderDemo',
+  components: {
+    WyxosError
+  },
   setup() {
     // Create a new form with initial values
     const form = new FormBuilder({
@@ -281,7 +279,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 .form-demo {
   margin-bottom: 30px;
 }

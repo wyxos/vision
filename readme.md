@@ -119,8 +119,7 @@ Comprehensive listing and pagination utility:
 import { Listing } from '@wyxos/vision'
 
 const listing = Listing.create({ page: 1, perPage: 10 })
-listing.loadFrom('/api/users')
-  .load()
+listing.load('/api/users')
   .then(() => {
     console.log('Users:', listing.attributes.items)
     console.log('Total:', listing.attributes.total)

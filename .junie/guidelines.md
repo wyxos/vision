@@ -1,0 +1,2 @@
+- script tag always at the top in components
+- 

@@ -17,7 +17,7 @@ const errors = useFormErrors()
 </script>
 
 <template>
-  <div class="wyxos-error">
+  <div class="wyxos-error text-sm text-red-500">
       <span v-if="form?.getError(name).message">{{
           form.getError(name).message
         }}</span>
