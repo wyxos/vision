@@ -8,13 +8,13 @@
   "scripts": {
     "lint": "eslint . --fix --ext .js,.vue,.json && prettier --write **/*{.js,.vue,.json}",
     "release": "node release.mjs",
-    "test": "vitest"
+    "test": "vitest",
+    "dev": "vite demo"
   },
   "keywords": [
     "vue",
     "helper functions",
-    "helper components",
-    "oruga helpers"
+    "helper components"
   ],
   "author": "Wyxos",
   "license": "MIT",
