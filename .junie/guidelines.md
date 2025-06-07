@@ -1,2 +1,3 @@
 - script tag always at the top in components
+- The listing module works along with the php package @wyxos/harmonie at ../php/harmonie relative to the project
 - 

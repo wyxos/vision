@@ -34,7 +34,8 @@
     "axios": "1.8.2",
     "moment": "^2.29.4",
     "query-string": "^8.1.0",
-    "vue": "^3.5.12"
+    "vue": "^3.5.12",
+    "vue-router": "^4.3.0"
   },
   "devDependencies": {
     "@oruga-ui/theme-oruga": "^0.6.0",
