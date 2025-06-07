@@ -1,6 +1,6 @@
 import { reactive } from 'vue'
 import axios from 'axios'
-import useFormErrors from './useFormErrors.js'
+import FormErrors from './FormErrors.js'
 
 export default class FormBuilder {
   // Function to transform the request payload
@@ -20,7 +20,7 @@ export default class FormBuilder {
     wasSubmitting: false
   })
 
-  errors = useFormErrors()
+  errors = FormErrors.create()
 
   resetAfterSubmitFlag = false
 
@@ -103,7 +103,7 @@ export default class FormBuilder {
   }
 
   get failed() {
-    return this.state.failed
+    return this.state.failed && this.state.wasSubmitting
   }
 
   get loading() {
@@ -130,9 +130,6 @@ export default class FormBuilder {
     return this.state.successful
   }
 
-  get isSubmitFailed() {
-    return this.state.failed && this.state.wasSubmitting
-  }
 
   get isLoading() {
     return this.state.loading && this.state.wasLoading
@@ -249,7 +246,7 @@ export default class FormBuilder {
           : response.data
       })
       .catch((error) => {
-        this.setSubmitFailed()
+        this.setFailed()
 
         this.errors.set(error)
 
@@ -335,7 +332,7 @@ export default class FormBuilder {
     return this
   }
 
-  setSubmitFailed() {
+  setFailed() {
     Object.assign(this.state, {
       loading: false,
       failed: true,
@@ -410,6 +407,16 @@ export default class FormBuilder {
 
   getErrors() {
     return this.errors.all()
+  }
+
+  hasErrors() {
+    return this.errors.all().length > 0
+  }
+
+  setError(field, value) {
+    this.errors.setOne(field, value)
+
+    return this
   }
 
   onSuccess(callback) {

@@ -95,36 +95,134 @@ users.load('/api/users')
 
 #### FormBuilder
 
-Powerful form handling with validation and submission:
+Powerful form handling with validation, submission, and state management:
 
 ```javascript
 import { FormBuilder } from '@wyxos/vision'
 
+// Create a form with initial data
 const form = FormBuilder.create({
   name: '',
-  email: ''
+  email: '',
+  role: 'user'
 })
 
+// Form state tracking
+console.log('Is form submitting?', form.isSubmitting)
+console.log('Is form loading?', form.isLoading)
+
+// Load existing data
+form.load('/api/users/1')
+  .then(response => {
+    console.log('Form data loaded:', form.form)
+  })
+
+// Transform data before submission
+form.transform(data => {
+  // Modify data before sending to server
+  return {
+    ...data,
+    email: data.email.toLowerCase()
+  }
+})
+
+// Force using FormData (useful for file uploads)
+form.forceFormData()
+
+// Submit the form with various HTTP methods
 form.post('/api/users')
   .onSuccess(data => {
     console.log('Form submitted successfully:', data)
   })
+  .onFail(error => {
+    console.error('Form submission failed:', error)
+  })
+
+// Check for errors
+if (form.hasError('email')) {
+  console.error('Email error:', form.getError('email'))
+}
+
+// Reset form to original values
+form.reset()
+
+// Clear all validation errors
+form.clearErrors()
 ```
 
 #### Listing
 
-Comprehensive listing and pagination utility:
+Comprehensive listing and pagination utility with filtering, searching, and state management:
 
 ```javascript
 import { Listing } from '@wyxos/vision'
+import { useRouter, useRoute } from 'vue-router'
 
-const listing = Listing.create({ page: 1, perPage: 10 })
+// Create a listing with initial query parameters
+const listing = Listing.create({ 
+  page: 1, 
+  perPage: 10,
+  search: '',
+  status: 'active'
+})
+
+// State tracking
+console.log('Is listing loading?', listing.isLoading)
+console.log('Is listing searching?', listing.isSearching)
+console.log('Is listing refreshing?', listing.isRefreshing)
+
+// Load data from an API endpoint
 listing.load('/api/users')
   .then(() => {
     console.log('Users:', listing.attributes.items)
     console.log('Total:', listing.attributes.total)
+    console.log('Current page:', listing.filter.query.page)
   })
+
+// Transform query parameters before sending to server
+listing.transform(query => {
+  // Modify query before sending to server
+  return {
+    ...query,
+    search: query.search ? query.search.trim() : ''
+  }
+})
+
+// Format response data
+listing.format(response => {
+  return {
+    listing: {
+      items: response.data.data,
+      total: response.data.meta.total,
+      perPage: response.data.meta.per_page,
+      showing: response.data.data.length
+    },
+    filters: response.data.meta.filters || []
+  }
+})
+
+// Search with current filter parameters
+listing.search()
+
+// Navigate to next page
+listing.next()
+
+// Reset search parameters
+listing.resetSearch()
+
+// Clear a specific filter
+listing.clear('status')
+
+// Reset all filters to original values
+listing.reset()
+
+// Integration with Vue Router
+const router = useRouter()
+const route = useRoute()
+listing.useRouter(router, route)
 ```
+
+The Listing module works along with the PHP package `@wyxos/harmonie` which should be located at `../php/harmonie` relative to your project for backend integration.
 
 ## Additional Utilities
 
@@ -138,7 +236,7 @@ listing.load('/api/users')
 - `Search` - Search functionality
 - `Steps` - Multi-step process management
 - `Tab` - Tab management
-- `useFormErrors` - Form error handling composable
+- `FormErrors` - Form error handling utility (replaces deprecated `useFormErrors`)
 
 ## Demo
 

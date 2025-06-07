@@ -1,6 +1,6 @@
 <script setup>
 import FormBuilder from '../utilities/FormBuilder'
-import useFormErrors from '../utilities/useFormErrors.js'
+import FormError from '../utilities/FormErrors'
 
 defineProps({
   form: {
@@ -13,7 +13,7 @@ defineProps({
   }
 })
 
-const errors = useFormErrors()
+const errors = FormError.create()
 </script>
 
 <template>

@@ -36,7 +36,7 @@ export default {
     // Function to preload data
     const preloadData = () => {
       // Reset any previous states
-      form.loadState.value = ''
+      // Note: FormBuilder doesn't have loadState property, it uses internal state management
 
       // Load data from JSONPlaceholder API with callbacks in options
       form.load('https://jsonplaceholder.typicode.com/posts/1', {
@@ -61,29 +61,24 @@ export default {
 
     // Function to submit the form
     const submitForm = () => {
-      // Clear any previous errors and states
+      // Clear any previous errors
       form.clearErrors()
-      form.submitState.value = ''
+      // Note: FormBuilder manages state internally, no need to reset submitState
 
       // Validate form fields
-      let hasErrors = false
-
       if (!form.title) {
-        form.errors.setOne('title', 'Title is required')
-        hasErrors = true
+        form.setError('title', 'Title is required')
       }
 
       if (!form.body) {
-        form.errors.setOne('body', 'Body is required')
-        hasErrors = true
+        form.setError('body', 'Body is required')
       }
 
       if (!form.userId) {
-        form.errors.setOne('userId', 'User ID is required')
-        hasErrors = true
+        form.setError('userId', 'User ID is required')
       }
 
-      if (hasErrors) {
+      if (form.hasErrors()) {
         return
       }
 
@@ -132,9 +127,7 @@ export default {
       form.reset()
       form.clearErrors()
       formResponse.value = null
-      // Reset states
-      form.submitState.value = ''
-      form.loadState.value = ''
+      // Note: FormBuilder manages state internally through its reset() method
     }
 
     return {
@@ -163,8 +156,8 @@ export default {
           <div class="state-label">Submit States:</div>
           <div class="state-badges">
             <span :class="{ active: form.isSubmitting }" class="state-badge">Loading</span>
-            <span :class="{ active: form.isSubmitted }" class="state-badge">Loaded</span>
-            <span :class="{ active: form.isSubmitFailed }" class="state-badge">Failed</span>
+            <span :class="{ active: form.successful }" class="state-badge">Loaded</span>
+            <span :class="{ active: form.failed }" class="state-badge">Failed</span>
           </div>
         </div>
         <div class="state-item">
@@ -264,15 +257,15 @@ export default {
       </form>
     </div>
 
-    <div v-if="form.isSubmitted" class="success-message">
+    <div v-if="form.successful" class="success-message">
       <h3>Form Submitted Successfully!</h3>
       <p>Method used: <strong>{{ selectedMethod.toUpperCase() }}</strong></p>
       <pre>{{ JSON.stringify(formResponse, null, 2) }}</pre>
     </div>
 
-    <div v-if="form.isSubmitFailed" class="error-message-container">
+    <div v-if="form.failed" class="error-message-container">
       <h3>Form Submission Failed</h3>
-      <div v-if="Object.keys(form.getErrors()).length > 0">
+      <div v-if="form.hasErrors()">
         <h4>Errors:</h4>
         <ul>
           <li v-for="(error, key) in form.getErrors()" :key="key">

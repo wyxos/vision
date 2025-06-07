@@ -54,7 +54,6 @@ describe('FormBuilder', () => {
     const form = FormBuilder.create({ name: '' })
     await expect(form.post('/api')).rejects.toBeDefined()
     expect(form.hasError('name')).toBe(true)
-    expect(form.isSubmitFailed).toBe(true)
     expect(form.failed).toBe(true)
     expect(form.wasSubmitting).toBe(true)
   })
@@ -76,7 +75,7 @@ describe('FormBuilder', () => {
 
     await expect(form.load('/api')).rejects.toBeDefined()
 
-    expect(form.failed).toBe(true)
+    expect(form.isLoadFailed).toBe(true)
     expect(form.wasLoading).toBe(true)
   })
 })
