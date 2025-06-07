@@ -2,11 +2,13 @@
 import { ref } from 'vue'
 import FormBuilder from '@/utilities/FormBuilder.js'
 import WyxosError from '@/components/WyxosError.vue'
+import WyxosSubmit from '@/components/WyxosSubmit.vue'
 
 export default {
   name: 'FormBuilderDemo',
   components: {
-    WyxosError
+    WyxosError,
+    WyxosSubmit
   },
   setup() {
     // Create a new form with initial values
@@ -257,12 +259,7 @@ export default {
         </div>
 
         <div class="form-actions">
-          <button
-            :disabled="form.isSubmitting"
-            class="submit-button"
-            type="submit">
-            {{ form.isSubmitting ? 'Submitting...' : 'Submit' }}
-          </button>
+          <WyxosSubmit :form="form" class="submit-button" />
           <button class="reset-button" type="button" @click="resetForm">
             Reset
           </button>

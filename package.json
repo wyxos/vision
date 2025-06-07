@@ -42,6 +42,7 @@
     "@oruga-ui/theme-oruga": "^0.6.0",
     "@tailwindcss/vite": "^4.0.0",
     "@vitejs/plugin-vue": "^5.2.4",
+    "@vue/test-utils": "^2.4.6",
     "chalk": "^5.3.0",
     "dotenv": "^16.3.1",
     "eslint": "^8.53.0",

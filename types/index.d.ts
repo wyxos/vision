@@ -66,6 +66,7 @@ export class FormBuilder<T extends Record<string, any> = Record<string, any>> {
   callbacks: FormCallbacks;
   abortSubmitController: AbortController | null;
   abortLoadController: AbortController | null;
+  loadUrl: string | null;
 
   // State getters
   readonly successful: boolean;
@@ -201,8 +202,73 @@ export class Listing<Q extends Record<string, any> = Record<string, any>, Item =
   onFail(callback: (error: any) => any): this;
 }
 
+export interface WyxosFormProps {
+  form?: Record<string, any>;
+  loadUrl?: string | null;
+  submitUrl?: string | null;
+  method?: 'get' | 'post' | 'put' | 'patch' | 'delete';
+  resetAfterSubmit?: boolean;
+  forceFormData?: boolean;
+  transform?: ((data: any) => any) | null;
+  autoLoad?: boolean;
+}
+
+export interface WyxosFormExpose {
+  form: Ref<FormBuilder>;
+  submit: () => Promise<any>;
+  load: (url?: string | null) => Promise<any>;
+  reset: () => void;
+  isSubmitting: Ref<boolean>;
+  isSubmitted: Ref<boolean>;
+  isLoading: Ref<boolean>;
+  isLoaded: Ref<boolean>;
+  hasErrors: Ref<boolean>;
+  errors: Ref<FormError[]>;
+}
+
+export interface WyxosListingProps {
+  query?: Record<string, any>;
+  loadUrl?: string | null;
+  autoLoad?: boolean;
+  transform?: ((query: any) => any) | null;
+  format?: ((response: any) => any) | null;
+  router?: any;
+  route?: any;
+}
+
+export interface WyxosListingExpose {
+  listing: Ref<Listing>;
+  load: (url?: string | null) => Promise<any>;
+  search: (preserveEmpty?: boolean) => Promise<any>;
+  refresh: () => Promise<any>;
+  reset: () => Promise<any>;
+  resetSearch: () => Promise<any>;
+  clear: (key?: string) => Promise<any>;
+  onPageChange: (page: number) => Promise<any>;
+  isLoading: Ref<boolean>;
+  isLoaded: Ref<boolean>;
+  isLoadFailed: Ref<boolean>;
+  isSearching: Ref<boolean>;
+  isSearched: Ref<boolean>;
+  isSearchFailed: Ref<boolean>;
+  isRefreshing: Ref<boolean>;
+  isRefreshed: Ref<boolean>;
+  isRefreshFailed: Ref<boolean>;
+  isDirty: Ref<boolean>;
+  attributes: Ref<ListingAttributes<any>>;
+  config: Ref<any>;
+  events: Ref<{ pageChange: (page: number) => any }>;
+}
+
+export interface WyxosSubmitProps {
+  form: FormBuilder;
+}
+
 export default {
   FormBuilder,
   Listing,
-  WyxosError
+  WyxosError,
+  WyxosForm,
+  WyxosListing,
+  WyxosSubmit
 };

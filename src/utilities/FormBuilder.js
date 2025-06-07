@@ -11,6 +11,7 @@ export default class FormBuilder {
   form = reactive({})
   abortSubmitController = null
   abortLoadController = null
+  loadUrl = null
   state = reactive({
     loading: false,
     loaded: false,
@@ -260,6 +261,9 @@ export default class FormBuilder {
 
   load(url, options = {}) {
     this.setLoading()
+
+    // Store the URL for future use
+    this.loadUrl = url
 
     const { onSuccess, onFail, ...axiosConfig } = { ...options }
 
