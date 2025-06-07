@@ -15,7 +15,7 @@
     "dev": "vite demo",
     "build": "vite build demo --outDir ../dist",
     "copy-cname": "node -e \"require('fs').copyFileSync('CNAME', 'dist/CNAME')\"",
-    "deploy": "npm run build && npm run copy-cname"
+    "deploy": "npm run build && npm run copy-cname && gh-pages -d dist"
   },
   "keywords": [
     "vue",
@@ -54,6 +54,7 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^6.1.1",
     "eslint-plugin-vue": "^9.18.1",
+    "gh-pages": "^6.3.0",
     "iconv-lite": "^0.6.3",
     "inquirer": "^10.1.8",
     "jsdom": "^26.1.0",
