@@ -1,3 +1,150 @@
+<script>
+import { ref } from 'vue'
+import FormBuilder from '@/utilities/FormBuilder.js'
+import WyxosError from '@/components/WyxosError.vue'
+
+export default {
+  name: 'FormBuilderDemo',
+  components: {
+    WyxosError
+  },
+  setup() {
+    // Create a new form with initial values
+    const form = new FormBuilder({
+      title: '',
+      body: '',
+      userId: 1
+    })
+
+    const formResponse = ref(null)
+    const selectedMethod = ref('post')
+
+    // Method descriptions
+    const methodDescriptions = {
+      post: 'Creates a new resource',
+      patch: 'Partially updates an existing resource',
+      put: 'Replaces an existing resource',
+      get: 'Retrieves a resource',
+      delete: 'Removes a resource'
+    }
+
+    // Function to get method description
+    const getMethodDescription = (method) => {
+      return methodDescriptions[method] || ''
+    }
+
+    // Function to preload data
+    const preloadData = () => {
+      // Reset any previous states
+      form.loadState.value = ''
+
+      // Load data from JSONPlaceholder API
+      form.load('https://jsonplaceholder.typicode.com/posts/1')
+          .then(data => {
+            console.log('Preloaded data:', data)
+            // If the API doesn't return a form property, manually set the form data
+            if (!data.form) {
+              form.setAttributes({
+                title: data.title || '',
+                body: data.body || '',
+                userId: data.userId || 1
+              })
+            }
+          })
+          .catch(error => {
+            console.error('Preload error:', error)
+          })
+    }
+
+    // Function to submit the form
+    const submitForm = () => {
+      // Clear any previous errors and states
+      form.clearErrors()
+      form.submitState.value = ''
+
+      // Validate form fields
+      let hasErrors = false
+
+      if (!form.title) {
+        form.errors.setOne('title', 'Title is required')
+        hasErrors = true
+      }
+
+      if (!form.body) {
+        form.errors.setOne('body', 'Body is required')
+        hasErrors = true
+      }
+
+      if (!form.userId) {
+        form.errors.setOne('userId', 'User ID is required')
+        hasErrors = true
+      }
+
+      if (hasErrors) {
+        return
+      }
+
+      // Base URL for all requests
+      const baseUrl = 'https://jsonplaceholder.typicode.com/posts'
+
+      // URL for specific resource (for methods that need an ID)
+      const resourceUrl = `${baseUrl}/1`
+
+      let promise
+
+      // Submit the form using the selected method
+      switch (selectedMethod.value) {
+        case 'post':
+          promise = form.post(baseUrl)
+          break
+        case 'patch':
+          promise = form.patch(resourceUrl)
+          break
+        case 'put':
+          promise = form.put(resourceUrl)
+          break
+        case 'get':
+          promise = form.get(baseUrl)
+          break
+        case 'delete':
+          promise = form.delete(resourceUrl)
+          break
+        default:
+          promise = form.post(baseUrl)
+      }
+
+      promise
+          .then(response => {
+            formResponse.value = response
+          })
+          .catch(error => {
+            console.error('Form submission error:', error)
+          })
+    }
+
+    // Function to reset the form
+    const resetForm = () => {
+      form.reset()
+      form.clearErrors()
+      formResponse.value = null
+      // Reset states
+      form.submitState.value = ''
+      form.loadState.value = ''
+    }
+
+    return {
+      form,
+      formResponse,
+      selectedMethod,
+      getMethodDescription,
+      preloadData,
+      submitForm,
+      resetForm
+    }
+  }
+}
+</script>
+
 <template>
   <div class="form-demo">
     <h2>FormBuilder Demo</h2>
@@ -131,153 +278,6 @@
     </div>
   </div>
 </template>
-
-<script>
-import { ref } from 'vue'
-import FormBuilder from '@/utilities/FormBuilder.js'
-import WyxosError from '@/components/WyxosError.vue'
-
-export default {
-  name: 'FormBuilderDemo',
-  components: {
-    WyxosError
-  },
-  setup() {
-    // Create a new form with initial values
-    const form = new FormBuilder({
-      title: '',
-      body: '',
-      userId: 1
-    })
-
-    const formResponse = ref(null)
-    const selectedMethod = ref('post')
-
-    // Method descriptions
-    const methodDescriptions = {
-      post: 'Creates a new resource',
-      patch: 'Partially updates an existing resource',
-      put: 'Replaces an existing resource',
-      get: 'Retrieves a resource',
-      delete: 'Removes a resource'
-    }
-
-    // Function to get method description
-    const getMethodDescription = (method) => {
-      return methodDescriptions[method] || ''
-    }
-
-    // Function to preload data
-    const preloadData = () => {
-      // Reset any previous states
-      form.loadState.value = ''
-
-      // Load data from JSONPlaceholder API
-      form.load('https://jsonplaceholder.typicode.com/posts/1')
-        .then(data => {
-          console.log('Preloaded data:', data)
-          // If the API doesn't return a form property, manually set the form data
-          if (!data.form) {
-            form.setAttributes({
-              title: data.title || '',
-              body: data.body || '',
-              userId: data.userId || 1
-            })
-          }
-        })
-        .catch(error => {
-          console.error('Preload error:', error)
-        })
-    }
-
-    // Function to submit the form
-    const submitForm = () => {
-      // Clear any previous errors and states
-      form.clearErrors()
-      form.submitState.value = ''
-
-      // Validate form fields
-      let hasErrors = false
-
-      if (!form.title) {
-        form.errors.setOne('title', 'Title is required')
-        hasErrors = true
-      }
-
-      if (!form.body) {
-        form.errors.setOne('body', 'Body is required')
-        hasErrors = true
-      }
-
-      if (!form.userId) {
-        form.errors.setOne('userId', 'User ID is required')
-        hasErrors = true
-      }
-
-      if (hasErrors) {
-        return
-      }
-
-      // Base URL for all requests
-      const baseUrl = 'https://jsonplaceholder.typicode.com/posts'
-
-      // URL for specific resource (for methods that need an ID)
-      const resourceUrl = `${baseUrl}/1`
-
-      let promise
-
-      // Submit the form using the selected method
-      switch (selectedMethod.value) {
-        case 'post':
-          promise = form.post(baseUrl)
-          break
-        case 'patch':
-          promise = form.patch(resourceUrl)
-          break
-        case 'put':
-          promise = form.put(resourceUrl)
-          break
-        case 'get':
-          promise = form.get(baseUrl)
-          break
-        case 'delete':
-          promise = form.delete(resourceUrl)
-          break
-        default:
-          promise = form.post(baseUrl)
-      }
-
-      promise
-        .then(response => {
-          formResponse.value = response
-        })
-        .catch(error => {
-          console.error('Form submission error:', error)
-        })
-    }
-
-    // Function to reset the form
-    const resetForm = () => {
-      form.reset()
-      form.clearErrors()
-      formResponse.value = null
-      // Reset states
-      form.submitState.value = ''
-      form.loadState.value = ''
-    }
-
-    return {
-      form,
-      formResponse,
-      selectedMethod,
-      getMethodDescription,
-      preloadData,
-      submitForm,
-      resetForm
-    }
-  }
-}
-</script>
 
 <style>
 .form-demo {

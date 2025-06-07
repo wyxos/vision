@@ -3,46 +3,42 @@
     <header>
       <h1>@wyxos/vision Demo</h1>
       <div class="tabs">
-        <button
-          @click="activeTab = 'form'"
-          :class="{ active: activeTab === 'form' }"
+        <router-link
+          to="/form"
+          custom
+          v-slot="{ isActive, navigate }"
         >
-          FormBuilder Demo
-        </button>
-        <button
-          @click="activeTab = 'listing'"
-          :class="{ active: activeTab === 'listing' }"
+          <button
+            @click="navigate"
+            :class="{ active: isActive }"
+          >
+            FormBuilder Demo
+          </button>
+        </router-link>
+        <router-link
+          to="/listing"
+          custom
+          v-slot="{ isActive, navigate }"
         >
-          Listing Demo
-        </button>
+          <button
+            @click="navigate"
+            :class="{ active: isActive }"
+          >
+            Listing Demo
+          </button>
+        </router-link>
       </div>
     </header>
 
     <main>
-      <FormBuilderDemo v-if="activeTab === 'form'" />
-      <ListingDemo v-if="activeTab === 'listing'" />
+      <router-view />
     </main>
   </div>
 </template>
 
 <script>
-import { ref } from 'vue'
-import FormBuilderDemo from './components/FormBuilderDemo.vue'
-import ListingDemo from './components/ListingDemo.vue'
-
 export default {
-  name: 'App',
-  components: {
-    FormBuilderDemo,
-    ListingDemo
-  },
-  setup() {
-    const activeTab = ref('form')
-
-    return {
-      activeTab
-    }
-  }
+  name: 'App'
 }
 </script>
 

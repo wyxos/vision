@@ -1,122 +1,6 @@
-<template>
-  <div class="listing-demo">
-    <h2>Listing Demo</h2>
-    <p>This demo shows how to use the Listing utility to fetch and display paginated data.</p>
-
-    <!-- States Display -->
-    <div class="states-container">
-      <h3>Listing States</h3>
-      <div class="states-grid">
-        <div class="state-item">
-          <div class="state-label">Load States:</div>
-          <div class="state-badges">
-            <span :class="{ active: listing.isLoading }" class="state-badge">Loading</span>
-            <span :class="{ active: listing.isLoaded }" class="state-badge">Loaded</span>
-            <span :class="{ active: listing.isLoadFailed }" class="state-badge">Failed</span>
-          </div>
-        </div>
-        <div class="state-item">
-          <div class="state-label">Search States:</div>
-          <div class="state-badges">
-            <span :class="{ active: listing.isSearching }" class="state-badge">Searching</span>
-            <span :class="{ active: listing.isSearched }" class="state-badge">Searched</span>
-            <span :class="{ active: listing.isSearchFailed }" class="state-badge">Failed</span>
-          </div>
-        </div>
-        <div class="state-item">
-          <div class="state-label">Refresh States:</div>
-          <div class="state-badges">
-            <span :class="{ active: listing.isRefreshing }" class="state-badge">Refreshing</span>
-            <span :class="{ active: listing.isRefreshed }" class="state-badge">Refreshed</span>
-            <span :class="{ active: listing.isRefreshFailed }" class="state-badge">Failed</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="filter-container">
-      <h3>Filters</h3>
-      <div class="filter-form">
-        <div class="filter-group">
-          <label for="userId">Filter by User ID</label>
-          <input
-            id="userId"
-            v-model="listing.filter.query.userId"
-            max="10"
-            min="1"
-            type="number"
-          >
-        </div>
-
-        <div class="filter-actions">
-          <button
-            :disabled="listing.isSearching"
-            class="apply-button"
-            @click="applyFilters"
-          >
-            {{ listing.isSearching ? 'Searching...' : 'Apply Filters' }}
-          </button>
-          <button
-            :disabled="listing.isSearching"
-            class="reset-button"
-            @click="resetFilters"
-          >
-            Reset Filters
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <div class="listing-container">
-      <div v-if="listing.isLoading || listing.isSearching || listing.isRefreshing" class="loading">
-        {{ getLoadingMessage() }}
-      </div>
-
-      <div v-else-if="listing.isLoadFailed || listing.isSearchFailed || listing.isRefreshFailed" class="error-message">
-        Failed to load data. <button class="retry-button" @click="retryLoad">Retry</button>
-      </div>
-
-      <div v-else>
-        <o-table
-          :loading="listing.isLoading || listing.isSearching || listing.isRefreshing"
-          v-bind="listing.config"
-          v-on="listing.events"
-        >
-          <o-table-column v-slot="props" field="id" label="ID">
-            {{ props.row.id }}
-          </o-table-column>
-          <o-table-column v-slot="props" field="title" label="Title">
-            {{ props.row.title }}
-          </o-table-column>
-          <o-table-column v-slot="props" field="userId" label="User ID">
-            {{ props.row.userId }}
-          </o-table-column>
-          <o-table-column v-slot="props" label="Actions">
-            <button class="view-button" @click="viewDetails(props.row)">View</button>
-          </o-table-column>
-        </o-table>
-      </div>
-    </div>
-
-    <o-modal v-model:active="isModalActive" :width="640" aria-role="dialog" aria-modal>
-      <div v-if="selectedItem" class="modal-content">
-        <h3>Post Details</h3>
-        <div class="details-card">
-          <h4>{{ selectedItem.title }}</h4>
-          <p>{{ selectedItem.body }}</p>
-          <div class="details-meta">
-            <span>ID: {{ selectedItem.id }}</span>
-            <span>User ID: {{ selectedItem.userId }}</span>
-          </div>
-          <button class="close-button" @click="closeModal">Close</button>
-        </div>
-      </div>
-    </o-modal>
-  </div>
-</template>
-
 <script>
 import { ref, onMounted } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import Listing from '@/utilities/Listing.js'
 import { OTable, OTableColumn, OModal } from '@oruga-ui/oruga-next'
 
@@ -128,12 +12,19 @@ export default {
     OModal
   },
   setup() {
+    // Get router and route instances
+    const router = useRouter()
+    const route = useRoute()
+
     // Create a new listing with initial query parameters
     const listing = new Listing({
       page: 1,
       limit: 10,
       userId: ''
     })
+
+    // Connect listing to Vue Router
+    listing.useRouter(router, route)
 
     // URL to load data from
     const apiUrl = 'https://jsonplaceholder.typicode.com/posts'
@@ -172,7 +63,7 @@ export default {
 
     // Function to apply filters
     const applyFilters = () => {
-      listing.filter.query.page = 1
+      listing.page = 1
       lastAction.value = 'search'
       listing.search()
     }
@@ -201,7 +92,7 @@ export default {
       listing.format(response => {
         // Format the response to match what the Listing class expects
         const totalCount = parseInt(response.headers['x-total-count'] || '0')
-        const perPage = listing.filter.query.limit
+        const perPage = listing.limit
 
         // Create and return an object with the expected structure
         return {
@@ -264,6 +155,123 @@ export default {
   }
 }
 </script>
+
+<template>
+  <div class="listing-demo">
+    <h2>Listing Demo</h2>
+    <p>This demo shows how to use the Listing utility to fetch and display paginated data.</p>
+
+    <!-- States Display -->
+    <div class="states-container">
+      <h3>Listing States</h3>
+      <div class="states-grid">
+        <div class="state-item">
+          <div class="state-label">Load States:</div>
+          <div class="state-badges">
+            <span :class="{ active: listing.isLoading }" class="state-badge">Loading</span>
+            <span :class="{ active: listing.isLoaded }" class="state-badge">Loaded</span>
+            <span :class="{ active: listing.isLoadFailed }" class="state-badge">Failed</span>
+          </div>
+        </div>
+        <div class="state-item">
+          <div class="state-label">Search States:</div>
+          <div class="state-badges">
+            <span :class="{ active: listing.isSearching }" class="state-badge">Searching</span>
+            <span :class="{ active: listing.isSearched }" class="state-badge">Searched</span>
+            <span :class="{ active: listing.isSearchFailed }" class="state-badge">Failed</span>
+          </div>
+        </div>
+        <div class="state-item">
+          <div class="state-label">Refresh States:</div>
+          <div class="state-badges">
+            <span :class="{ active: listing.isRefreshing }" class="state-badge">Refreshing</span>
+            <span :class="{ active: listing.isRefreshed }" class="state-badge">Refreshed</span>
+            <span :class="{ active: listing.isRefreshFailed }" class="state-badge">Failed</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="filter-container">
+      <h3>Filters</h3>
+      <div class="filter-form">
+        <div class="filter-group">
+          <label for="userId">Filter by User ID</label>
+          <input
+            id="userId"
+            v-model="listing.userId"
+            max="10"
+            min="1"
+            type="number"
+          >
+        </div>
+
+        <div class="filter-actions">
+          <button
+            :disabled="listing.isSearching"
+            class="apply-button"
+            @click="applyFilters"
+          >
+            {{ listing.isSearching ? 'Searching...' : 'Apply Filters' }}
+          </button>
+          <button
+            :disabled="listing.isSearching"
+            class="reset-button"
+            @click="resetFilters"
+          >
+            Reset Filters
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="listing-container">
+      <div v-if="listing.isLoading || listing.isSearching || listing.isRefreshing" class="loading">
+        {{ getLoadingMessage() }}
+      </div>
+
+      <div v-else-if="listing.isLoadFailed || listing.isSearchFailed || listing.isRefreshFailed" class="error-message">
+        Failed to load data. <button class="retry-button" @click="retryLoad">Retry</button>
+      </div>
+
+      <div v-else>
+        <o-table
+          :loading="listing.isLoading || listing.isSearching || listing.isRefreshing"
+          v-bind="listing.config"
+          v-on="listing.events"
+        >
+          <o-table-column v-slot="props" field="id" label="ID">
+            {{ props.row.id }}
+          </o-table-column>
+          <o-table-column v-slot="props" field="title" label="Title">
+            {{ props.row.title }}
+          </o-table-column>
+          <o-table-column v-slot="props" field="userId" label="User ID">
+            {{ props.row.userId }}
+          </o-table-column>
+          <o-table-column v-slot="props" label="Actions">
+            <button class="view-button" @click="viewDetails(props.row)">View</button>
+          </o-table-column>
+        </o-table>
+      </div>
+    </div>
+
+    <o-modal v-model:active="isModalActive" :width="640" aria-modal aria-role="dialog">
+      <div v-if="selectedItem" class="modal-content">
+        <h3>Post Details</h3>
+        <div class="details-card">
+          <h4>{{ selectedItem.title }}</h4>
+          <p>{{ selectedItem.body }}</p>
+          <div class="details-meta">
+            <span>ID: {{ selectedItem.id }}</span>
+            <span>User ID: {{ selectedItem.userId }}</span>
+          </div>
+          <button class="close-button" @click="closeModal">Close</button>
+        </div>
+      </div>
+    </o-modal>
+  </div>
+</template>
 
 <style>
 .listing-demo {
