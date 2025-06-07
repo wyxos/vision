@@ -253,41 +253,6 @@ errors.clear()
 const allErrors = errors.all()
 ```
 
-## Demo
-
-A demo application is included in this repository to showcase the usage of FormBuilder and Listing utilities. To run the demo:
-
-```bash
-npm run dev
-```
-
-This will start a Vite development server, and you can access the demo in your browser at http://localhost:3000.
-
-The demo includes:
-- FormBuilder example with validation and submission
-- Listing example with pagination and filtering
-
-## Deployment
-
-To deploy the demo to GitHub Pages:
-
-1. Create a CNAME file with your domain:
-   ```bash
-   npm run create-cname your-domain.com
-   ```
-   This will create a CNAME file in the dist directory with your specified domain. If the file already exists and contains the specified domain, it will not be modified.
-
-2. Build and deploy the project:
-   ```bash
-   npm run deploy
-   ```
-   This will build the demo and deploy it to GitHub Pages.
-
-3. Commit and push the changes to GitHub, including the dist directory.
-
-4. Configure GitHub Pages in your repository settings to use the content from the /dist directory in the main branch.
-
-The demo will be available at your specified domain.
 
 ## License
 
