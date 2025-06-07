@@ -38,22 +38,25 @@ export default {
       // Reset any previous states
       form.loadState.value = ''
 
-      // Load data from JSONPlaceholder API
-      form.load('https://jsonplaceholder.typicode.com/posts/1')
-          .then(data => {
-            console.log('Preloaded data:', data)
-            // If the API doesn't return a form property, manually set the form data
-            if (!data.form) {
-              form.setAttributes({
-                title: data.title || '',
-                body: data.body || '',
-                userId: data.userId || 1
-              })
-            }
-          })
-          .catch(error => {
-            console.error('Preload error:', error)
-          })
+      // Load data from JSONPlaceholder API with callbacks in options
+      form.load('https://jsonplaceholder.typicode.com/posts/1', {
+        onSuccess: (data) => {
+          console.log('Preloaded data:', data)
+          // If the API doesn't return a form property, manually set the form data
+          if (!data.form) {
+            form.setAttributes({
+              title: data.title || '',
+              body: data.body || '',
+              userId: data.userId || 1
+            })
+          }
+          return data
+        },
+        onFail: (error) => {
+          console.error('Preload error:', error)
+          return error
+        }
+      })
     }
 
     // Function to submit the form
@@ -90,36 +93,38 @@ export default {
       // URL for specific resource (for methods that need an ID)
       const resourceUrl = `${baseUrl}/1`
 
-      let promise
-
-      // Submit the form using the selected method
-      switch (selectedMethod.value) {
-        case 'post':
-          promise = form.post(baseUrl)
-          break
-        case 'patch':
-          promise = form.patch(resourceUrl)
-          break
-        case 'put':
-          promise = form.put(resourceUrl)
-          break
-        case 'get':
-          promise = form.get(baseUrl)
-          break
-        case 'delete':
-          promise = form.delete(resourceUrl)
-          break
-        default:
-          promise = form.post(baseUrl)
+      // Options with callbacks for all HTTP methods
+      const options = {
+        onSuccess: (response) => {
+          formResponse.value = response
+          return response
+        },
+        onFail: (error) => {
+          console.error('Form submission error:', error)
+          return error
+        }
       }
 
-      promise
-          .then(response => {
-            formResponse.value = response
-          })
-          .catch(error => {
-            console.error('Form submission error:', error)
-          })
+      // Submit the form using the selected method with callbacks in options
+      switch (selectedMethod.value) {
+        case 'post':
+          form.post(baseUrl, options)
+          break
+        case 'patch':
+          form.patch(resourceUrl, options)
+          break
+        case 'put':
+          form.put(resourceUrl, options)
+          break
+        case 'get':
+          form.get(baseUrl, options)
+          break
+        case 'delete':
+          form.delete(resourceUrl, options)
+          break
+        default:
+          form.post(baseUrl, options)
+      }
     }
 
     // Function to reset the form
