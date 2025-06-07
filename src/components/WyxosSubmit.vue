@@ -6,18 +6,28 @@ const props = defineProps({
   form: {
     type: Object,
     required: true
+  },
+  // Allow disabling the button externally
+  disabled: {
+    type: Boolean,
+    default: false
   }
 })
 
 // Computed property to determine if the button should be disabled
 const isDisabled = computed(() => {
+  return props.form.isSubmitting || props.disabled
+})
+
+// Computed property to determine if the form is submitting
+const isSubmitting = computed(() => {
   return props.form.isSubmitting
 })
 </script>
 
 <template>
   <button type="submit" :disabled="isDisabled" class="wyxos-submit">
-    <span v-if="isDisabled" class="wyxos-submit-loading">
+    <span v-if="isSubmitting" class="wyxos-submit-loading">
       <!-- Simple loading spinner -->
       <span class="wyxos-submit-spinner"></span>
     </span>

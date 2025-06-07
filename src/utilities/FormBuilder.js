@@ -143,6 +143,12 @@ export default class FormBuilder {
     return this.state.failed && this.state.wasLoading
   }
 
+  get isDirty() {
+    const currentForm = JSON.stringify(this.form)
+    const originalForm = JSON.stringify(this.original)
+    return currentForm !== originalForm
+  }
+
   //
   static create(options) {
     return new this(options)

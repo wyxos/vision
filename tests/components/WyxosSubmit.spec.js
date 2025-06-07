@@ -62,4 +62,20 @@ describe('WyxosSubmit', () => {
     expect(wrapper.find('button').attributes('disabled')).toBeUndefined()
     expect(wrapper.find('.wyxos-submit-spinner').exists()).toBe(false)
   })
+
+  it('is disabled when disabled prop is true, regardless of form state', async () => {
+    const mockForm = new FormBuilder()
+    mockForm.state.loading = false
+    mockForm.state.wasSubmitting = false
+
+    const wrapper = mount(WyxosSubmit, {
+      props: {
+        form: mockForm,
+        disabled: true
+      }
+    })
+
+    expect(wrapper.find('button').attributes('disabled')).toBeDefined()
+    expect(wrapper.find('.wyxos-submit-spinner').exists()).toBe(false)
+  })
 })

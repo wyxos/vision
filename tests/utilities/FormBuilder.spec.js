@@ -78,4 +78,23 @@ describe('FormBuilder', () => {
     expect(form.isLoadFailed).toBe(true)
     expect(form.wasLoading).toBe(true)
   })
+
+  it('tracks dirty state correctly', () => {
+    const form = FormBuilder.create({ name: '', email: '' })
+
+    // Initially the form should not be dirty
+    expect(form.isDirty).toBe(false)
+
+    // Form should be dirty after changing a value
+    form.name = 'John'
+    expect(form.isDirty).toBe(true)
+
+    // Form should not be dirty after resetting
+    form.reset()
+    expect(form.isDirty).toBe(false)
+
+    // Form should be dirty after changing a value again
+    form.email = 'john@example.com'
+    expect(form.isDirty).toBe(true)
+  })
 })

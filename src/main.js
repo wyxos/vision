@@ -1,13 +1,34 @@
 import FormBuilder from './utilities/FormBuilder.js'
 import Listing from './utilities/Listing.js'
 import WyxosError from './components/WyxosError.vue'
+import WyxosForm from './components/WyxosForm.vue'
+import WyxosListing from './components/WyxosListing.vue'
+import WyxosSubmit from './components/WyxosSubmit.vue'
 
-export { FormBuilder, Listing, WyxosError }
+export { FormBuilder, Listing, WyxosError, WyxosForm, WyxosListing, WyxosSubmit }
+
+const install = (app, options = {}) => {
+  // Register all components
+  app.component('WyxosError', WyxosError)
+  app.component('WyxosForm', WyxosForm)
+  app.component('WyxosListing', WyxosListing)
+  app.component('WyxosSubmit', WyxosSubmit)
+
+  // Also register with shorthand names (W prefix instead of Wyxos)
+  app.component('WError', WyxosError)
+  app.component('WForm', WyxosForm)
+  app.component('WListing', WyxosListing)
+  app.component('WSubmit', WyxosSubmit)
+}
 
 export default {
+  install,
   FormBuilder,
   Listing,
-  WyxosError
+  WyxosError,
+  WyxosForm,
+  WyxosListing,
+  WyxosSubmit
 }
 
 // import {
