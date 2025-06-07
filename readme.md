@@ -267,6 +267,22 @@ The demo includes:
 - FormBuilder example with validation and submission
 - Listing example with pagination and filtering
 
+## Deployment
+
+To deploy the demo to GitHub Pages:
+
+1. Build the project locally:
+   ```bash
+   npm run deploy
+   ```
+   This will build the demo and copy the CNAME file to the dist directory.
+
+2. Commit and push the changes to GitHub, including the dist directory.
+
+3. Configure GitHub Pages in your repository settings to use the content from the /dist directory in the main branch.
+
+The demo will be available at [vision.wyxos.com](https://vision.wyxos.com).
+
 ## License
 
 MIT
