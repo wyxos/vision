@@ -19,7 +19,9 @@ export default class FormBuilder {
     wasLoading: false,
     wasSubmitting: false
   })
+
   errors = useFormErrors()
+
   resetAfterSubmitFlag = false
 
   callbacks = {
@@ -197,7 +199,7 @@ export default class FormBuilder {
 
     this.clearErrors()
 
-    const axiosConfig = { ...options }
+    const { onSuccess, onFail, ...axiosConfig } = { ...options }
 
     // If there's an ongoing request, abort it
     if (this.abortSubmitController) {
@@ -239,8 +241,11 @@ export default class FormBuilder {
           this.setAttributes(this.original)
         }
 
-        return this.callbacks.success
-          ? this.callbacks.success(response.data)
+        // Use callback from options first, then fallback to the one set via onSuccess method
+        const successCallback = onSuccess || this.callbacks.success
+
+        return successCallback
+          ? successCallback(response.data)
           : response.data
       })
       .catch((error) => {
@@ -248,18 +253,21 @@ export default class FormBuilder {
 
         this.errors.set(error)
 
-        if (this.callbacks.failure) {
-          return Promise.reject(this.callbacks.failure(error))
+        // Use callback from options first, then fallback to the one set via onFail method
+        const failCallback = onFail || this.callbacks.failure
+
+        if (failCallback) {
+          return Promise.reject(failCallback(error))
         }
 
         return Promise.reject(error)
       })
   }
 
-  load(url) {
+  load(url, options = {}) {
     this.setLoading()
 
-    const axiosConfig = {}
+    const { onSuccess, onFail, ...axiosConfig } = { ...options }
 
     // If there's an ongoing request, abort it
     if (this.abortLoadController) {
@@ -281,10 +289,22 @@ export default class FormBuilder {
           this.setAttributes(response.data.form)
         }
 
-        return response.data
+        // Use callback from options first, then fallback to the one set via onSuccess method
+        const successCallback = onSuccess || this.callbacks.success
+
+        return successCallback
+          ? successCallback(response.data)
+          : response.data
       })
       .catch((error) => {
         this.setLoadFailed()
+
+        // Use callback from options first, then fallback to the one set via onFail method
+        const failCallback = onFail || this.callbacks.failure
+
+        if (failCallback) {
+          return Promise.reject(failCallback(error))
+        }
 
         return Promise.reject(error)
       })
