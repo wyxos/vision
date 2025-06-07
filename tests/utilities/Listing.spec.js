@@ -126,7 +126,10 @@ describe('Listing', () => {
   it('tracks state correctly during failed search operation', async () => {
     axios.get.mockRejectedValue(new Error('Network error'))
     const listing = Listing.create({ page: 1 })
-    listing.load('/items')
+    // load() sets internal URL and returns a promise. Since the axios call is
+    // mocked to reject, we must catch the promise to avoid an unhandled
+    // rejection during the test.
+    listing.load('/items').catch(() => {})
 
     // Start search
     const searchPromise = listing.search().catch(() => {})
