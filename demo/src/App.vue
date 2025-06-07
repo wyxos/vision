@@ -1,18 +1,25 @@
 <template>
   <div class="app-container">
-    <header>
-      <h1>@wyxos/vision Demo</h1>
-      <div class="tabs">
-        <router-link v-slot="{ isActive, navigate }" to="/form" custom>
-          <button :class="{ active: isActive }" @click="navigate">
-            FormBuilder Demo
-          </button>
-        </router-link>
-        <router-link v-slot="{ isActive, navigate }" to="/listing" custom>
-          <button :class="{ active: isActive }" @click="navigate">
-            Listing Demo
-          </button>
-        </router-link>
+    <header class="flex justify-between">
+      <div>
+        <h1>@wyxos/vision Demo</h1>
+        <div class="tabs">
+          <router-link v-slot="{ isActive, navigate }" custom to="/form">
+            <button :class="{ active: isActive }" @click="navigate">
+              FormBuilder Demo
+            </button>
+          </router-link>
+          <router-link v-slot="{ isActive, navigate }" custom to="/listing">
+            <button :class="{ active: isActive }" @click="navigate">
+              Listing Demo
+            </button>
+          </router-link>
+        </div>
+      </div>
+      <div class="links">
+        <a href="https://github.com/wyxos/vision/tree/main/docs" target="_blank">Documentation</a>
+        <a href="https://github.com/wyxos" target="_blank">GitHub</a>
+        <a href="https://wyxos.com" target="_blank">Wyxos.com</a>
       </div>
     </header>
 
@@ -77,5 +84,23 @@ main {
   border-radius: 8px;
   padding: 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.links {
+  margin-top: 10px;
+  display: flex;
+  gap: 15px;
+}
+
+.links a {
+  color: #4caf50;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.links a:hover {
+  color: #2e7d32;
+  text-decoration: underline;
 }
 </style>
