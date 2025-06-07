@@ -1,15 +1,12 @@
 # @wyxos/vision
 
-A comprehensive Vue.js utility library that extends Oruga UI with additional components and utilities to simplify common tasks in Vue applications.
+A lightweight Vue.js utility library that provides essential form handling, listing, and error display utilities for Vue applications.
 
 ## Features
 
-- **Enhanced Oruga UI Components**: Seamlessly integrates with Oruga UI and provides additional components with extended functionality
 - **Form Handling**: Powerful form building, validation, and submission utilities
-- **Async Data Management**: Simplified API for handling asynchronous data fetching and state management
 - **Listing and Pagination**: Comprehensive tools for creating data tables with filtering, pagination, and sorting
 - **Error Handling**: Built-in error handling and validation utilities
-- **UI Components**: Rich set of UI components for common tasks like confirmation dialogs, inline editing, and more
 
 ## Installation
 
@@ -19,7 +16,7 @@ npm install @wyxos/vision
 
 ## Requirements
 
-This package has the following peer dependencies:
+This package has the following dependencies:
 
 - Vue 3.x
 - axios
@@ -34,64 +31,41 @@ This package has the following peer dependencies:
 ```javascript
 import { createApp } from 'vue'
 import App from './App.vue'
-import Vision from '@wyxos/vision'
+import { FormBuilder, Listing, WyxosError } from '@wyxos/vision'
 
 const app = createApp(App)
 
-app.use(Vision)
+// Register components as needed
+app.component('WyxosError', WyxosError)
 
 app.mount('#app')
 ```
 
 ### Components
 
-Vision provides a rich set of components with the `Wyxos` prefix (also accessible with the `W` prefix for brevity):
+Vision currently provides the following component:
 
-- `WyxosAccordion` - Collapsible content panels
-- `WyxosAction` - Action button with loading states
-- `WyxosAsync` - Component for handling async data loading
-- `WyxosButton` - Enhanced button with loading states
-- `WyxosCollection` - Collection management
-- `WyxosConfirm` - Confirmation dialog
-- `WyxosDatepicker` - Date picker component
-- `WyxosDeleteButton` - Button for delete operations with confirmation
-- `WyxosError` - Error display component
-- `WyxosForm` - Form component with validation
-- `WyxosIcon` - Icon component
-- `WyxosImage` - Image component with loading states
-- `WyxosInlineEdit` - Inline editing component
-- `WyxosInput` - Enhanced input component
-- `WyxosListing` - Data listing component with pagination
-- `WyxosLiveInput` - Input with live updates
-- `WyxosLogout` - Logout button with confirmation
-- `WyxosProgress` - Progress indicator
-- `WyxosPrompt` - Prompt dialog
-- `WyxosRemove` - Remove button with confirmation
-- `WyxosSelect` - Enhanced select component
-- `WyxosSessionExpired` - Session expired notification
-- `WyxosSubmit` - Submit button with loading states
-- `WyxosTab` - Tab component
-- `WyxosTags` - Tags input component
-- `WyxosTokenExpired` - Token expired notification
-- `WyxosUpdateButton` - Button for update operations with loading states
+- `WyxosError` - Error display component for form validation errors
+
+Note: When creating Vue components, always place the script tag at the top of the component, as shown in the example below:
+
+```vue
+<script setup>
+// Imports and component logic here
+</script>
+
+<template>
+  <!-- Template content here -->
+</template>
+
+<style>
+/* Styles here */
+</style>
+```
 
 ### Utilities
 
-Vision provides several utility classes to simplify common tasks:
-
-#### AsyncData
-
-Simplifies handling asynchronous data fetching with loading states:
-
-```javascript
-import { AsyncData } from '@wyxos/vision'
-
-const users = AsyncData.create()
-users.load('/api/users')
-  .then(response => {
-    console.log('Users loaded:', users.data.value)
-  })
-```
+Vision provides the following utility classes to simplify common tasks:
 
 #### FormBuilder
 
@@ -224,26 +198,67 @@ listing.useRouter(router, route)
 
 The Listing module works along with the PHP package `@wyxos/harmonie` which should be located at `../php/harmonie` relative to your project for backend integration.
 
-## Additional Utilities
+#### Filter
 
-- `Action` - Utility for handling actions with loading states
-- `AutoComplete` - Autocomplete functionality
-- `DateRender` - Date formatting and rendering
-- `Filter` - Query filtering utility
-- `FileRequest` - File upload and download handling
-- `LoadState` - Loading state management
-- `ResourceList` - Resource listing utility
-- `Search` - Search functionality
-- `Steps` - Multi-step process management
-- `Tab` - Tab management
-- `FormErrors` - Form error handling utility (replaces deprecated `useFormErrors`)
+Query filtering utility used by the Listing module:
+
+```javascript
+import { Filter } from '@wyxos/vision'
+
+// Create a filter with initial query parameters
+const filter = new Filter({
+  search: '',
+  status: 'active',
+  page: 1
+})
+
+// Check if filter is dirty (has been modified)
+console.log('Is filter dirty?', filter.isDirty)
+
+// Reset filter to original values
+filter.reset()
+
+// Clear a specific filter
+filter.clear('status')
+
+// Get filled fields (non-empty values)
+const filledFields = filter.getFilledFields()
+```
+
+#### FormErrors
+
+Form error handling utility:
+
+```javascript
+import { FormErrors } from '@wyxos/vision'
+
+// Create a new error bag
+const errors = FormErrors.create()
+
+// Set an error
+errors.setOne('email', 'Please enter a valid email address')
+
+// Check if a field has an error
+if (errors.has('email')) {
+  console.log('Email error:', errors.get('email').message)
+}
+
+// Clear a specific error
+errors.clear('email')
+
+// Clear all errors
+errors.clear()
+
+// Get all errors
+const allErrors = errors.all()
+```
 
 ## Demo
 
 A demo application is included in this repository to showcase the usage of FormBuilder and Listing utilities. To run the demo:
 
 ```bash
-npm run demo
+npm run dev
 ```
 
 This will start a Vite development server, and you can access the demo in your browser at http://localhost:3000.
@@ -251,8 +266,6 @@ This will start a Vite development server, and you can access the demo in your b
 The demo includes:
 - FormBuilder example with validation and submission
 - Listing example with pagination and filtering
-
-For more details, see the [demo README](./demo/README.md).
 
 ## License
 

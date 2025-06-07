@@ -12,7 +12,10 @@
     "lint": "eslint . --fix --ext .js,.vue,.json && prettier --write **/*{.js,.vue,.json}",
     "release": "node release.mjs",
     "test": "vitest run",
-    "dev": "vite demo"
+    "dev": "vite demo",
+    "build": "vite build demo --outDir ../dist",
+    "copy-cname": "node -e \"require('fs').copyFileSync('CNAME', 'dist/CNAME')\"",
+    "deploy": "npm run build && npm run copy-cname"
   },
   "keywords": [
     "vue",
@@ -32,7 +35,6 @@
     "@fortawesome/fontawesome-free": "^6.5.1",
     "@oruga-ui/oruga-next": "^0.10.4",
     "axios": "1.8.2",
-    "moment": "^2.29.4",
     "query-string": "^8.1.0",
     "vue": "^3.5.12",
     "vue-router": "^4.3.0"

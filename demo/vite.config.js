@@ -5,6 +5,7 @@ import { resolve } from 'path'
 
 export default defineConfig({
   plugins: [tailwindcss(), vue()],
+  base: '/',
   resolve: {
     alias: {
       '@': resolve(__dirname, '../src'),
@@ -13,5 +14,9 @@ export default defineConfig({
   },
   server: {
     port: 3000
+  },
+  build: {
+    outDir: '../dist',
+    emptyOutDir: true
   }
 })
