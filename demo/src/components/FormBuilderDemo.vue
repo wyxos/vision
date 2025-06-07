@@ -172,6 +172,14 @@ export default {
           </div>
         </div>
         <div class="state-item">
+          <div class="state-label">Form Status:</div>
+          <div class="state-badges">
+            <span :class="{ active: form.isDirty }" class="state-badge"
+              >Dirty</span
+            >
+          </div>
+        </div>
+        <div class="state-item">
           <div class="state-label">Load States:</div>
           <div class="state-badges">
             <span :class="{ active: form.isLoading }" class="state-badge"

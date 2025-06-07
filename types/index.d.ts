@@ -81,6 +81,7 @@ export class FormBuilder<T extends Record<string, any> = Record<string, any>> {
   readonly isLoading: boolean;
   readonly isLoaded: boolean;
   readonly isLoadFailed: boolean;
+  readonly isDirty: boolean;
 
   // Methods
   resetAfterSubmit(flag?: boolean): this;
@@ -262,13 +263,22 @@ export interface WyxosListingExpose {
 
 export interface WyxosSubmitProps {
   form: FormBuilder;
+  disabled?: boolean;
 }
 
-export default {
-  FormBuilder,
-  Listing,
-  WyxosError,
-  WyxosForm,
-  WyxosListing,
-  WyxosSubmit
-};
+export interface VisionPluginOptions {
+  [key: string]: any;
+}
+
+export interface VisionPlugin {
+  install(app: App, options?: VisionPluginOptions): void;
+  FormBuilder: typeof FormBuilder;
+  Listing: typeof Listing;
+  WyxosError: any;
+  WyxosForm: any;
+  WyxosListing: any;
+  WyxosSubmit: any;
+}
+
+declare const Vision: VisionPlugin;
+export default Vision;
