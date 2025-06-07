@@ -146,7 +146,10 @@ export default {
 <template>
   <div class="form-demo">
     <h2>FormBuilder Demo</h2>
-    <p>This demo shows how to use the FormBuilder utility to create and manage forms.</p>
+    <p>
+      This demo shows how to use the FormBuilder utility to create and manage
+      forms.
+    </p>
 
     <!-- Form States Display -->
     <div class="states-container">
@@ -155,17 +158,29 @@ export default {
         <div class="state-item">
           <div class="state-label">Submit States:</div>
           <div class="state-badges">
-            <span :class="{ active: form.isSubmitting }" class="state-badge">Loading</span>
-            <span :class="{ active: form.successful }" class="state-badge">Loaded</span>
-            <span :class="{ active: form.failed }" class="state-badge">Failed</span>
+            <span :class="{ active: form.isSubmitting }" class="state-badge"
+              >Loading</span
+            >
+            <span :class="{ active: form.successful }" class="state-badge"
+              >Loaded</span
+            >
+            <span :class="{ active: form.failed }" class="state-badge"
+              >Failed</span
+            >
           </div>
         </div>
         <div class="state-item">
           <div class="state-label">Load States:</div>
           <div class="state-badges">
-            <span :class="{ active: form.isLoading }" class="state-badge">Loading</span>
-            <span :class="{ active: form.isLoaded }" class="state-badge">Loaded</span>
-            <span :class="{ active: form.isLoadFailed }" class="state-badge">Failed</span>
+            <span :class="{ active: form.isLoading }" class="state-badge"
+              >Loading</span
+            >
+            <span :class="{ active: form.isLoaded }" class="state-badge"
+              >Loaded</span
+            >
+            <span :class="{ active: form.isLoadFailed }" class="state-badge"
+              >Failed</span
+            >
           </div>
         </div>
       </div>
@@ -179,12 +194,15 @@ export default {
         <button
           :disabled="form.isLoading"
           class="preload-button"
-          @click="preloadData"
-        >
+          @click="preloadData">
           {{ form.isLoading ? 'Loading...' : 'Preload Data' }}
         </button>
-        <div v-if="form.isLoaded" class="preload-success">Data loaded successfully!</div>
-        <div v-if="form.isLoadFailed" class="preload-error">Failed to load data</div>
+        <div v-if="form.isLoaded" class="preload-success">
+          Data loaded successfully!
+        </div>
+        <div v-if="form.isLoadFailed" class="preload-error">
+          Failed to load data
+        </div>
       </div>
     </div>
 
@@ -193,7 +211,10 @@ export default {
         <!-- HTTP Method Selection -->
         <div class="form-group">
           <label for="httpMethod">HTTP Method</label>
-          <select id="httpMethod" v-model="selectedMethod" class="method-select">
+          <select
+            id="httpMethod"
+            v-model="selectedMethod"
+            class="method-select">
             <option value="post">POST</option>
             <option value="patch">PATCH</option>
             <option value="put">PUT</option>
@@ -212,8 +233,7 @@ export default {
             id="title"
             v-model="form.title"
             :class="{ 'has-error': form.hasError('title') }"
-            type="text"
-          >
+            type="text" />
           <WyxosError :form="form" name="title" />
         </div>
 
@@ -222,8 +242,7 @@ export default {
           <textarea
             id="body"
             v-model="form.body"
-            :class="{ 'has-error': form.hasError('body') }"
-          ></textarea>
+            :class="{ 'has-error': form.hasError('body') }"></textarea>
           <WyxosError :form="form" name="body" />
         </div>
 
@@ -233,8 +252,7 @@ export default {
             id="userId"
             v-model="form.userId"
             :class="{ 'has-error': form.hasError('userId') }"
-            type="number"
-          >
+            type="number" />
           <WyxosError :form="form" name="userId" />
         </div>
 
@@ -242,15 +260,10 @@ export default {
           <button
             :disabled="form.isSubmitting"
             class="submit-button"
-            type="submit"
-          >
+            type="submit">
             {{ form.isSubmitting ? 'Submitting...' : 'Submit' }}
           </button>
-          <button
-            class="reset-button"
-            type="button"
-            @click="resetForm"
-          >
+          <button class="reset-button" type="button" @click="resetForm">
             Reset
           </button>
         </div>
@@ -259,7 +272,9 @@ export default {
 
     <div v-if="form.successful" class="success-message">
       <h3>Form Submitted Successfully!</h3>
-      <p>Method used: <strong>{{ selectedMethod.toUpperCase() }}</strong></p>
+      <p>
+        Method used: <strong>{{ selectedMethod.toUpperCase() }}</strong>
+      </p>
       <pre>{{ JSON.stringify(formResponse, null, 2) }}</pre>
     </div>
 
@@ -282,7 +297,8 @@ export default {
   margin-bottom: 30px;
 }
 
-h2, h3 {
+h2,
+h3 {
   margin-top: 0;
   color: #333;
 }
@@ -362,7 +378,7 @@ h3 {
 }
 
 .preload-success {
-  color: #4CAF50;
+  color: #4caf50;
   font-weight: bold;
 }
 
@@ -408,7 +424,9 @@ label {
   font-weight: bold;
 }
 
-input, textarea, select {
+input,
+textarea,
+select {
   width: 100%;
   padding: 8px;
   border: 1px solid #ddd;
@@ -451,7 +469,7 @@ button:hover {
 }
 
 .submit-button {
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
 }
 
@@ -471,7 +489,7 @@ button:hover {
   padding: 15px;
   background-color: #e8f5e9;
   border-radius: 4px;
-  border-left: 4px solid #4CAF50;
+  border-left: 4px solid #4caf50;
 }
 
 .error-message-container {

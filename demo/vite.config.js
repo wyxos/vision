@@ -4,10 +4,7 @@ import tailwindcss from '@tailwindcss/vite'
 import { resolve } from 'path'
 
 export default defineConfig({
-  plugins: [
-    tailwindcss(),
-    vue()
-  ],
+  plugins: [tailwindcss(), vue()],
   resolve: {
     alias: {
       '@': resolve(__dirname, '../src'),

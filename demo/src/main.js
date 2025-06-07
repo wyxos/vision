@@ -14,7 +14,7 @@ const app = createApp(App)
 
 // Configure Oruga
 const config = {
-  iconPack: "fas",
+  iconPack: 'fas',
   button: {
     override: true,
     rootClass: 'btn',
