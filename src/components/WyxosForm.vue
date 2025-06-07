@@ -22,7 +22,8 @@ const props = defineProps({
   method: {
     type: String,
     default: 'post',
-    validator: (value) => ['get', 'post', 'put', 'patch', 'delete'].includes(value)
+    validator: (value) =>
+      ['get', 'post', 'put', 'patch', 'delete'].includes(value)
   },
   // Whether to reset form after successful submission
   resetAfterSubmit: {
@@ -158,7 +159,6 @@ defineExpose({
       :is-loading="isLoading"
       :is-loaded="isLoaded"
       :has-errors="hasErrors"
-      :errors="errors"
-    ></slot>
+      :errors="errors"></slot>
   </form>
 </template>

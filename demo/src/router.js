@@ -1,4 +1,4 @@
-import {createRouter, createWebHashHistory } from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
 import FormBuilderDemo from './components/FormBuilderDemo.vue'
 import ListingDemo from './components/ListingDemo.vue'
 

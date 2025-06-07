@@ -24,7 +24,10 @@ describe('FormErrors', () => {
     errors.set(responseError)
 
     expect(errors.has('name')).toBe(true)
-    expect(errors.get('name')).toEqual({ message: 'required', variant: 'danger' })
+    expect(errors.get('name')).toEqual({
+      message: 'required',
+      variant: 'danger'
+    })
     expect(errors.all()).toEqual([
       { key: 'name', message: 'required' },
       { key: 'email', message: 'invalid' }
@@ -39,10 +42,16 @@ describe('FormErrors', () => {
   it('updates and clears errors', () => {
     const errors = FormErrors.create()
     errors.setOne('field', 'invalid')
-    expect(errors.get('field')).toEqual({ message: 'invalid', variant: 'danger' })
+    expect(errors.get('field')).toEqual({
+      message: 'invalid',
+      variant: 'danger'
+    })
 
     errors.setOne('field', 'changed')
-    expect(errors.get('field')).toEqual({ message: 'changed', variant: 'danger' })
+    expect(errors.get('field')).toEqual({
+      message: 'changed',
+      variant: 'danger'
+    })
 
     errors.clear('field')
     expect(errors.has('field')).toBe(false)

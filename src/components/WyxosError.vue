@@ -1,7 +1,7 @@
 <script setup>
 import FormBuilder from '../utilities/FormBuilder'
 import FormError from '../utilities/FormErrors'
-import {computed} from "vue";
+import { computed } from 'vue'
 
 const props = defineProps({
   form: {
@@ -17,7 +17,11 @@ const props = defineProps({
 const errors = FormError.create()
 
 const errorMessage = computed(() => {
-  return props.form?.getError(props.name)?.message || errors.get(props.name)?.message || ''
+  return (
+    props.form?.getError(props.name)?.message ||
+    errors.get(props.name)?.message ||
+    ''
+  )
 })
 </script>
 

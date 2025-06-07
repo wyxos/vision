@@ -5,7 +5,14 @@ import WyxosForm from './components/WyxosForm.vue'
 import WyxosListing from './components/WyxosListing.vue'
 import WyxosSubmit from './components/WyxosSubmit.vue'
 
-export { FormBuilder, Listing, WyxosError, WyxosForm, WyxosListing, WyxosSubmit }
+export {
+  FormBuilder,
+  Listing,
+  WyxosError,
+  WyxosForm,
+  WyxosListing,
+  WyxosSubmit
+}
 
 const install = (app, options = {}) => {
   // Register all components
