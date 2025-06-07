@@ -1,0 +1,4 @@
+- Script tag always at the top in components
+- The listing module works along with the php package @wyxos/harmonie at ../php/harmonie relative to the project
+- After each tasks, evaluate if readme.md and typescript definitions require updates too.
+- Ensure to run and update tests after each tasks.
