@@ -38,7 +38,6 @@ export default {
     // Last action performed (for retry functionality)
     const lastAction = ref(null)
 
-
     // Function to get appropriate loading message
     const getLoadingMessage = () => {
       if (listing.isLoading) return 'Loading posts...'
@@ -74,7 +73,6 @@ export default {
       listing.resetSearch()
     }
 
-
     // Function to view item details
     const viewDetails = (item) => {
       selectedItem.value = item
@@ -89,7 +87,7 @@ export default {
 
     // Function to format the response to match what the Listing class expects
     const setupResponseFormatter = () => {
-      listing.format(response => {
+      listing.format((response) => {
         // Format the response to match what the Listing class expects
         const totalCount = parseInt(response.headers['x-total-count'] || '0')
         const perPage = listing.limit
@@ -109,7 +107,7 @@ export default {
     // Load data when component is mounted
     onMounted(() => {
       // Transform the query parameters to match the JSONPlaceholder API
-      listing.transform(query => {
+      listing.transform((query) => {
         const transformedQuery = { ...query }
 
         // JSONPlaceholder uses _page and _limit for pagination
@@ -123,12 +121,12 @@ export default {
       })
 
       // Set up success and failure callbacks
-      listing.onSuccess(data => {
+      listing.onSuccess((data) => {
         console.log('Operation successful:', data)
         return data
       })
 
-      listing.onFail(error => {
+      listing.onFail((error) => {
         console.error('Operation failed:', error)
         return error
       })
@@ -159,7 +157,10 @@ export default {
 <template>
   <div class="listing-demo">
     <h2>Listing Demo</h2>
-    <p>This demo shows how to use the Listing utility to fetch and display paginated data.</p>
+    <p>
+      This demo shows how to use the Listing utility to fetch and display
+      paginated data.
+    </p>
 
     <!-- States Display -->
     <div class="states-container">
@@ -168,25 +169,47 @@ export default {
         <div class="state-item">
           <div class="state-label">Load States:</div>
           <div class="state-badges">
-            <span :class="{ active: listing.isLoading }" class="state-badge">Loading</span>
-            <span :class="{ active: listing.isLoaded }" class="state-badge">Loaded</span>
-            <span :class="{ active: listing.isLoadFailed }" class="state-badge">Failed</span>
+            <span :class="{ active: listing.isLoading }" class="state-badge"
+              >Loading</span
+            >
+            <span :class="{ active: listing.isLoaded }" class="state-badge"
+              >Loaded</span
+            >
+            <span :class="{ active: listing.isLoadFailed }" class="state-badge"
+              >Failed</span
+            >
           </div>
         </div>
         <div class="state-item">
           <div class="state-label">Search States:</div>
           <div class="state-badges">
-            <span :class="{ active: listing.isSearching }" class="state-badge">Searching</span>
-            <span :class="{ active: listing.isSearched }" class="state-badge">Searched</span>
-            <span :class="{ active: listing.isSearchFailed }" class="state-badge">Failed</span>
+            <span :class="{ active: listing.isSearching }" class="state-badge"
+              >Searching</span
+            >
+            <span :class="{ active: listing.isSearched }" class="state-badge"
+              >Searched</span
+            >
+            <span
+              :class="{ active: listing.isSearchFailed }"
+              class="state-badge"
+              >Failed</span
+            >
           </div>
         </div>
         <div class="state-item">
           <div class="state-label">Refresh States:</div>
           <div class="state-badges">
-            <span :class="{ active: listing.isRefreshing }" class="state-badge">Refreshing</span>
-            <span :class="{ active: listing.isRefreshed }" class="state-badge">Refreshed</span>
-            <span :class="{ active: listing.isRefreshFailed }" class="state-badge">Failed</span>
+            <span :class="{ active: listing.isRefreshing }" class="state-badge"
+              >Refreshing</span
+            >
+            <span :class="{ active: listing.isRefreshed }" class="state-badge"
+              >Refreshed</span
+            >
+            <span
+              :class="{ active: listing.isRefreshFailed }"
+              class="state-badge"
+              >Failed</span
+            >
           </div>
         </div>
       </div>
@@ -202,23 +225,20 @@ export default {
             v-model="listing.userId"
             max="10"
             min="1"
-            type="number"
-          >
+            type="number" />
         </div>
 
         <div class="filter-actions">
           <button
             :disabled="listing.isSearching"
             class="apply-button"
-            @click="applyFilters"
-          >
+            @click="applyFilters">
             {{ listing.isSearching ? 'Searching...' : 'Apply Filters' }}
           </button>
           <button
             :disabled="listing.isSearching"
             class="reset-button"
-            @click="resetFilters"
-          >
+            @click="resetFilters">
             Reset Filters
           </button>
         </div>
@@ -226,20 +246,30 @@ export default {
     </div>
 
     <div class="listing-container">
-      <div v-if="listing.isLoading || listing.isSearching || listing.isRefreshing" class="loading">
+      <div
+        v-if="listing.isLoading || listing.isSearching || listing.isRefreshing"
+        class="loading">
         {{ getLoadingMessage() }}
       </div>
 
-      <div v-else-if="listing.isLoadFailed || listing.isSearchFailed || listing.isRefreshFailed" class="error-message">
-        Failed to load data. <button class="retry-button" @click="retryLoad">Retry</button>
+      <div
+        v-else-if="
+          listing.isLoadFailed ||
+          listing.isSearchFailed ||
+          listing.isRefreshFailed
+        "
+        class="error-message">
+        Failed to load data.
+        <button class="retry-button" @click="retryLoad">Retry</button>
       </div>
 
       <div v-else>
         <o-table
-          :loading="listing.isLoading || listing.isSearching || listing.isRefreshing"
+          :loading="
+            listing.isLoading || listing.isSearching || listing.isRefreshing
+          "
           v-bind="listing.config"
-          v-on="listing.events"
-        >
+          v-on="listing.events">
           <o-table-column v-slot="props" field="id" label="ID">
             {{ props.row.id }}
           </o-table-column>
@@ -250,13 +280,19 @@ export default {
             {{ props.row.userId }}
           </o-table-column>
           <o-table-column v-slot="props" label="Actions">
-            <button class="view-button" @click="viewDetails(props.row)">View</button>
+            <button class="view-button" @click="viewDetails(props.row)">
+              View
+            </button>
           </o-table-column>
         </o-table>
       </div>
     </div>
 
-    <o-modal v-model:active="isModalActive" :width="640" aria-modal aria-role="dialog">
+    <o-modal
+      v-model:active="isModalActive"
+      :width="640"
+      aria-modal
+      aria-role="dialog">
       <div v-if="selectedItem" class="modal-content">
         <h3>Post Details</h3>
         <div class="details-card">
@@ -278,7 +314,8 @@ export default {
   margin-bottom: 30px;
 }
 
-h2, h3 {
+h2,
+h3 {
   margin-top: 0;
   color: #333;
 }
@@ -396,7 +433,7 @@ button:disabled {
 }
 
 .apply-button {
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
 }
 
@@ -406,7 +443,7 @@ button:disabled {
 }
 
 .view-button {
-  background-color: #2196F3;
+  background-color: #2196f3;
   color: white;
   padding: 5px 10px;
   font-size: 12px;
@@ -447,7 +484,8 @@ button:disabled {
   margin-bottom: 20px;
 }
 
-:deep(.o-table__th), :deep(.o-table__td) {
+:deep(.o-table__th),
+:deep(.o-table__td) {
   padding: 10px;
   text-align: left;
 }
@@ -460,7 +498,6 @@ button:disabled {
 :deep(.o-table__tr:hover) {
   background-color: #f9f9f9;
 }
-
 
 .modal-content {
   padding: 20px;

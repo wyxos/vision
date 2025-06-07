@@ -3,27 +3,13 @@
     <header>
       <h1>@wyxos/vision Demo</h1>
       <div class="tabs">
-        <router-link
-          to="/form"
-          custom
-          v-slot="{ isActive, navigate }"
-        >
-          <button
-            @click="navigate"
-            :class="{ active: isActive }"
-          >
+        <router-link v-slot="{ isActive, navigate }" to="/form" custom>
+          <button :class="{ active: isActive }" @click="navigate">
             FormBuilder Demo
           </button>
         </router-link>
-        <router-link
-          to="/listing"
-          custom
-          v-slot="{ isActive, navigate }"
-        >
-          <button
-            @click="navigate"
-            :class="{ active: isActive }"
-          >
+        <router-link v-slot="{ isActive, navigate }" to="/listing" custom>
+          <button :class="{ active: isActive }" @click="navigate">
             Listing Demo
           </button>
         </router-link>
@@ -81,9 +67,9 @@ button {
 }
 
 button.active {
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
-  border-color: #4CAF50;
+  border-color: #4caf50;
 }
 
 main {

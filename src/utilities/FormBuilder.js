@@ -130,7 +130,6 @@ export default class FormBuilder {
     return this.state.successful
   }
 
-
   get isLoading() {
     return this.state.loading && this.state.wasLoading
   }
@@ -241,9 +240,7 @@ export default class FormBuilder {
         // Use callback from options first, then fallback to the one set via onSuccess method
         const successCallback = onSuccess || this.callbacks.success
 
-        return successCallback
-          ? successCallback(response.data)
-          : response.data
+        return successCallback ? successCallback(response.data) : response.data
       })
       .catch((error) => {
         this.setFailed()
@@ -289,9 +286,7 @@ export default class FormBuilder {
         // Use callback from options first, then fallback to the one set via onSuccess method
         const successCallback = onSuccess || this.callbacks.success
 
-        return successCallback
-          ? successCallback(response.data)
-          : response.data
+        return successCallback ? successCallback(response.data) : response.data
       })
       .catch((error) => {
         this.setLoadFailed()

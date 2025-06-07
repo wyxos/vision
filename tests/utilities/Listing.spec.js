@@ -4,12 +4,15 @@ import Listing from '../../src/utilities/Listing'
 
 vi.mock('axios')
 vi.stubGlobal('window', { location: { search: '' } })
-vi.stubGlobal('AbortController', class AbortController {
-  signal = { aborted: false }
-  abort() {
-    this.signal.aborted = true
+vi.stubGlobal(
+  'AbortController',
+  class AbortController {
+    signal = { aborted: false }
+    abort() {
+      this.signal.aborted = true
+    }
   }
-})
+)
 
 describe('Listing', () => {
   beforeEach(() => {

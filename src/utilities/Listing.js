@@ -29,7 +29,11 @@ export default class Listing {
 
     for (const key in query) {
       // Skip if the property is null, undefined, or an empty string
-      if (query[key] === null || query[key] === undefined || query[key] === '') {
+      if (
+        query[key] === null ||
+        query[key] === undefined ||
+        query[key] === ''
+      ) {
         continue
       }
 
@@ -436,7 +440,6 @@ export default class Listing {
 
     return this.search()
   }
-
 
   reset() {
     this.filter.reset()
