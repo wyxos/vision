@@ -67,4 +67,12 @@ describe('Filter', () => {
     filter.query.search = 'changed'
     expect(filter.isDefault('search')).toBe(false)
   })
+
+  it('should return filled fields', () => {
+    filter.query.empty = ''
+    filter.query.extra = null
+    filter.query.valid = 'value'
+    const filled = filter.getFilledFields()
+    expect(filled).toEqual({ page: 1, search: 'test', valid: 'value' })
+  })
 })

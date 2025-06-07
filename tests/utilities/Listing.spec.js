@@ -98,6 +98,18 @@ describe('Listing', () => {
     expect(lastCall[1].params).toEqual({ page: 1, name: 'JOHN' })
   })
 
+  it('filters out empty query parameters by default', async () => {
+    axios.get.mockResolvedValue({ data: { listing: {} } })
+    const listing = Listing.create({ page: 1, name: '', category: 'books', extra: null })
+    listing.load('/items')
+
+    await listing.search()
+
+    const lastCall = axios.get.mock.calls[axios.get.mock.calls.length - 1]
+    expect(lastCall[0]).toBe('/items')
+    expect(lastCall[1].params).toEqual({ page: 1, category: 'books' })
+  })
+
   it('tracks state correctly during search operation', async () => {
     axios.get.mockResolvedValue({ data: { listing: {} } })
     const listing = Listing.create({ page: 1 })
