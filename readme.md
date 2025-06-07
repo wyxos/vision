@@ -271,17 +271,23 @@ The demo includes:
 
 To deploy the demo to GitHub Pages:
 
-1. Build the project locally:
+1. Create a CNAME file with your domain:
+   ```bash
+   npm run create-cname your-domain.com
+   ```
+   This will create a CNAME file in the dist directory with your specified domain. If the file already exists and contains the specified domain, it will not be modified.
+
+2. Build and deploy the project:
    ```bash
    npm run deploy
    ```
-   This will build the demo and copy the CNAME file to the dist directory.
+   This will build the demo and deploy it to GitHub Pages.
 
-2. Commit and push the changes to GitHub, including the dist directory.
+3. Commit and push the changes to GitHub, including the dist directory.
 
-3. Configure GitHub Pages in your repository settings to use the content from the /dist directory in the main branch.
+4. Configure GitHub Pages in your repository settings to use the content from the /dist directory in the main branch.
 
-The demo will be available at [vision.wyxos.com](https://vision.wyxos.com).
+The demo will be available at your specified domain.
 
 ## License
 
