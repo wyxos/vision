@@ -220,7 +220,6 @@ defineExpose({
       :is-dirty="isDirty"
       :attributes="attributes"
       :config="config"
-      :events="events"
-    ></slot>
+      :events="events"></slot>
   </div>
 </template>

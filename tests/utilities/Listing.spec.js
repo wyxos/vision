@@ -100,7 +100,12 @@ describe('Listing', () => {
 
   it('filters out empty query parameters by default', async () => {
     axios.get.mockResolvedValue({ data: { listing: {} } })
-    const listing = Listing.create({ page: 1, name: '', category: 'books', extra: null })
+    const listing = Listing.create({
+      page: 1,
+      name: '',
+      category: 'books',
+      extra: null
+    })
     listing.load('/items')
 
     await listing.search()

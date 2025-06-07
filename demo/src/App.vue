@@ -17,7 +17,9 @@
         </div>
       </div>
       <div class="links">
-        <a href="https://github.com/wyxos/vision/tree/main/docs" target="_blank">Documentation</a>
+        <a href="https://github.com/wyxos/vision/tree/main/docs" target="_blank"
+          >Documentation</a
+        >
         <a href="https://github.com/wyxos" target="_blank">GitHub</a>
         <a href="https://wyxos.com" target="_blank">Wyxos.com</a>
       </div>
