@@ -1,61 +1,80 @@
-<script>
-import FormBuilder from '../utilities/FormBuilder.js'
+<script setup>
+import { computed } from 'vue'
 
-export default {
-  name: 'WyxosSubmit',
-  props: {
-    form: {
-      type: FormBuilder,
-      required: true
-    },
-    labels: {
-      type: Object,
-      default() {
-        return {
-          submit: 'Submit',
-          submitting: 'Processing',
-          submitted: 'Complete',
-          failed: 'Retry'
-        }
-      }
-    }
+const props = defineProps({
+  // FormBuilder instance
+  form: {
+    type: Object,
+    required: true
   },
-  data() {
-    return {
-      mergedLabels: {
-        submit: 'Submit',
-        submitting: 'Processing',
-        submitted: 'Complete',
-        failed: 'Retry'
-      }
-    }
-  },
-  watch: {
-    labels: {
-      deep: true,
-      handler(newVal) {
-        this.mergedLabels = { ...this.mergedLabels, ...newVal }
-      }
-    }
-  },
-  created() {
-    this.mergedLabels = { ...this.mergedLabels, ...this.labels }
+  // Allow disabling the button externally
+  disabled: {
+    type: Boolean,
+    default: false
   }
-}
+})
+
+// Computed property to determine if the button should be disabled
+const isDisabled = computed(() => {
+  return props.form.isSubmitting || props.disabled
+})
+
+// Computed property to determine if the form is submitting
+const isSubmitting = computed(() => {
+  return props.form.isSubmitting
+})
 </script>
 
 <template>
-  <o-button
-    :disabled="Boolean(form.isSubmitting || form.isSubmitted)"
-    native-type="submit">
-    <span
-      v-if="!form.isSubmitted && !form.isSubmitting && !form.isSubmitFailed"
-      >{{ mergedLabels.submit }}</span
-    >
-    <span v-if="form.isSubmitting"
-      >{{ mergedLabels.submitting }} <i class="fas fa-spinner fa-spin"></i
-    ></span>
-    <span v-if="form.isSubmitted">{{ mergedLabels.submitted }}</span>
-    <span v-if="form.isSubmitFailed">{{ mergedLabels.failed }}</span>
-  </o-button>
+  <button type="submit" :disabled="isDisabled" class="wyxos-submit">
+    <span v-if="isSubmitting" class="wyxos-submit-loading">
+      <!-- Simple loading spinner -->
+      <span class="wyxos-submit-spinner"></span>
+    </span>
+    <span v-else>
+      <slot>Submit</slot>
+    </span>
+  </button>
 </template>
+
+<style scoped>
+.wyxos-submit {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 80px;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.wyxos-submit:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.wyxos-submit-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wyxos-submit-spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+</style>

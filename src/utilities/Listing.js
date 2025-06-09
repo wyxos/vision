@@ -5,11 +5,43 @@ import queryString from 'query-string'
 
 export default class Listing {
   loadUrl = ''
-  loadingState = ref(null)
+  loadState = ref('')
+  searchState = ref('')
+  refreshState = ref('')
+
+  abortLoadController = null
+  abortSearchController = null
+  abortRefreshController = null
 
   router = null
 
   transformCallback = null
+
+  formatCallback = null
+
+  /**
+   * Filter out empty parameters from a query object
+   * @param {Object} query - The query object to filter
+   * @returns {Object} - A new query object with empty parameters removed
+   */
+  filterEmptyParams(query) {
+    const filteredQuery = {}
+
+    for (const key in query) {
+      // Skip if the property is null, undefined, or an empty string
+      if (
+        query[key] === null ||
+        query[key] === undefined ||
+        query[key] === ''
+      ) {
+        continue
+      }
+
+      filteredQuery[key] = query[key]
+    }
+
+    return filteredQuery
+  }
 
   attributes = reactive({
     items: [],
@@ -17,6 +49,11 @@ export default class Listing {
     perPage: 0,
     total: 0
   })
+
+  callbacks = {
+    success: null,
+    failure: null
+  }
 
   constructor(query) {
     this.filter = new Filter(query)
@@ -59,7 +96,7 @@ export default class Listing {
           const path = name.split('.')
 
           if (path.length > 1) {
-            let obj = target.form
+            let obj = target.filter.query
 
             for (let i = 0; i < path.length - 1; i++) {
               if (!(path[i] in obj)) {
@@ -106,11 +143,39 @@ export default class Listing {
   }
 
   get isLoading() {
-    return this.loadingState.value === 'loading'
+    return this.loadState.value === 'loading'
   }
 
   get isLoaded() {
-    return this.loadingState.value === 'loaded'
+    return this.loadState.value === 'loaded'
+  }
+
+  get isLoadFailed() {
+    return this.loadState.value === 'failed'
+  }
+
+  get isSearching() {
+    return this.searchState.value === 'loading'
+  }
+
+  get isSearched() {
+    return this.searchState.value === 'loaded'
+  }
+
+  get isSearchFailed() {
+    return this.searchState.value === 'failed'
+  }
+
+  get isRefreshing() {
+    return this.refreshState.value === 'loading'
+  }
+
+  get isRefreshed() {
+    return this.refreshState.value === 'loaded'
+  }
+
+  get isRefreshFailed() {
+    return this.refreshState.value === 'failed'
   }
 
   get isDirty() {
@@ -127,12 +192,8 @@ export default class Listing {
     return this
   }
 
-  search(query = {}) {
-    if (typeof query === 'function') {
-      query = Object.assign({}, this.filter.query, query(this.filter.query))
-    } else {
-      query = Object.assign({}, this.filter.query, query)
-    }
+  search(preserveEmpty = false) {
+    let query = Object.assign({}, this.filter.query)
 
     if (this.transformCallback) {
       query = this.transformCallback(query)
@@ -142,29 +203,63 @@ export default class Listing {
       return this.router.push({ query })
     }
 
-    this.loading()
+    this.searching()
+
+    // Use the original query if preserveEmpty is true, otherwise filter out empty parameters
+    const queryToUse = preserveEmpty ? query : this.filterEmptyParams(query)
+
+    const axiosConfig = { params: queryToUse }
+
+    // If there's an ongoing request, abort it
+    if (this.abortSearchController) {
+      this.abortSearchController.abort()
+    }
+
+    // Create a new AbortController
+    this.abortSearchController = new AbortController()
+
+    // Add the signal to the axios config
+    axiosConfig.signal = this.abortSearchController.signal
 
     return axios
-      .get(this.loadUrl, {
-        params: query
-      })
+      .get(this.loadUrl, axiosConfig)
       .then((response) => {
-        if (response.data.listing) {
-          Object.assign(this.attributes, response.data.listing)
+        this.searched()
+
+        // Process the response using the formatResponse callback or default processing
+        const processedData = this.processResponse(response)
+
+        if (processedData.listing) {
+          Object.assign(this.attributes, processedData.listing)
         }
 
-        if (response.data.filters) {
-          this.filter.applied = response.data.filters
+        if (processedData.filters) {
+          this.filter.applied = processedData.filters
         }
 
-        return response
+        return this.callbacks.success
+          ? this.callbacks.success(processedData)
+          : response
       })
-      .finally(() => {
-        this.loaded()
+      .catch((error) => {
+        // Don't handle aborted requests as errors
+        if (error.name === 'CanceledError' || error.name === 'AbortError') {
+          return Promise.reject(error)
+        }
+
+        this.searchFailed()
+
+        if (this.callbacks.failure) {
+          return Promise.reject(this.callbacks.failure(error))
+        }
+
+        return Promise.reject(error)
       })
   }
 
-  load(query = {}) {
+  load(url) {
+    this.loadUrl = url
+
     const urlQuery = queryString.parse(window.location.search, {
       parseNumbers: true,
       parseBooleans: true
@@ -174,81 +269,176 @@ export default class Listing {
 
     this.filter.query.page = 1
 
-    if (typeof query === 'function') {
-      query = Object.assign({}, this.filter.query, query(this.filter.query))
-    } else {
-      query = Object.assign({}, this.filter.query, query)
+    let query = Object.assign({}, this.filter.query)
+
+    if (this.transformCallback) {
+      query = this.transformCallback(query)
     }
 
     this.loading()
 
+    // Filter out empty parameters
+    const filteredQuery = this.filterEmptyParams(query)
+
+    const axiosConfig = { params: filteredQuery }
+
+    // If there's an ongoing request, abort it
+    if (this.abortLoadController) {
+      this.abortLoadController.abort()
+    }
+
+    // Create a new AbortController
+    this.abortLoadController = new AbortController()
+
+    // Add the signal to the axios config
+    axiosConfig.signal = this.abortLoadController.signal
+
     return axios
-      .get(this.loadUrl, {
-        params: query
-      })
+      .get(url, axiosConfig)
       .then((response) => {
-        if (response.data.listing) {
-          Object.assign(this.attributes, response.data.listing)
-        }
-
-        if (response.data.filters) {
-          this.filter.applied = response.data.filters
-        }
-
-        return response
-      })
-      .finally(() => {
         this.loaded()
+
+        // Process the response using the formatResponse callback or default processing
+        const processedData = this.processResponse(response)
+
+        if (processedData.listing) {
+          Object.assign(this.attributes, processedData.listing)
+        }
+
+        if (processedData.filters) {
+          this.filter.applied = processedData.filters
+        }
+
+        return this.callbacks.success
+          ? this.callbacks.success(processedData)
+          : response
+      })
+      .catch((error) => {
+        // Don't handle aborted requests as errors
+        if (error.name === 'CanceledError' || error.name === 'AbortError') {
+          return Promise.reject(error)
+        }
+
+        this.loadFailed()
+
+        if (this.callbacks.failure) {
+          return Promise.reject(this.callbacks.failure(error))
+        }
+
+        return Promise.reject(error)
       })
   }
 
-  refresh(query) {
-    if (typeof query === 'function') {
-      query = Object.assign({}, this.filter.query, query(this.filter.query))
-    } else {
-      query = Object.assign({}, this.filter.query, query)
+  refresh() {
+    let query = Object.assign({}, this.filter.query)
+
+    if (this.transformCallback) {
+      query = this.transformCallback(query)
     }
 
-    this.loading()
+    this.refreshing()
+
+    // Filter out empty parameters
+    const filteredQuery = this.filterEmptyParams(query)
+
+    const axiosConfig = { params: filteredQuery }
+
+    // If there's an ongoing request, abort it
+    if (this.abortRefreshController) {
+      this.abortRefreshController.abort()
+    }
+
+    // Create a new AbortController
+    this.abortRefreshController = new AbortController()
+
+    // Add the signal to the axios config
+    axiosConfig.signal = this.abortRefreshController.signal
 
     return axios
-      .get(this.loadUrl, {
-        params: query
-      })
+      .get(this.loadUrl, axiosConfig)
       .then((response) => {
-        if (response.data.listing) {
-          Object.assign(this.attributes, response.data.listing)
+        this.refreshed()
+
+        // Process the response using the formatResponse callback or default processing
+        const processedData = this.processResponse(response)
+
+        if (processedData.listing) {
+          Object.assign(this.attributes, processedData.listing)
         }
 
-        if (response.data.filters) {
-          this.filter.applied = response.data.filters
+        if (processedData.filters) {
+          this.filter.applied = processedData.filters
         }
 
-        return response
+        return this.callbacks.success
+          ? this.callbacks.success(processedData)
+          : response
       })
-      .finally(() => {
-        this.loaded()
+      .catch((error) => {
+        // Don't handle aborted requests as errors
+        if (error.name === 'CanceledError' || error.name === 'AbortError') {
+          return Promise.reject(error)
+        }
+
+        this.refreshFailed()
+
+        if (this.callbacks.failure) {
+          return Promise.reject(this.callbacks.failure(error))
+        }
+
+        return Promise.reject(error)
       })
   }
 
   loading() {
-    this.loadingState.value = 'loading'
+    this.loadState.value = 'loading'
+    return this
   }
 
   loaded() {
-    this.loadingState.value = 'loaded'
+    this.loadState.value = 'loaded'
+    return this
+  }
+
+  loadFailed() {
+    this.loadState.value = 'failed'
+    return this
+  }
+
+  searching() {
+    this.searchState.value = 'loading'
+    return this
+  }
+
+  searched() {
+    this.searchState.value = 'loaded'
+    return this
+  }
+
+  searchFailed() {
+    this.searchState.value = 'failed'
+    return this
+  }
+
+  refreshing() {
+    this.refreshState.value = 'loading'
+    return this
+  }
+
+  refreshed() {
+    this.refreshState.value = 'loaded'
+    return this
+  }
+
+  refreshFailed() {
+    this.refreshState.value = 'failed'
+    return this
   }
 
   onPageChange(value) {
     this.filter.query.page = value
 
     return this.search()
-  }
-
-  loadFrom(path) {
-    this.loadUrl = path
-
-    return this
   }
 
   reset() {
@@ -282,19 +472,51 @@ export default class Listing {
   }
 
   resetSearch() {
-    this.reset()
+    this.filter.reset()
     this.filter.applied = []
 
     if (this.router) {
       return this.router.push({ query: {} }) // Clear query params without reload
     }
 
-    return this.load()
+    return this.search()
   }
 
   transform(callback) {
     this.transformCallback = callback
 
     return this
+  }
+
+  onSuccess(callback) {
+    this.callbacks.success = callback
+
+    return this
+  }
+
+  onFail(callback) {
+    this.callbacks.failure = callback
+
+    return this
+  }
+
+  format(callback) {
+    this.formatCallback = callback
+
+    return this
+  }
+
+  /**
+   * Format the response data to match what the listing expects
+   * @param {Object} response - The axios response object
+   * @returns {Object} - The formatted response data
+   */
+  processResponse(response) {
+    if (this.formatCallback) {
+      return this.formatCallback(response)
+    }
+
+    // Default formatting if no callback is provided
+    return response.data
   }
 }

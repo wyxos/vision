@@ -1,0 +1,5 @@
+@import "tailwindcss";
+
+.wyxos-error{
+    @apply text-sm text-red-500 py-2;
+}

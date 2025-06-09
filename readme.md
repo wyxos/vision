@@ -1,90 +1,88 @@
 # @wyxos/vision
 
-`@wyxos/vision` is a Laravel plugin designed to scaffold and enhance web applications by providing a set of Vue.js
-components, utilities, and CLI commands. It integrates seamlessly with Laravel, offering tools for rapid SPA (Single
-Page Application) development, streamlined forms and listings management, and custom command utilities for efficient
-project configuration and management.
+A lightweight Vue.js utility library that provides essential form handling, listing, and error display utilities for Vue applications.
 
 ## Features
 
-- **Vue.js Components**: Leverage a variety of components like `WyxosForm`, `WyxosImage`, and `WyxosInput` for building
-  dynamic, responsive user interfaces with minimal boilerplate.
-- **Utilities**: Utilize helper classes such as `FormBuilder`, `Listing`, and `Auth` to simplify form handling, data
-  listing, and authentication processes.
-- **CLI Commands**: Automate routine tasks with commands like `make:route` for route and component generation,
-  and `toggle` commands to switch between different library configurations or versions.
-
-## Getting Started
-
-To get started with `@wyxos/vision`, ensure you have a Laravel project set up. Then, run the following command to
-install the plugin and scaffold your project with the necessary configurations and dependencies:
-
-```bash
-npx @wyxos/vision make:laravel <projectName>
-```
+- **Form Handling**: Powerful form building, validation, and submission utilities
+- **Listing and Pagination**: Comprehensive tools for creating data tables with filtering, pagination, and sorting
+- **Error Handling**: Built-in error handling and validation utilities
 
 ## Installation
-
-The plugin can be installed directly from npm:
 
 ```bash
 npm install @wyxos/vision
 ```
 
-Or, if you prefer using Yarn:
+## Requirements
 
-```bash
-yarn add @wyxos/vision
-```
+This package has the following dependencies:
+
+- Vue 3.x
+- axios
+- moment
+- query-string
+- vue-router
 
 ## Usage
 
-After installation, you can start using the Vue.js components and utilities in your Laravel project. Here's a quick
-example of how you might use the `WyxosForm` component:
+### Basic Setup
 
-```vue
+You can use Vision in two ways:
 
-<template>
-  <WyxosForm :form="form" @submit="submitForm">
-    <WyxosInput label="Username" v-model="form.username"/>
-    <WyxosInput label="Password" type="password" v-model="form.password"/>
-    <o-button @click="form.submit">Submit</o-button>
-  </WyxosForm>
-</template>
+#### Option 1: Use as a Vue Plugin (Recommended)
 
-<script>
-  import {WyxosForm, WyxosInput} from '@wyxos/vision';
-  import FormBuilder from '@wyxos/vision/utilities/FormBuilder';
+```javascript
+import { createApp } from 'vue'
+import App from './App.vue'
+import Vision from '@wyxos/vision'
 
-  export default {
-    components: {
-      WyxosForm,
-      WyxosInput
-    },
-    data() {
-      return {
-        form: new FormBuilder({
-          username: '',
-          password: '',
-        })
-      };
-    },
-    methods: {
-      submitForm() {
-        // Handle form submission
-      }
-    }
-  }
-</script>
+const app = createApp(App)
+
+// Register all Vision components at once
+app.use(Vision)
+
+app.mount('#app')
 ```
 
-For more detailed documentation on components and utilities, refer to
-the [official documentation](https://github.com/wyxos/vision).
+This will register all components with both their full names (e.g., `WyxosForm`) and shorthand names (e.g., `WForm`).
 
-## Contributing
+#### Option 2: Import Components Individually
 
-Contributions are welcome! If you'd like to contribute, please fork the repository and submit a pull request.
+```javascript
+import { createApp } from 'vue'
+import App from './App.vue'
+import { FormBuilder, Listing, WyxosError, WyxosForm, WyxosListing } from '@wyxos/vision'
+
+const app = createApp(App)
+
+// Register components as needed
+app.component('WyxosError', WyxosError)
+app.component('WyxosForm', WyxosForm)
+app.component('WyxosListing', WyxosListing)
+
+app.mount('#app')
+```
+
+### Components
+
+Vision provides various components to simplify common UI tasks. See the [Components documentation](./docs/Components.md) for details on:
+
+- `WyxosError` - Error display component for form validation errors
+- `WyxosForm` - Form component that creates and customizes a FormBuilder instance
+- `WyxosListing` - Listing component that creates and customizes a Listing instance
+- `WyxosSubmit` - Submit button component that integrates with FormBuilder for form submission. Can be disabled via the `disabled` prop.
+
+### Utilities
+
+Vision provides utility classes to simplify common tasks. See the [Utilities documentation](./docs/Utilities.md) for details on:
+
+- `FormBuilder` - Form handling with validation, submission, and state management
+- `Listing` - Comprehensive listing and pagination utility with filtering, searching, and state management
+- `Filter` - Query filtering utility used by the Listing module
+- `FormErrors` - Form error handling utility
+
 
 ## License
 
-`@wyxos/vision` is licensed under the MIT License. See the LICENSE file for more details.
+MIT
