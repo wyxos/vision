@@ -1,97 +1,137 @@
-import {
-  OAutocomplete,
-  OButton,
-  OCheckbox,
-  ODatepicker,
-  OField,
-  OIcon,
-  OInput,
-  OModal,
-  ONotification,
-  ORadio,
-  OSelect,
-  OTabItem,
-  OTable,
-  OTableColumn,
-  OTabs,
-  OTaginput,
-  OTooltip,
-  OUpload
-} from '@oruga-ui/oruga-next'
-import errorHandlerSetup from './errorHandlerSetup.js'
+import FormBuilder from './utilities/FormBuilder.js'
+import Listing from './utilities/Listing.js'
+import WyxosError from './components/WyxosError.vue'
+import WyxosForm from './components/WyxosForm.vue'
+import WyxosListing from './components/WyxosListing.vue'
+import WyxosSubmit from './components/WyxosSubmit.vue'
 
-const components = import.meta.glob('./components/*.vue', { eager: true })
-
-const MappedComponents = {}
-
-const install = (app, options = {}) => {
-  options = { ...{ vision: {} }, ...options }
-
-  app.component('OButton', OButton)
-  app.component('OField', OField)
-  app.component('ORadio', ORadio)
-  app.component('OModal', OModal)
-  app.component('OTooltip', OTooltip)
-  app.component('OTable', OTable)
-  app.component('OTableColumn', OTableColumn)
-  app.component('OTabs', OTabs)
-  app.component('OTabItem', OTabItem)
-  app.component('OTaginput', OTaginput)
-  app.component('ODatepicker', ODatepicker)
-  app.component('OSelect', OSelect)
-  app.component('OInput', OInput)
-  app.component('OIcon', OIcon)
-  app.component('OUpload', OUpload)
-  app.component('OCheckbox', OCheckbox)
-  app.component('ONotification', ONotification)
-  app.component('OAutocomplete', OAutocomplete)
-
-  Object.keys(components).forEach((key) => {
-    const componentModule = components[key]
-    if (componentModule && componentModule.default) {
-      const component = componentModule.default
-      const name = component.name
-
-      if (name) {
-        app.component(name, component)
-        app.component(name.replace('Wyxos', 'W'), component)
-        MappedComponents[name] = component
-      } else {
-        // use the file name as name
-        const fileName = key.split('/').pop().split('.')[0]
-        app.component(fileName, component)
-        app.component(fileName.replace('Wyxos', 'W'), component)
-        MappedComponents[fileName] = component
-      }
-    } else {
-      console.error(`Could not load component from '${key}'`)
-    }
-  })
-
-  app.config.globalProperties.$v = {
-    to: (name, params) => {
-      return {
-        name,
-        params
-      }
-    }
-  }
-
-  errorHandlerSetup(options)
+export {
+  FormBuilder,
+  Listing,
+  WyxosError,
+  WyxosForm,
+  WyxosListing,
+  WyxosSubmit
 }
 
-export const vn = {
-  route(name, params, query) {
-    return {
-      name,
-      params,
-      query
-    }
-  }
+const install = (app, options = {}) => {
+  // Register all components
+  app.component('WyxosError', WyxosError)
+  app.component('WyxosForm', WyxosForm)
+  app.component('WyxosListing', WyxosListing)
+  app.component('WyxosSubmit', WyxosSubmit)
+
+  // Also register with shorthand names (W prefix instead of Wyxos)
+  app.component('WError', WyxosError)
+  app.component('WForm', WyxosForm)
+  app.component('WListing', WyxosListing)
+  app.component('WSubmit', WyxosSubmit)
 }
 
 export default {
   install,
-  ...MappedComponents,
-  vn
+  FormBuilder,
+  Listing,
+  WyxosError,
+  WyxosForm,
+  WyxosListing,
+  WyxosSubmit
 }
+
+// import {
+//   OAutocomplete,
+//   OButton,
+//   OCheckbox,
+//   ODatepicker,
+//   OField,
+//   OIcon,
+//   OInput,
+//   OModal,
+//   ONotification,
+//   ORadio,
+//   OSelect,
+//   OTabItem,
+//   OTable,
+//   OTableColumn,
+//   OTabs,
+//   OTaginput,
+//   OTooltip,
+//   OUpload
+// } from '@oruga-ui/oruga-next'
+// import errorHandlerSetup from './errorHandlerSetup.js'
+//
+// const components = import.meta.glob('./components/*.vue', { eager: true })
+//
+// const MappedComponents = {}
+//
+// const install = (app, options = {}) => {
+//   options = { ...{ vision: {} }, ...options }
+//
+//   app.component('OButton', OButton)
+//   app.component('OField', OField)
+//   app.component('ORadio', ORadio)
+//   app.component('OModal', OModal)
+//   app.component('OTooltip', OTooltip)
+//   app.component('OTable', OTable)
+//   app.component('OTableColumn', OTableColumn)
+//   app.component('OTabs', OTabs)
+//   app.component('OTabItem', OTabItem)
+//   app.component('OTaginput', OTaginput)
+//   app.component('ODatepicker', ODatepicker)
+//   app.component('OSelect', OSelect)
+//   app.component('OInput', OInput)
+//   app.component('OIcon', OIcon)
+//   app.component('OUpload', OUpload)
+//   app.component('OCheckbox', OCheckbox)
+//   app.component('ONotification', ONotification)
+//   app.component('OAutocomplete', OAutocomplete)
+//
+//   Object.keys(components).forEach((key) => {
+//     const componentModule = components[key]
+//     if (componentModule && componentModule.default) {
+//       const component = componentModule.default
+//       const name = component.name
+//
+//       if (name) {
+//         app.component(name, component)
+//         app.component(name.replace('Wyxos', 'W'), component)
+//         MappedComponents[name] = component
+//       } else {
+//         // use the file name as name
+//         const fileName = key.split('/').pop().split('.')[0]
+//         app.component(fileName, component)
+//         app.component(fileName.replace('Wyxos', 'W'), component)
+//         MappedComponents[fileName] = component
+//       }
+//     } else {
+//       console.error(`Could not load component from '${key}'`)
+//     }
+//   })
+//
+//   app.config.globalProperties.$v = {
+//     to: (name, params) => {
+//       return {
+//         name,
+//         params
+//       }
+//     }
+//   }
+//
+//   errorHandlerSetup(options)
+// }
+//
+// export const vn = {
+//   route(name, params, query) {
+//     return {
+//       name,
+//       params,
+//       query
+//     }
+//   }
+// }
+//
+// export default {
+//   install,
+//   ...MappedComponents,
+//   vn
+// }

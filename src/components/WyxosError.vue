@@ -1,33 +1,32 @@
-<script>
-import { defineComponent } from 'vue'
+<script setup>
 import FormBuilder from '../utilities/FormBuilder'
-import useFormErrors from '../utilities/useFormErrors.js'
+import FormError from '../utilities/FormErrors'
+import { computed } from 'vue'
 
-export default defineComponent({
-  name: 'WyxosError',
-  props: {
-    form: {
-      type: FormBuilder,
-      default: null
-    },
-    name: {
-      type: String,
-      required: true
-    }
+const props = defineProps({
+  form: {
+    type: FormBuilder,
+    default: null
   },
-  setup() {
-    return {
-      errors: useFormErrors()
-    }
+  name: {
+    type: String,
+    required: true
   }
+})
+
+const errors = FormError.create()
+
+const errorMessage = computed(() => {
+  return (
+    props.form?.getError(props.name)?.message ||
+    errors.get(props.name)?.message ||
+    ''
+  )
 })
 </script>
 
 <template>
-  <span v-if="form?.getError(name).message" class="wyxos-error">{{
-    form.getError(name).message
-  }}</span>
-  <span v-else-if="errors.get(name)?.message" class="wyxos-error">{{
-    errors.get(name).message
-  }}</span>
+  <div v-if="errorMessage" class="wyxos-error">
+    <span>{{ errorMessage }}</span>
+  </div>
 </template>

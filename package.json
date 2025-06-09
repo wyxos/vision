@@ -1,45 +1,48 @@
 {
   "name": "@wyxos/vision",
-  "version": "1.24.0",
-  "description": "",
+  "version": "2.0.1",
+  "description": "A collection of Vue utilities and components for building web applications",
   "type": "module",
-  "files": [
-    "dist"
-  ],
-  "main": "./dist/vision.umd.cjs",
-  "module": "./dist/vision.js",
-  "exports": {
-    ".": {
-      "import": "./dist/vision.js",
-      "require": "./dist/vision.umd.cjs"
-    }
+  "main": "./src/main.js",
+  "types": "./types/index.d.ts",
+  "bin": {
+    "@wyxos/vision": "./bin/toggle.js"
   },
   "scripts": {
-    "dev": "vite --config demo/vite.config.js",
-    "build": "vite --config demo/vite.config.js build --emptyOutDir",
-    "watch": "npm run build -- --watch",
     "lint": "eslint . --fix --ext .js,.vue,.json && prettier --write **/*{.js,.vue,.json}",
     "release": "node release.mjs",
-    "preview": "vite preview",
-    "test": "vitest"
+    "test": "vitest run",
+    "dev": "vite demo",
+    "build": "vite build demo",
+    "create-cname": "node bin/create-cname.mjs vision.wyxos.com",
+    "deploy": "npm run build && npm run create-cname && gh-pages -d dist"
   },
   "keywords": [
     "vue",
+    "vue3",
     "helper functions",
     "helper components",
-    "oruga helpers"
+    "form builder",
+    "listing",
+    "data table",
+    "pagination",
+    "error handling",
+    "utilities"
   ],
   "author": "Wyxos",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
-    "@vuepic/vue-datepicker": "^9.0.2",
-    "qs": "^6.13.1",
-    "query-string": "^8.1.0"
+    "@fortawesome/fontawesome-free": "^6.5.1",
+    "@oruga-ui/oruga-next": "^0.10.4",
+    "axios": "1.8.2",
+    "query-string": "^8.1.0",
+    "vue": "^3.5.12"
   },
   "devDependencies": {
-    "@oruga-ui/oruga-next": "^0.10.4",
-    "@vitejs/plugin-vue": "^4.4.1",
-    "axios": "1.8.2",
+    "@oruga-ui/theme-oruga": "^0.6.0",
+    "@tailwindcss/vite": "^4.0.0",
+    "@vitejs/plugin-vue": "^5.2.4",
+    "@vue/test-utils": "^2.4.6",
     "chalk": "^5.3.0",
     "dotenv": "^16.3.1",
     "eslint": "^8.53.0",
@@ -51,25 +54,19 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^6.1.1",
     "eslint-plugin-vue": "^9.18.1",
+    "gh-pages": "^6.3.0",
     "iconv-lite": "^0.6.3",
     "inquirer": "^10.1.8",
-    "moment": "^2.29.4",
+    "jsdom": "^26.1.0",
     "prettier": "^3.1.0",
-    "sass": "^1.69.5",
-    "sass-loader": "^13.3.2",
     "simple-git": "^3.25.0",
     "source-map": "^0.7.4",
-    "vite": "5.4.6",
-    "vite-plugin-eslint": "^1.8.1",
+    "tailwindcss": "^4.0.0",
+    "vite": "6.3.4",
     "vitest": "^2.1.9",
-    "vue": "^3.5.12",
-    "vue-router": "^4.3.2"
+    "vue-router": "^4.3.0"
   },
   "peerDependencies": {
-    "axios": "1.8.2",
-    "moment": "^2.29.4",
-    "query-string": "^8.1.0",
-    "vue": "^3.3.8",
-    "vue-router": "^4.3.2"
+    "vue": "^3.5.12"
   }
 }

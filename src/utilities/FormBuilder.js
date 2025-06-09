@@ -1,26 +1,35 @@
-import { reactive, ref } from 'vue'
+import { reactive } from 'vue'
 import axios from 'axios'
-import useFormErrors from './useFormErrors.js'
+import FormErrors from './FormErrors.js'
 
 export default class FormBuilder {
-  method = 'post'
-  submitUrl = null
-  loadUrl = null
+  // Function to transform the request payload
+  transformCallback = null
+  // Whether to force the use of FormData
+  forceFormDataFlag = false
   original = {}
   form = reactive({})
   abortSubmitController = null
   abortLoadController = null
-  submitState = ref('')
-  loadState = ref('')
-  errors = useFormErrors()
+  loadUrl = null
+  state = reactive({
+    loading: false,
+    loaded: false,
+    successful: false,
+    failed: false,
+    wasLoading: false,
+    wasSubmitting: false
+  })
+
+  errors = FormErrors.create()
+
   resetAfterSubmitFlag = false
 
   callbacks = {
     submit: null,
     load: null,
     success: null,
-    failure: null,
-    formatter: null
+    failure: null
   }
 
   constructor(form = {}) {
@@ -90,72 +99,59 @@ export default class FormBuilder {
     })
   }
 
-  // get isDirty() {
-  //   const deepSort = (obj) => {
-  //     if (Array.isArray(obj)) {
-  //       return obj.map(deepSort) // Sort each item in the array
-  //     } else if (obj && typeof obj === 'object') {
-  //       return Object.keys(obj)
-  //         .sort() // Sort keys
-  //         .reduce((sorted, key) => {
-  //           sorted[key] = deepSort(obj[key]) // Recursively sort values
-  //           return sorted
-  //         }, {})
-  //     }
-  //     return obj // Return non-object values as is
-  //   }
-  //
-  //   return (
-  //     JSON.stringify(deepSort(this.original)) !==
-  //     JSON.stringify(deepSort(this.form))
-  //   )
-  // }
+  get successful() {
+    return this.state.successful
+  }
+
+  get failed() {
+    return this.state.failed && this.state.wasSubmitting
+  }
+
+  get loading() {
+    return this.state.loading
+  }
+
+  get loaded() {
+    return this.state.loaded
+  }
+
+  get wasLoading() {
+    return this.state.wasLoading
+  }
+
+  get wasSubmitting() {
+    return this.state.wasSubmitting
+  }
 
   get isSubmitting() {
-    return this.submitState.value === 'loading'
+    return this.state.loading && this.state.wasSubmitting
   }
 
   get isSubmitted() {
-    return this.submitState.value === 'loaded'
-  }
-
-  get isSubmitFailed() {
-    return this.submitState.value === 'failed'
+    return this.state.successful
   }
 
   get isLoading() {
-    return this.loadState.value === 'loading'
+    return this.state.loading && this.state.wasLoading
   }
 
   get isLoaded() {
-    return this.loadState.value === 'loaded'
+    return this.state.loaded
   }
 
   get isLoadFailed() {
-    return this.loadState.value === 'failed'
+    return this.state.failed && this.state.wasLoading
+  }
+
+  get isDirty() {
+    const currentForm = JSON.stringify(this.form)
+    const originalForm = JSON.stringify(this.original)
+    return currentForm !== originalForm
   }
 
   //
   static create(options) {
     return new this(options)
-  }
-
-  isPost() {
-    this.method = 'post'
-
-    return this
-  }
-
-  isPatch() {
-    this.method = 'patch'
-
-    return this
-  }
-
-  isPut() {
-    this.method = 'put'
-
-    return this
   }
 
   resetAfterSubmit(flag = true) {
@@ -167,9 +163,7 @@ export default class FormBuilder {
   setAttributes(form) {
     // Use deep cloning to prevent reactivity in `original`
     this.original = JSON.parse(JSON.stringify(form))
-    // this.form = reactive(
-    //   Object.assign({}, this.form, JSON.parse(JSON.stringify(form)))
-    // )
+
     Object.keys(form).forEach((key) => {
       this.form[key] = form[key]
     })
@@ -177,18 +171,38 @@ export default class FormBuilder {
     return this
   }
 
-  submitAt(path) {
-    this.submitUrl = path
+  forceFormData(flag = true) {
+    this.forceFormDataFlag = flag
 
     return this
   }
 
-  async submit() {
-    this.submitting()
+  get(url, options = {}) {
+    return this.submit('get', url, options)
+  }
+
+  post(url, options = {}) {
+    return this.submit('post', url, options)
+  }
+
+  patch(url, options = {}) {
+    return this.submit('patch', url, options)
+  }
+
+  put(url, options = {}) {
+    return this.submit('put', url, options)
+  }
+
+  delete(url, options = {}) {
+    return this.submit('delete', url, options)
+  }
+
+  async submit(method, url, options = {}) {
+    this.setSubmitting()
 
     this.clearErrors()
 
-    const axiosConfig = {}
+    const { onSuccess, onFail, ...axiosConfig } = { ...options }
 
     // If there's an ongoing request, abort it
     if (this.abortSubmitController) {
@@ -201,44 +215,63 @@ export default class FormBuilder {
     // Add the signal to the axios config
     axiosConfig.signal = this.abortSubmitController.signal
 
-    // delay by 1 second
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-
-    const data = this.callbacks.formatter
-      ? this.callbacks.formatter(this.form)
+    let data = this.transformCallback
+      ? this.transformCallback(this.form)
       : this.form
 
-    const method = this.method
+    if (this.forceFormDataFlag) {
+      const formData = new FormData()
+      Object.entries(data).forEach(([key, value]) => {
+        formData.append(key, value)
+      })
+      data = formData
+    }
 
-    return axios[method](this.submitUrl, data, axiosConfig)
+    let request
+    if (method === 'get') {
+      request = axios.get(url, axiosConfig)
+    } else if (method === 'delete') {
+      request = axios.delete(url, axiosConfig)
+    } else {
+      request = axios[method](url, data, axiosConfig)
+    }
+
+    return request
       .then((response) => {
-        this.submitted()
+        this.setSubmitted()
 
         if (this.resetAfterSubmitFlag) {
           this.setAttributes(this.original)
         }
 
-        return this.callbacks.success
-          ? this.callbacks.success(response.data)
-          : response.data
+        // Use callback from options first, then fallback to the one set via onSuccess method
+        const successCallback = onSuccess || this.callbacks.success
+
+        return successCallback ? successCallback(response.data) : response.data
       })
       .catch((error) => {
-        this.submitFailed()
+        this.setFailed()
 
         this.errors.set(error)
 
-        if (this.callbacks.failure) {
-          return Promise.reject(this.callbacks.failure(error))
+        // Use callback from options first, then fallback to the one set via onFail method
+        const failCallback = onFail || this.callbacks.failure
+
+        if (failCallback) {
+          return Promise.reject(failCallback(error))
         }
 
         return Promise.reject(error)
       })
   }
 
-  load() {
-    this.loading()
+  load(url, options = {}) {
+    this.setLoading()
 
-    const axiosConfig = {}
+    // Store the URL for future use
+    this.loadUrl = url
+
+    const { onSuccess, onFail, ...axiosConfig } = { ...options }
 
     // If there's an ongoing request, abort it
     if (this.abortLoadController) {
@@ -252,67 +285,111 @@ export default class FormBuilder {
     axiosConfig.signal = this.abortLoadController.signal
 
     return axios
-      .get(this.loadUrl, axiosConfig)
+      .get(url, axiosConfig)
       .then((response) => {
-        this.loaded()
+        this.setLoaded()
 
         if (response.data.form) {
           this.setAttributes(response.data.form)
         }
 
-        return response.data
+        // Use callback from options first, then fallback to the one set via onSuccess method
+        const successCallback = onSuccess || this.callbacks.success
+
+        return successCallback ? successCallback(response.data) : response.data
       })
       .catch((error) => {
-        this.loadFailed()
+        this.setLoadFailed()
+
+        // Use callback from options first, then fallback to the one set via onFail method
+        const failCallback = onFail || this.callbacks.failure
+
+        if (failCallback) {
+          return Promise.reject(failCallback(error))
+        }
 
         return Promise.reject(error)
       })
   }
 
-  submitting() {
-    this.submitState.value = 'loading'
+  setSubmitting() {
+    Object.assign(this.state, {
+      loading: true,
+      successful: false,
+      failed: false,
+      wasSubmitting: true,
+      wasLoading: false,
+      loaded: false
+    })
 
     return this
   }
 
-  submitted() {
-    this.submitState.value = 'loaded'
+  setSubmitted() {
+    Object.assign(this.state, {
+      loading: false,
+      successful: true,
+      failed: false,
+      wasSubmitting: true,
+      wasLoading: false
+    })
 
     return this
   }
 
-  submitFailed() {
-    this.submitState.value = 'failed'
+  setFailed() {
+    Object.assign(this.state, {
+      loading: false,
+      failed: true,
+      successful: false,
+      wasSubmitting: true,
+      wasLoading: false
+    })
 
     return this
   }
 
-  loading() {
-    this.loadState.value = 'loading'
+  setLoading() {
+    Object.assign(this.state, {
+      loading: true,
+      loaded: false,
+      failed: false,
+      successful: false,
+      wasLoading: true,
+      wasSubmitting: false
+    })
 
     return this
   }
 
-  loaded() {
-    this.loadState.value = 'loaded'
+  setLoaded() {
+    Object.assign(this.state, {
+      loading: false,
+      loaded: true,
+      failed: false,
+      wasLoading: true,
+      wasSubmitting: false,
+      successful: false
+    })
 
     return this
   }
 
-  loadFailed() {
-    this.loadState.value = 'failed'
+  setLoadFailed() {
+    Object.assign(this.state, {
+      loading: false,
+      loaded: false,
+      failed: true,
+      successful: false,
+      wasLoading: true,
+      wasSubmitting: false
+    })
 
     return this
   }
 
-  formatter(callback) {
-    this.callbacks.formatter = callback
-
-    return this
-  }
-
-  loadFrom(path) {
-    this.loadUrl = path
+  transform(callback) {
+    this.transformCallback = callback
 
     return this
   }
@@ -335,6 +412,16 @@ export default class FormBuilder {
 
   getErrors() {
     return this.errors.all()
+  }
+
+  hasErrors() {
+    return this.errors.all().length > 0
+  }
+
+  setError(field, value) {
+    this.errors.setOne(field, value)
+
+    return this
   }
 
   onSuccess(callback) {
