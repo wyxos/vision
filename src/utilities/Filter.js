@@ -43,8 +43,16 @@ export default class Filter {
   }
 
   reset() {
-    this.query = reactive({
-      ...this.original
+    // Reset existing keys to original values
+    Object.keys(this.original).forEach((key) => {
+      this.query[key] = this.original[key]
+    })
+
+    // Remove keys not present in original
+    Object.keys(this.query).forEach((key) => {
+      if (!(key in this.original)) {
+        delete this.query[key]
+      }
     })
   }
 
